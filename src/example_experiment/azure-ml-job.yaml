@@ -21,5 +21,4 @@ environment:
 code:
   local_path: .
 
-# compute: azureml:<azure-ml-cluster-name>
-compute: azureml:cpu-cheap
+compute: azureml:<azure-ml-cluster-name>

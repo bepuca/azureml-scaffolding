@@ -3,7 +3,7 @@
 repos:
   # Opinionated code formatter to forget about formatting
   - repo: https://github.com/ambv/black
-    rev: 22.1.0
+    rev: 22.3.0
     hooks:
       - id: black
 
@@ -18,9 +18,3 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
-
-  # Strip output of notebooks to avoid useless commits and prevent commiting secrets
-  - repo: https://github.com/kynan/nbstripout
-    rev: 0.5.0
-    hooks:
-      - id: nbstripout

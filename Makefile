@@ -1,11 +1,32 @@
 include config.env
 
+help:
+	@echo ""
+	@echo "Call comands as 'make <command>'".
+	@echo "Command arguments specified in this help with UPPER_CAPS. Some required, some optional."
+	@echo "Pass arguments as 'make <command> <ARG1>=\"<arg1_value>\" <ARG2>=\"<arg2_value>\"'"
+	@echo ""
+	@echo "Commands:"
+	@echo "    help             Shows this help."
+	@echo "    format           Format using black & isort. Display flake8 errors."
+	@echo "    new-exp          Create new experiment folder from template. Req: EXP."
+	@echo "    job              Triggers Azure ML job for experiment. Req: EXP; opt XARGS."
+	@echo "    build-exp        Builds experiment environment Docker image. Req: EXP; opt XARGS."
+	@echo "    local            Triggers local.py inside Docker environment. Req: EXP; opt: RUN_XARGS, XARGS."
+	@echo "    jupyter          Spins jupyter lab inside Docker environment. Req: EXP; opt: RUN_XARGS, XARGS."
+	@echo "    terminal         Spins terminal inside Docker environment. Req: EXP; opt: RUN_XARGS, XARGS."
+
 check-exp-arg:
 	@if [[ -z "$(EXP)" ]]; then { echo "You must pass EXP=<experiment_name> with this command"; exit 1; } fi
 
+format:
+	black .
+	isort .
+	flake8 .
+
 new-exp: check-exp-arg
 	unzip experiment_template.zip -d $(CODE_PATH)
-	mv $(CODE_PATH)/experiment_template $(CODE_PATH)/$(EXP)
+	mv -f $(CODE_PATH)/experiment_template $(CODE_PATH)/$(EXP)
 
 job: check-exp-arg
 	cp -R $(CODE_PATH)/common $(CODE_PATH)/$(EXP);

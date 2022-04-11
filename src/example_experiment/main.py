@@ -5,8 +5,10 @@ import mlflow
 
 from common.printer import print_data_path
 
+
 def greet_world(greeting: str):
     print(f"{greeting} world!")
+
 
 def log_azure_ml():
     # "MLFLOW_TRACKING_URI" is set-up when running inside an Azure ML Job
