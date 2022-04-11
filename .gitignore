@@ -1,3 +1,11 @@
+# PROJECT SPECIFIC
+# Everything inside data should not be uploaded to git
+/data/*
+!/data/.gitkeep
+
+# Local entrypoints should be developer-specific
+**/local.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,3 +135,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# macOS stuff
+**/.DS_Store

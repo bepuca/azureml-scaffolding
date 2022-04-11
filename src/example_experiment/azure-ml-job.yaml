@@ -1,0 +1,24 @@
+# Tells Azure ML what kind of YAML this is.
+#  Docs: https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-job-command
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+
+# Name of the experiment where all jobs will end up in the Azure ML dashboard
+experiment_name: <experiment-name>
+
+# What to run
+command: >-
+  python main.py --data_path ${{inputs.data_path}} --greeting ${{inputs.greeting}}
+
+inputs:
+  data_path:
+    dataset: azureml:<azure-ml-dataset-name>:<azure-ml-dataset-version>
+  greeting: Hello
+
+# Where to run it
+environment:
+  build:
+    local_path: ./docker
+code:
+  local_path: .
+
+compute: azureml:<azure-ml-cluster-name>
