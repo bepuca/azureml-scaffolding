@@ -38,6 +38,7 @@ build-exp: check-exp-arg
 	docker build --tag $(EXP):latest $(XARGS) $(CODE_PATH)/$(EXP)/docker
 
 local: check-exp-arg
+	@if [[ ! -f "$(CODE_PATH)/$(EXP)/local.py" ]]; then { echo "local.py missing for EXP=$(EXP)"; exit 1; } fi
 	docker run --rm $(RUN_XARGS) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(EXP)",target=$(DOCKER_WORKDIR)/$(EXP) \
