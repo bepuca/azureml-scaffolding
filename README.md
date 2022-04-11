@@ -11,6 +11,11 @@ applicable to most (if not all) projects. At the same time, we intend to provide
 same philosophy for solving common situations in the form of extensions for this template. These
 extensions can be found in the Azure MLOps Scaffolding Extensions repository.
 
+An important note to make is that on this base template, we make no assumptions on when and
+how you should register or deploy a model. These are usually heavily influenced by the use case so
+there does not exist a one size fits all. Despite that, we do provide extensions for some common
+scenarios.
+
 ## Project Structre
 
 ```
@@ -153,6 +158,9 @@ local commands.
 5. If you want to use the example command in `azure-ml-job.yaml` to try things work, modify the
 `inputs.data_path.dataset` to point to one of your datasets in the workspace so the job does not
 crash.
+
+> DISCLAIMER: You should not modify the project structure. You can add new files to the existing
+> folders, but deleting provided files may break the expectations of the Makefile.
 
 After that, you are ready to start modifying your `main.py` (and the `command` and `inputs` in the
 `azure-ml-job.yaml` to match it) and you will be set to start experimenting. You can also modify
