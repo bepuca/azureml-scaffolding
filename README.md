@@ -70,6 +70,19 @@ The `Makefile` is designed to be the main driver of this project and aims to abs
 complexity of the real commands behind short and easy to remember ones. At the same time, it intends
 to offer customization of arguments where it is needed.
 
+### Expectations
+
+> DISCLAIMER: These are the expectations of the project, breaking them will result in some of the commands in the `Makefile` not working. We encourage you to honor them.
+
+- All source code is located inside the folder defined as `CODE_PATH` in `config.env`. Default is `./src`.
+- Common functionality across experiments is all centralized in `common` folder inside the code folder.
+- Each experiment is located inside a folder named after the experiment inside the code folder.
+- Inside each experiment, there are the following files: `az-ml-job.yaml`, `main.py` and `local.py`.
+- Inside each experiment folder there is a `docker` folder representing the docker context of the environment for that experiment.
+- Inside each `docker` folder there is a `Dockerfile` defining the environment of the experiment.
+
+### Commands
+
 Commands are called as `make <command> EXTRA_ARGUMENT=<extra_argument>`. Note not all make commands
 accept extra arguments.
 
@@ -158,9 +171,6 @@ local commands.
 5. If you want to use the example command in `azure-ml-job.yaml` to try things work, modify the
 `inputs.data_path.dataset` to point to one of your datasets in the workspace so the job does not
 crash.
-
-> DISCLAIMER: You should not modify the project structure. You can add new files to the existing
-> folders, but deleting provided files may break the expectations of the Makefile.
 
 After that, you are ready to start modifying your `main.py` (and the `command` and `inputs` in the
 `azure-ml-job.yaml` to match it) and you will be set to start experimenting. You can also modify
