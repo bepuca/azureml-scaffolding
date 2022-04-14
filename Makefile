@@ -16,28 +16,31 @@ help:
 	@echo "    jupyter          Spins jupyter lab inside Docker environment. Req: EXP; opt: RUN_XARGS, XARGS."
 	@echo "    terminal         Spins terminal inside Docker environment. Req: EXP; opt: RUN_XARGS, XARGS."
 
-check-exp-arg:
-	@if [[ -z "$(EXP)" ]]; then { echo "You must pass EXP=<experiment_name> with this command"; exit 1; } fi
+check-arg:
+	@if [[ -z "$($(ARG))" ]]; then { echo "You must pass $(ARG) argument with this command"; exit 1; } fi
+
+check-arg-EXP: ARG=EXP
+check-arg-EXP: check-arg
 
 format:
 	black .
 	isort .
 	flake8 .
 
-new-exp: check-exp-arg
+new-exp: check-arg-EXP
 	unzip experiment_template.zip -d $(CODE_PATH)
 	mv -f $(CODE_PATH)/experiment_template $(CODE_PATH)/$(EXP)
 
-job: check-exp-arg
+job: check-arg-EXP
 	cp -R $(CODE_PATH)/common $(CODE_PATH)/$(EXP);
 	az ml job create -f $(CODE_PATH)/$(EXP)/azure-ml-job.yaml \
 		--resource-group $(RESOURCE_GROUP) --workspace-name $(WORKSPACE) $(XARGS) || true
 	rm -r $(CODE_PATH)/$(EXP)/common;
 
-build-exp: check-exp-arg
+build-exp: check-arg-EXP
 	docker build --tag $(EXP):latest $(XARGS) $(CODE_PATH)/$(EXP)/docker
 
-local: check-exp-arg
+local: check-arg-EXP
 	@if [[ ! -f "$(CODE_PATH)/$(EXP)/local.py" ]]; then { echo "local.py missing for EXP=$(EXP)"; exit 1; } fi
 	docker run --rm $(RUN_XARGS) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
@@ -47,7 +50,7 @@ local: check-exp-arg
 		python $(EXP)/local.py $(XARGS) \
 	rm -rf $(CODE_PATH)/$(EXP)/common;
 
-jupyter: check-exp-arg
+jupyter: check-arg-EXP
 	docker run --rm -it -p 8888:8888 $(RUN_XARGS) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(EXP)",target=$(DOCKER_WORKDIR)/$(EXP) \
@@ -58,7 +61,7 @@ jupyter: check-exp-arg
 		|| true
 	rm -rf $(CODE_PATH)/$(EXP)/common;
 
-terminal: check-exp-arg
+terminal: check-arg-EXP
 	docker run --rm -it $(RUN_XARGS) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(EXP)",target=$(DOCKER_WORKDIR)/$(EXP) \

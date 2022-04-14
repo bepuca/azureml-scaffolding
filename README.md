@@ -77,7 +77,7 @@ to offer customization of arguments where it is needed.
 - All source code is located inside the folder defined as `CODE_PATH` in `config.env`. Default is `./src`.
 - Common functionality across experiments is all centralized in `common` folder inside the code folder.
 - Each experiment is located inside a folder named after the experiment inside the code folder.
-- Inside each experiment, there are the following files: `az-ml-job.yaml`, `main.py` and `local.py`.
+- Inside each experiment, there are the following files: `az-ml-job.yaml`, `main.py` and `local.py`. Note that `local.py` is gitignored, so every developer might need to create their own.
 - Inside each experiment folder there is a `docker` folder representing the docker context of the environment for that experiment.
 - Inside each `docker` folder there is a `Dockerfile` defining the environment of the experiment.
 
@@ -90,9 +90,11 @@ accept extra arguments.
 
     Display a concise description of all the commands of the Makefile and their arguments.
 
-- `check-exp-arg`
+- `check-arg`
 
-    Check that the `EXP` extra argument is passed for a command that needs it. Not intended to be used manually.
+    Check that the an argument is passed for a command that needs it. Not intended to be used manually.
+    This is a generic command that is inherited for others such as `check-arg-EXP`. This one would
+    check if `EXP` argument is passed.
 
 - `format`
 
