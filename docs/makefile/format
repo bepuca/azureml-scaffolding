@@ -1,0 +1,6 @@
+Command:
+    format              : Format using black & isort. Display flake8 errors.
+        Formats code using black & isort and display flake8 errors using the current activated
+        environment. It is recommended to have a local python environment with the
+        requirements.txt at the root level installed. Note that if you install the pre-commit
+        hooks, this formatting will be run anyway when you commit code.

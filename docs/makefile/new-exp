@@ -1,0 +1,13 @@
+Command:
+    new-exp             : Create new experiment folder from template.
+        Essentially extracts the base experiment structure from the experiment_template.zip.
+        After doing that, you should follow the instructions found in "New experiment" section
+        in the base README of the project to make sure the new experiment is functional.
+
+Arguments:
+    exp [Required] : Name of the new experiment being created. Only letters and underscores as it
+                     is partly a python module.
+
+Examples:
+    Create a new experiment called "goodbye_world"
+        make new-exp exp=goodbye_world

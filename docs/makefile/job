@@ -1,0 +1,20 @@
+Command:
+    job                 : Triggers Azure ML job for experiment.
+        This uses (and requires) to have the Azure ML CLI v2 installed. The job specs used are
+        the ones defined in `azure-ml-job.yaml` inside the experiment folder. Note that while
+        a command job is specified by default, you can use any type of job compatible with
+        Azure ML, you just need to change the YAML contents. For more information,
+        visit https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-overview#job
+
+Arguments:
+    exp [Required] : Name of the experiment for which to trigger the job; it is defined by the
+                     folder name containing the experiment.
+    job-xargs      : Optional extra arguments to be passed to the `az ml job create` call. It
+                     should be a single string.
+
+Examples:
+    Trigger a job in Azure ML without any extra configuration
+        make job exp=hello_world
+
+    Trigger a job in Azure ML modifying one input using the extra configuration
+        make job exp=hello_world job-xargs="--set inputs.greeting=Welcome"

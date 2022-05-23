@@ -11,14 +11,16 @@ command: >-
 
 inputs:
   data_path:
-    dataset: azureml:<azure-ml-dataset-name>:<azure-ml-dataset-version>
-  greeting: Hello
+    # Only works if dataset created using Azure ML CLI v2; run `az ml data create --help` to see how
+    path: azureml:<azure-ml-dataset-name>:<azure-ml-dataset-version>
+  greeting: "Hello"
+
+# What code to make available
+code: .
 
 # Where to run it
 environment:
   build:
-    local_path: ./docker
-code:
-  local_path: .
+    path: ./environment
 
 compute: azureml:<azure-ml-cluster-name>
