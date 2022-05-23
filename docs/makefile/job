@@ -14,7 +14,7 @@ Arguments:
 
 Examples:
     Trigger a job in Azure ML without any extra configuration
-        make job exp=hello_world
+        make job exp=example_experiment
 
     Trigger a job in Azure ML modifying one input using the extra configuration
-        make job exp=hello_world job-xargs="--set inputs.greeting=Welcome"
+        make job exp=example_experiment job-xargs="--set inputs.greeting=Welcome"

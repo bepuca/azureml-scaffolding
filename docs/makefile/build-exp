@@ -12,8 +12,8 @@ Arguments:
 
 Examples:
     Build the image for an experiment without any extra configuration
-        make build-exp exp=hello_world
+        make build-exp exp=example_experiment
 
     Build the image for an experiment with some extra configuration. In this case, setting a build
     time argument
-        make build-exp exp=hello_world build-xargs="--build-arg MY_VAR=my_value"
+        make build-exp exp=example_experiment build-xargs="--build-arg MY_VAR=my_value"

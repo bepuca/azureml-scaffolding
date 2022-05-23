@@ -19,7 +19,7 @@ Arguments:
 
 Examples:
     Run default local.py without extra configuration
-        make local exp=hello_world
+        make local exp=example_experiment
 
     Run custom file that requires an extra input and allow use of GPUs
-        make local exp=hello_world run-xargs="--gpus all" script-xargs="--greeting Welcome"
+        make local exp=example_experiment run-xargs="--gpus all" script-xargs="--greeting Welcome"

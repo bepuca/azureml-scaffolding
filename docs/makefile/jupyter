@@ -17,7 +17,7 @@ Arguments:
 
 Examples:
     Spin up the default jupyter lab without any extra configuration
-        make jupyter exp=hello_world
+        make jupyter exp=example_experiment
 
     Spin up jupyter lab exposed in a different port (useful when host machine is already using
     the port, like Azure ML compute instances) and allowing the use of GPUs.

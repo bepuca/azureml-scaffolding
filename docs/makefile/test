@@ -14,7 +14,7 @@ Arguments:
 
 Examples:
     Run tests without extra configuration
-        make test exp=hello_world
+        make test exp=example_experiment
 
     Run tests using GPUs and stop after first failure
-        make test exp=hello_world run-xargs="--gpus all" test-xargs="-x"
+        make test exp=example_experiment run-xargs="--gpus all" test-xargs="-x"

@@ -11,4 +11,4 @@ Arguments:
 
 Examples:
     Spin up a terminal for an experiment
-        make terminal exp=hello_world
+        make terminal exp=example_experiment
