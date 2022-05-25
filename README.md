@@ -1,15 +1,16 @@
-# Azure MLOps Scaffolding
+# AzureML Scaffolding
 
 The goal of this project is to provide a minimal scaffolding to make it easier to work effectively
 with Azure Machine Learning. The main focus is in the (often overlooked) Data Scientist inner loop.
 That is, the work done in experimentation trying to improve the solutions to the model so that
 developers can focus on the actual code by making the infrastructure "just work" as much as
-possible.
+possible. The idea is to enable what we call Continuous Experimentation. This means that the
+data scientists are always enabled to keep experimenting and deploying is not a blocker for that.
 
 This project contains what we feel is the absolute minimum we need to fulfill our goal and is
 applicable to most (if not all) projects. At the same time, we intend to provide code with the
 same philosophy for solving common situations in the form of extensions for this template. These
-extensions can be found in the Azure MLOps Scaffolding Extensions repository.
+extensions can be found in the AzureML Scaffolding Extensions repository.
 
 An important note to make is that on this base template, we make no assumptions on when and
 how you should register or deploy a model. These are usually heavily influenced by the use case so
