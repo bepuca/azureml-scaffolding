@@ -18,6 +18,10 @@ scenarios.
 
 ## Project Structre
 
+Note this structure only reflects the base template. Adding extensions to your project might
+add new files or folders not documented here. For the sanity of your developers, we recommend you
+also update this structure when you do so.
+
 ```
 ├── .flake8                     <- Configuration file for flake8, the linter.
 ├── .gitignore                  <- Gitignore with the usual python project defaults.
@@ -30,10 +34,12 @@ scenarios.
 ├── README.md                   <- The top-level README for developers using this project.
 ├── Makefile                    <- Makefile with all the commands needed for the project.
 ├── experiment_template.zip     <- Compressed template to make it easier to add experiments.
-├── data                        <- Data folder to copy datasets to local.
+├── data                        <- Data folder to copy datasets to the working machine.
 │                                  Everything inside is ignored by git.
 ├── docs                        <- Docs belong here.
 │   └── makefile                <- Folder with files used by the `help` command of the Makefile.
+├── models                      <- Folder to save trained models in your working machine.
+│                                  Everything inside is ignored by git.
 ├── notebooks                   <- Folder for saving the jupyter notebooks of the project.
 └── src                         <- Source code of the project.
     ├── common                  <- All code to be shared among experiments.
@@ -63,7 +69,8 @@ avoid surprises in production.
 5. You use a UNIX-based machine (Linux, macOS, Windows with WSL). This is not completely requried,
 but the main driver of this project is the `Makefile` and it is harder to work with them on Windows.
 We recommend installing Windows Subsystem for Linux. You can also copy the commands manually. There
-are tools for running `make` in Windows but we do not guarantee our file to work.
+are tools for running `make` in Windows but we do not guarantee our file to work. We may offer an
+extension to add compatibility with Windows if there is demand for it.
 
 
 ## Makefile
@@ -73,8 +80,50 @@ complexity of the real commands behind short and easy to remember ones. At the s
 to offer customization of arguments where it is needed.
 
 Commands are called as `make <command> argument=<argument>` from the command line placed at the
-root folder of the project. Not all commands accept or require arguments. To get started, run
-`make help` to display the available commands.
+root folder of the project. Not all commands accept or require arguments.
+
+While the `Makefile` in itself is quite transparent, it can be overwhelming to new users to
+Azure ML, docker, or both. We tried to make the help as useful as possible so you can skip opening
+the file altogether and work successfully. Therefore, we suggest you start by running in your
+command line:
+
+```make help```
+
+This will display the available commands with a short description of them. For more details of each
+command and a description of the required and/or accepted arguments, run:
+
+```make help cmd=<command_name>```
+
+### Requirements
+
+Some requirements could be flexible to other workflows and are mentioned as potential alternatives. Nevertheless, they would require some extra effort and will not work with the `Makefile` as it is.
+We may provide examples on how that would look like in the future.
+
+- **Azure ML workspace** - For anything to work, you need to have an Azure ML workspace
+    configured and, of course, and Azure account with access to that workspace. By configured, we
+    basically mean created and at least one compute cluster defined to be able to run things there.
+    It is likely you also need to have a dataset available. General
+    documentation can be found here: https://docs.microsoft.com/en-us/azure/machine-learning/.
+
+- **Azure ML CLI v2** - We recommend to interface with Azure ML through the CLI (rather than the
+    python SDK) because it makes the separation between ML code and platform specific infrastructure
+    much clearer (CLI uses YAMLs and not python code). Potential alternative: Python SDK.
+
+    1. Follow the instructions in https://docs.microsoft.com/en-us/cli/azure/install-azure-cli to
+        install the generic Azure CLI.
+    2. Run the command `az extension add --name ml` in your command line to install the ML v2
+        extension.
+    3. Run `az login` to make sure you are logged in your Azure account.
+    4. Run `az account set --name <subscription_name>` to make your CLI point to the subscription
+        that owns the Azure ML workspace. If you go to the Azure ML studio at https://ml.azure.com
+        and navigate to the workspace, the name of the subscription appears at the top right of
+        the screen.
+    5. You are set to go!
+
+- **Docker** - We strongly recommend using Docker based environments to maximize reproducibility.
+    Therefore, all runs in your working machine will need the Docker engine installed there (if you
+    follow the suggested workflow). To install it, follow the instructions here:
+    https://docs.docker.com/engine/install/
 
 ### Expectations
 

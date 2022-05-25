@@ -1,7 +1,11 @@
 # PROJECT SPECIFIC
-# Everything inside data should not be uploaded to git
+# Nothing inside data should be tracked by git
 /data/*
 !/data/.gitkeep
+
+# Nothing inside models should be tracked by git
+/models/*
+!/models/.gitkeep
 
 # Local entrypoints should be developer-specific
 **/local.py
