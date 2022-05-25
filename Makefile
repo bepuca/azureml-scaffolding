@@ -52,7 +52,7 @@ job: check-arg-exp check-exp-exists
 	rm -r $(CODE_PATH)/$(exp)/common;
 
 build-exp: check-arg-exp check-exp-exists
-	docker build --tag $(exp):latest $(build-xargs) $(CODE_PATH)/$(exp)/docker
+	docker build --tag $(exp):latest $(build-xargs) $(CODE_PATH)/$(exp)/environment
 
 # Lines as `<command>: var=val` define defaults for optional arguments.
 local: script="local.py"
@@ -86,11 +86,10 @@ test: check-arg-exp check-exp-exists
 	rm -rf $(CODE_PATH)/$(exp)/common;
 
 # Lines as `<command>: var=val` define defaults for optional arguments.
-
 jupyter: port=8888
 jupyter: check-arg-exp check-exp-exists
 	# Start a jupyter server inside the docker environment of the specified experiment
-	docker run --rm -it -p 8888:$(port) $(run-xargs) \
+	docker run --rm -it -p $(port):8888 $(run-xargs) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(exp)",target=$(DOCKER_WORKDIR)/$(exp) \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/$(exp)/common \
