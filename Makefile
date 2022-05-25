@@ -86,11 +86,11 @@ test: check-arg-exp check-exp-exists
 	rm -rf $(CODE_PATH)/$(exp)/common;
 
 # Lines as `<command>: var=val` define defaults for optional arguments.
-jupyter: jupyter-in-port=8888
-jupyter: jupyter-out-port=8888
+jupyter: in-port=8888
+jupyter: out-port=8888
 jupyter: check-arg-exp check-exp-exists
 	# Start a jupyter server inside the docker environment of the specified experiment
-	docker run --rm -it -p $(jupyter-in-port):$(jupyter-out-port) $(run-xargs) \
+	docker run --rm -it -p $(in-port):$(out-port) $(run-xargs) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(exp)",target=$(DOCKER_WORKDIR)/$(exp) \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/$(exp)/common \

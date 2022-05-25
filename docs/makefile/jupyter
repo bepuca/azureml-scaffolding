@@ -7,13 +7,13 @@ Command:
         it ensures the environment matches the one the experiment uses everywhere.
 
 Arguments:
-    exp [Required]   : Name of the experiment for which to spin jupyter; it is defined by the
-                       folder name containing the experiment.
-    jupyter-in-port  : (Default 8888) Port where jupyter is run inside the Docker container.
-    jupyter-out-port : (Default 8888) Port where jupyter is exposed in the machine that is running
-                       Docker.
-    run-xargs        : Extra arguments to be passed to the `docker run` command. It must be a
-                       single string.
+    exp [Required] : Name of the experiment for which to spin jupyter; it is defined by the
+                     folder name containing the experiment.
+    in-port        : (Default 8888) Port where jupyter is run inside the Docker container.
+    out-port       : (Default 8888) Port where jupyter is exposed in the machine that is running
+                     Docker.
+    run-xargs      : Extra arguments to be passed to the `docker run` command. It must be a
+                     single string.
 
 Examples:
     Spin up the default jupyter lab without any extra configuration
