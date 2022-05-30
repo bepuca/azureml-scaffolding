@@ -1,7 +1,7 @@
 # AzureML Scaffolding
 
 The goal of this project is to provide a minimal scaffolding to make it easier to work effectively
-with Azure Machine Learning. The main focus is in the (often overlooked) Data Scientist inner loop.
+with Azure Machine Learning. The main focus is in the (often overlooked) Data Scientist's inner loop.
 That is, the work done in experimentation trying to improve the solutions to the model so that
 developers can focus on the actual code by making the infrastructure "just work" as much as
 possible. The idea is to enable what we call Continuous Experimentation. This means that the
@@ -17,7 +17,7 @@ how you should register or deploy a model. These are usually heavily influenced 
 there does not exist a one size fits all. Despite that, we do provide extensions for some common
 scenarios.
 
-## Project Structre
+## Project Structure
 
 Note this structure only reflects the base template. Adding extensions to your project might
 add new files or folders not documented here. For the sanity of your developers, we recommend you
