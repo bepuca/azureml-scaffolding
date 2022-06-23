@@ -5,6 +5,3 @@ FROM python:latest
 RUN pip install 'azureml-mlflow' \
                 'mlflow-skinny' \
                 'pytest'
-
-# Should match your DOCKER_WORKDIR in `config.env`
-WORKDIR /mnt

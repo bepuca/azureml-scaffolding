@@ -9,8 +9,7 @@ Command:
 Arguments:
     exp [Required] : Name of the experiment for which to spin jupyter; it is defined by the
                      folder name containing the experiment.
-    port           : (Default 8888) Port where jupyter is exposed in the machine that is running
-                     Docker.
+    port           : (Default 8888) Port where jupyter runs and is exposed.
     run-xargs      : Extra arguments to be passed to the `docker run` command. It must be a
                      single string.
 
@@ -20,4 +19,4 @@ Examples:
 
     Spin up jupyter lab exposed in a different port (useful when host machine is already using
     the port, like Azure ML compute instances) and allowing the use of GPUs.
-        make jupyter jupyter-out-port=8890 run-xargs="--gpus all"
+        make jupyter port=8890 run-xargs="--gpus all"
