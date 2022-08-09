@@ -1,0 +1,20 @@
+Command:
+    dependency          : Make common dependency available in an experiment.
+        This makes a common dependency living in the `common` folder at experiment level
+        available inside the `common` folder of the specified experiment. That way, that
+        dependency can be used in the experiment that now have it. For consistency, this command
+        introduces the dependency in the experiment within the same original folder structure.
+        That is, the path to the dependency is the same in all `common` folders that contain it.
+        As a technical detail, we use symlinks for this functionality. This means that any change
+        will be reflected in all references of the file or folder.
+
+Arguments:
+    exp [Required] : Name of the experiment in which we want to make the dependency available;
+                     it is defined by the folder name containing the experiment.
+    dep [Required] : Path to the dependency inside the original common folder. A dependency can
+                     either be a file or a folder. `common` should not be included in the path
+                     provided, as the command already accounts for it.
+
+Examples:
+    Introduce dependency to `printer.py` in the `example_experiment` so it can be used.
+        make dependency exp=example_experiment dep=printer.py

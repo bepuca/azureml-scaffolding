@@ -42,15 +42,9 @@ new-exp: check-arg-exp
 	mv -f $(CODE_PATH)/experiment_template $(CODE_PATH)/$(exp)
 
 job: check-arg-exp check-exp-exists
-	# Temporarily copy common folder inside experiment so it ends up in the Azure ML snapshot
-	cp -R $(CODE_PATH)/common $(CODE_PATH)/$(exp);
-
 	# Submit the job to Azure ML and continue to next step even if submission fails
 	az ml job create -f $(CODE_PATH)/$(exp)/azure-ml-job.yaml \
 		--resource-group $(RESOURCE_GROUP) --workspace-name $(WORKSPACE) $(job-xargs) || true
-
-	# Remove the common folder from inside the experiment folder
-	rm -r $(CODE_PATH)/$(exp)/common;
 
 build-exp: check-arg-exp check-exp-exists
 	docker build --tag $(exp):latest $(build-xargs) $(CODE_PATH)/$(exp)/environment
@@ -65,57 +59,59 @@ local: build-exp
 	docker run --rm $(run-xargs) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(exp)",target=$(DOCKER_WORKDIR)/$(exp) \
-		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/$(exp)/common \
+		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/common \
 		--workdir $(DOCKER_WORKDIR) \
 		$(exp):latest \
 		python $(exp)/$(script) $(script-xargs) \
 		|| true
-
-	# Remove common folder from inside experiment created as byproduct of mounts in docker
-	rm -rf $(CODE_PATH)/$(exp)/common;
 
 test: build-exp
 	# Run test suite inside the docker environment of the specified experiment
 	docker run --rm $(run-xargs) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(exp)",target=$(DOCKER_WORKDIR)/$(exp) \
-		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/$(exp)/common \
+		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/common \
 		--workdir $(DOCKER_WORKDIR)/$(exp) \
 		$(exp):latest \
 		python -m pytest $(test-xargs) \
 		|| true
 
-	# Remove common folder from inside experiment created as byproduct of mounts in docker
-	rm -rf $(CODE_PATH)/$(exp)/common;
-
 # Lines as `<command>: var=val` define defaults for optional arguments.
-jupyter: port=8888
 jupyter: port=8888
 jupyter: build-exp
 	# Start a jupyter server inside the docker environment of the specified experiment
 	docker run --rm -it -p $(port):$(port) $(run-xargs) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(exp)",target=$(DOCKER_WORKDIR)/$(exp) \
-		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/$(exp)/common \
+		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/common \
 		--mount type=bind,source="$(PWD)/notebooks",target=$(DOCKER_WORKDIR)/notebooks \
 		--workdir $(DOCKER_WORKDIR) \
 		$(exp):latest \
 		/bin/bash -c "pip install jupyterlab; jupyter lab --allow-root --ip 0.0.0.0 --no-browser --port $(port)" \
 		|| true
 
-	# Remove common folder from inside experiment created as byproduct of mounts in docker
-	rm -rf $(CODE_PATH)/$(exp)/common;
-
 terminal: build-exp
 	# Start an interactive terminal inside the docker environment of the specified experiment
 	docker run --rm -it $(RUN_XARGS) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(exp)",target=$(DOCKER_WORKDIR)/$(exp) \
-		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/$(exp)/common \
+		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/common \
 		--workdir $(DOCKER_WORKDIR) \
 		$(exp):latest \
 		/bin/bash \
 		|| true
 
-	# Remove common folder from inside experiment created as byproduct of mounts in docker
-	rm -rf $(CODE_PATH)/$(exp)/common;
+# Use the base command `check-arg` to ensure `dep` argument was passed
+check-arg-dep: arg=dep
+check-arg-dep: check-arg
+
+dependency: check-arg-exp check-exp-exists check-arg-dep
+	@dep_dir=`dirname $(dep)`; \
+	dep_obj=`basename $(dep)`; \
+	mkdir -p $(CODE_PATH)/$(exp)/common/$$dep_dir; \
+	cd $(CODE_PATH)/$(exp)/common/$$dep_dir; \
+	subexp_depth=`echo $(exp) | grep -o '/' - | wc -l`; \
+	rel_path=../..; \
+	for i in `seq 1 $$subexp_depth 1`; do rel_path=$$rel_path/..; done; \
+	ln -s $$rel_path/common/$(dep) .
+	@echo "Dependency successfully created!"
