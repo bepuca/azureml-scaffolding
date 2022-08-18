@@ -7,10 +7,11 @@ developers can focus on the actual code by making the infrastructure "just work"
 possible. The idea is to enable what we call Continuous Experimentation. This means that the
 data scientists are always enabled to keep experimenting and deploying is not a blocker for that.
 
-This project contains what we feel is the absolute minimum we need to fulfill our goal and is
-applicable to most (if not all) projects. At the same time, we intend to provide code with the
-same philosophy for solving common situations in the form of extensions for this template. These
-extensions can be found in the AzureML Scaffolding Extensions repository.
+This project contains what we feel is the absolute minimum we need to fulfill our goal and should be
+applicable to most (if not all) projects. At the same time, we aim for it to be extensive and
+we intend to provide code with the same philosophy for solving common situations in the form of
+extensions for this template. These extensions can be found in the
+[AzureML Scaffolding Extensions](https://github.com/bepuca/azureml-scaffolding-extensions) repository.
 
 An important note to make is that on this base template, we make no assumptions on when and
 how you should register or deploy a model. These are usually heavily influenced by the use case so
@@ -97,7 +98,8 @@ command and a description of the required and/or accepted arguments, run:
 
 ### Requirements
 
-Some requirements could be flexible to other workflows and are mentioned as potential alternatives. Nevertheless, they would require some extra effort and will not work with the `Makefile` as it is.
+Some requirements could be flexible to other workflows and are mentioned as potential alternatives.
+Nevertheless, they would require some extra effort and will not work with the `Makefile` as it is.
 We may provide examples on how that would look like in the future.
 
 - **Azure ML workspace** - For anything to work, you need to have an Azure ML workspace
@@ -133,7 +135,8 @@ We may provide examples on how that would look like in the future.
 - All source code is located inside the folder defined as `CODE_PATH` in `config.env`. Default is `./src`.
 - Common functionality across experiments is all centralized in `common` folder inside the code folder.
 - Each experiment is located inside a folder named after the experiment inside the code folder.
-- Inside each experiment, there are the following files: `az-ml-job.yaml`, `main.py` and `local.py`. Note that `local.py` is gitignored, so every developer might need to create their own.
+- Inside each experiment, there are the following files: `az-ml-job.yaml`, `main.py` and `local.py`.
+Note that `local.py` is gitignored, so every developer might need to create their own.
 - Inside each experiment folder there is an `environment` folder representing the docker context of the environment for that experiment.
 - Inside each `environment` folder there is a `Dockerfile` defining the environment of the experiment.
 
@@ -142,7 +145,7 @@ We may provide examples on how that would look like in the future.
 ### New project
 
 When starting a new blank project, the easiest is to create the new repository using this one as
-template if the platform you use allows that.  If not, you can just initialize your project and then
+template if the platform you use allows that. If not, you can just initialize your project and then
 copy all the files manually.
 
 Once you have the files in your repository, there are a few steps you
@@ -151,7 +154,7 @@ need to follow before you are ready to work with it:
 1. Modify `conf.env` with the variables of your project.
 2. Create a new python environment with your favourite tool (conda, virtualenv, ...) for the
 formatting toolds of the project.
-3. Install the `requirements.txt`  in your formatting environment.
+3. Install the `requirements.txt` in your formatting environment.
 4. Install the precommits in your repository by running `pre-commit` install with the environment
 activated. After this, all commits will be linted and formatted.
 5. Run `make new-exp exp=<your_experiment_name>` to create the first of your experiments. Then
@@ -180,3 +183,20 @@ After that, you are ready to start modifying your `main.py` (and the `command` a
 the `local.py` for faster local experimentation. You can just import the functionality of `main.py`
 to run a local experiment or you may want to run smaller pieces of the code while you develop or to
 debug them.
+
+
+### Common dependencies
+
+Most projects end up needing to reuse some code across experiments. While the usual way of doing it
+is through registering packages somewhere, we believe it introduces a signficant overhead,
+specially in the initial stages of a project where things change very quickly. Therefore, the
+solution we propose is to have a special folder at the experiment level called `common` where you
+should put all the code that is meant to be used by more than one experiment.
+
+After that, you can make that dependency available to the relevant experiments by using the
+command `make dependency` (you may run `make help cmd=dependency` for details). Behind the scenes,
+this will create a symlink inside a folder also called `common` inside your experiment to the
+original file or folder. For you, it means that after running that command you can import
+the dependency from any file in the experiment simply by:
+
+```from common import <your_dependency>```
