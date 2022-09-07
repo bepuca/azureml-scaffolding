@@ -112,6 +112,6 @@ dependency: check-arg-exp check-exp-exists check-arg-dep
 	cd $(CODE_PATH)/$(exp)/common/$$dep_dir; \
 	subexp_depth=`echo $(exp) | grep -o '/' - | wc -l`; \
 	rel_path=../..; \
-	for i in `seq 1 $$subexp_depth 1`; do rel_path=$$rel_path/..; done; \
+	for i in `seq 1 1 $$subexp_depth`; do rel_path=$$rel_path/..; done; \
 	ln -s $$rel_path/common/$(dep) .
 	@echo "Dependency successfully created!"
