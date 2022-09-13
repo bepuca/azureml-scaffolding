@@ -233,9 +233,9 @@ the dependency from any file in the experiment simply by:
 
 ```from common import <your_dependency>```
 
-If a dependency created on another machine when you `git pull` (because instead of a symlink
-you get a text file inside the `common` folder of a given experiment), please check the git
-`symlinks` option by running:
+If a dependency created on another machine does not work when you `git pull`
+(because instead of a symlink you get a text file inside the `common` folder of a given experiment),
+please check the git `symlinks` option by running:
 
 ```git config --get core.symlinks```
 
