@@ -12,30 +12,30 @@ there does not exist a one size fits all. Despite that, we do provide extensions
 scenarios.
 
 ## Navigation
-1. [Features overview](#features-overview)  
-2. [Getting started](#getting-started)  
-   1. [Requirements](#requirements)  
-   2. [Setting up new project](#setting-up-new-project)  
-   3. [Creating experiments](#creating-experiments)  
-3. [Concepts](#concepts)  
-   1. [Assumptions](#assumptions)  
-   2. [Expectations](#expectations)  
-   3. [Project structure](#project-structure)  
-   4. [Makefile](#makefile)  
-   5. [Common dependencies](#common-dependencies)   
+1. [Features overview](#features-overview)
+2. [Getting started](#getting-started)
+   1. [Requirements](#requirements)
+   2. [Setting up new project](#setting-up-new-project)
+   3. [Creating experiments](#creating-experiments)
+3. [Concepts](#concepts)
+   1. [Assumptions](#assumptions)
+   2. [Expectations](#expectations)
+   3. [Project structure](#project-structure)
+   4. [Makefile](#makefile)
+   5. [Common dependencies](#common-dependencies)
 
 
-## Features overview 
+## Features overview
 [[back to the top]](#navigation)
 
 - Leverages the new [AzureML CLIv2](https://docs.microsoft.com/en-us/azure/machine-learning/concept-v2)
 - Supports running multiple experiments with independent AzureML configurations
-- Allows for sharing (not duplicating) code between experiments 
+- Allows for sharing (not duplicating) code between experiments
 - Local and remote execution - develop and quickly test code localy and execute full scale pipelines on [AzureML compute targets](https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-target)
 - Using docker containers to ensure compatibility of environments between local and remote execution
 - Clear separation between data science/ML and AzureML specific code
 - Code linting and formatting
-- Using `makefile` to offer a set of commands to abstract the complexity, eg.: `make new-exp exp=<your_experiment_name>` or `make job exp=<experiment_name>`.  
+- Using `makefile` to offer a set of commands to abstract the complexity, eg.: `make new-exp exp=<your_experiment_name>` or `make job exp=<experiment_name>`.
    More details in [Makefile section](#makefile).
 
 ## Getting started
@@ -134,7 +134,7 @@ avoid surprises in production.
 4. You format and lint your code as soon as possible to ensure legibility and catch small bugs early.
 5. You use a UNIX-based machine (Linux, macOS, Windows with WSL or [AzureML Compute Instance](https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-instance)). This is not completely requried,
 but the main driver of this project is `Makefile` and it is hard to work with it on Windows.
-For Windows users we recommend setting up Azure ML Compute instance as a dev environment and use this scaffolding from there.  
+For Windows users we recommend setting up Azure ML Compute instance as a dev environment and use this scaffolding from there.
 There are tools for running `make` in Windows but we do not guarantee our file to work. We may offer an
 extension to add full compatibility with Windows in the future if there is demand for it.
 
@@ -232,3 +232,12 @@ original file or folder. For you, it means that after running that command you c
 the dependency from any file in the experiment simply by:
 
 ```from common import <your_dependency>```
+
+If a dependency created on another machine when you `git pull` (because instead of a symlink
+you get a text file inside the `common` folder of a given experiment), please check the git
+`symlinks` option by running:
+
+```git config --get core.symlinks```
+
+This option should never be false for the symlink dependencies to work. If it is, change it to
+true or unset it, delete the branch from your computer and pull again.
