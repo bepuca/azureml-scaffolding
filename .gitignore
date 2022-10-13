@@ -142,3 +142,6 @@ dmypy.json
 
 # macOS stuff
 **/.DS_Store
+
+# IDE stuff
+.idea/*
