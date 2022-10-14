@@ -41,9 +41,10 @@ new-exp: check-arg-exp
 	# Rename the freshly created folder to match the requested experiment name
 	mv -f $(CODE_PATH)/experiment_template $(CODE_PATH)/$(exp)
 
+job: yaml="azure-ml-job.yaml"
 job: check-arg-exp check-exp-exists
 	# Submit the job to Azure ML and continue to next step even if submission fails
-	az ml job create -f $(CODE_PATH)/$(exp)/azure-ml-job.yaml \
+	az ml job create -f $(CODE_PATH)/$(exp)/$(yaml) \
 		--resource-group $(RESOURCE_GROUP) --workspace-name $(WORKSPACE) $(job-xargs) || true
 
 build-exp: check-arg-exp check-exp-exists
