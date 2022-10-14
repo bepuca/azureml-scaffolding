@@ -11,6 +11,15 @@ how you should register or deploy a model. These are usually heavily influenced 
 there does not exist a one size fits all. Despite that, we do provide extensions for some common
 scenarios.
 
+## Cloning this repository
+
+As described in more detail in [Common dependencies](#common-dependencies), we make use of symlinks to handle common dependencies. 
+To ensure that this behaviour is enabled, when cloning, use the following command:
+
+```
+git clone -c core.symlinks=true <Repo URL>
+```
+
 ## Navigation
 1. [Features overview](#features-overview)
 2. [Getting started](#getting-started)
