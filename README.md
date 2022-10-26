@@ -13,7 +13,7 @@ scenarios.
 
 ## Cloning this repository
 
-As described in more detail in [Common dependencies](#common-dependencies), we make use of symlinks to handle common dependencies. 
+As described in more detail in [Common dependencies](#common-dependencies), we make use of symlinks to handle common dependencies.
 To ensure that this behaviour is enabled, when cloning, use the following command:
 
 ```
@@ -104,7 +104,8 @@ follow the instructions in the following section.
 6. It is recommended to delete the `example_experiment` folder and keep only your own. The folder
 aims to show examples of the most commonly needed things (like referencing a dataset or logging a
 metric).
-7. Remove the existing functionality in `./src/common`. The provided code is just an example.
+7. Remove the existing functionality in `./src/common`. Remove also the contents of the folder
+`./src/<your_experiment_name>/common`. The provided code is just an example.
 
 ### Creating experiments
 [[back to the top]](#navigation)
