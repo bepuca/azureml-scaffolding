@@ -19,4 +19,4 @@ Examples:
 
     Spin up jupyter lab exposed in a different port (useful when host machine is already using
     the port, like Azure ML compute instances) and allowing the use of GPUs.
-        make jupyter port=8890 run-xargs="--gpus all"
+        make jupyter exp=example_experiment port=8890 run-xargs="--gpus all"
