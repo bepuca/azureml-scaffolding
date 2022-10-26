@@ -9,6 +9,9 @@ Command:
 Arguments:
     exp [Required] : Name of the experiment for which to trigger the job; it is defined by the
                      folder name containing the experiment.
+    file           : (Default azure-ml-job.yaml) YAML file with the specification of the job.
+                     It must be inside the experiment folder. If not at root level of experiment,
+                     the full path from the experiment root level has to be passed.
     job-xargs      : Optional extra arguments to be passed to the `az ml job create` call. It
                      should be a single string.
 
