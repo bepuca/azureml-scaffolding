@@ -2,7 +2,6 @@ import argparse
 import os
 
 import mlflow
-
 from common.printer import print_data_path
 
 
@@ -24,12 +23,16 @@ def log_azure_ml():
     mlflow.log_metrics(metrics)
 
 
+def run_script(greeting, data_path, logging_enabled=True):
+    greet_world(greeting=greeting)
+    print_data_path(data_path)
+    if logging_enabled:
+        log_azure_ml()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, help="Path where data is stored")
-    parser.add_argument("--greeting", type=str, help="Word with which to greet the world")
+    parser.add_argument("--greeting", type=str, help="Word with which to greet the world", default='Hello')
     args = parser.parse_args()
-
-    greet_world(greeting=args.greeting)
-    print_data_path(args.data_path)
-    log_azure_ml()
+    run_script(args.greeting, args.data_path)
