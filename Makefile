@@ -93,7 +93,7 @@ jupyter: build-exp
 
 terminal: build-exp
 	# Start an interactive terminal inside the docker environment of the specified experiment
-	docker run --rm -it $(RUN_XARGS) \
+	docker run --rm -it $(run-xargs) \
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(exp)",target=$(DOCKER_WORKDIR)/$(exp) \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/common \
