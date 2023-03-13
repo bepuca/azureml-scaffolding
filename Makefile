@@ -61,6 +61,7 @@ local: build-exp
 		--mount type=bind,source="$(PWD)/data",target=$(DOCKER_WORKDIR)/data \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(exp)",target=$(DOCKER_WORKDIR)/$(exp) \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/common \
+		--mount type=bind,source="$(PWD)/models",target=$(DOCKER_WORKDIR)/models \
 		--workdir $(DOCKER_WORKDIR) \
 		$(exp):latest \
 		python $(exp)/$(script) $(script-xargs) \
@@ -86,6 +87,7 @@ jupyter: build-exp
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/$(exp)",target=$(DOCKER_WORKDIR)/$(exp) \
 		--mount type=bind,source="$(PWD)/$(CODE_PATH)/common",target=$(DOCKER_WORKDIR)/common \
 		--mount type=bind,source="$(PWD)/notebooks",target=$(DOCKER_WORKDIR)/notebooks \
+		--mount type=bind,source="$(PWD)/models",target=$(DOCKER_WORKDIR)/models \
 		--workdir $(DOCKER_WORKDIR) \
 		$(exp):latest \
 		/bin/bash -c "pip install jupyterlab; jupyter lab --allow-root --ip 0.0.0.0 --no-browser --port $(port)" \
