@@ -6,11 +6,7 @@ For example:
 - running a sequence of scripts sequentially
 - setting environment variables prior to script execution
 """
-from pathlib import Path
-
-from main import run_script
+from main import main
 
 if __name__ == "__main__":
-    run_script(greeting="Hello, there!",
-               data_path=Path('../../data'),
-               logging_enabled=False)
+    main(greeting="Hello, there!", data_path="../../data")

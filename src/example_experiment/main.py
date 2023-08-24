@@ -1,38 +1,41 @@
-import argparse
-import os
+from func_to_script import script
 
-import mlflow
-from common.printer import print_data_path
+from common.logging.azureml_logger import AzureMLLogger
 
 
-def greet_world(greeting: str):
-    print(f"{greeting} world!")
+def get_the_ultimate_answer() -> int:
+    """Dummy function to exemplify unit tests"""
+    return 42
 
 
-def log_azure_ml():
-    # "MLFLOW_TRACKING_URI" is set-up when running inside an Azure ML Job
-    # This command only needs to run once
-    mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
+@script
+def main(data_path: str, greeting: str = "Hello"):
+    """Example function with the main things needed to get started with AzureML
+
+    :param data_path: Path where data is stored. Here to exemplify how to connect AzureML data
+        (see `azure-ml-job.yaml`).
+    :param greeting: Word with which to greet the world.
+    """
+    logger = AzureMLLogger()
 
     # Tags are shown as properties of the job in the Azure ML dashboard. Run once.
     tags = {"tag": "example"}
-    mlflow.set_tags(tags)
+    logger.set_tags(tags)
 
-    # If you log metrics with same key multiple times, you get a plot in Azure ML
-    metrics = {"answer": 42}
-    mlflow.log_metrics(metrics)
+    # Console logs in AzureML are just prints
+    print(f"{greeting} world!")
+    print(f"'data_path' is pointing to '{data_path}'")
 
+    # Metrics are numerical values
+    metrics = {"answer": get_the_ultimate_answer()}
+    logger.log_metrics(metrics)
 
-def run_script(greeting, data_path, logging_enabled=True):
-    greet_world(greeting=greeting)
-    print_data_path(data_path)
-    if logging_enabled:
-        log_azure_ml()
+    values = [1, 0, 1, 2, 3, 2, 4]
+    for v in values:
+        metrics = {"value": v}
+        logger.log_metrics(metrics)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--data_path", type=str, help="Path where data is stored")
-    parser.add_argument("--greeting", type=str, help="Word with which to greet the world", default='Hello')
-    args = parser.parse_args()
-    run_script(args.greeting, args.data_path)
+    # No arguments passed because we leverage the @script decorator
+    main()
