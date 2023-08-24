@@ -94,17 +94,20 @@ Once you have the files in your repository, there are a few steps you
 need to follow before you are ready to work with it:
 
 1. Modify `conf.env` with the variables of your project.
-2. Create a new python environment with your favourite tool (conda, virtualenv, ...) for the
-formatting toolds of the project.
-3. Install the `requirements.txt` in your formatting environment.
-4. Install the precommits in your repository by running `pre-commit` install with the environment
+2. Modify the `name` field in `environment.yaml` at the root of your project to match the name of
+your project.
+3. Create a new python (conda) environment from `environment.yaml` at root by running
+`conda env create -f environment.yaml`. Note that with not much work you could change to using
+other environment systems (e.g., virtualenv).
+4. Activate your newly created environment by running `conda activate -n <name_step_2>`.
+5. Install the precommits in your repository by running `pre-commit` install with the environment
 activated. After this, all commits will be linted and formatted.
-5. Run `make new-exp exp=<your_experiment_name>` to create the first of your experiments. Then
+6. Run `make new-exp exp=<your_experiment_name>` to create the first of your experiments. Then
 follow the instructions in the following section.
-6. It is recommended to delete the `example_experiment` folder and keep only your own. The folder
+7. It is recommended to delete the `example_experiment` folder and keep only your own. The folder
 aims to show examples of the most commonly needed things (like referencing a dataset or logging a
-metric).
-7. Remove the existing functionality in `./src/common`. Remove also the contents of the folder
+metric). The exact same code is present in the `.experiment_template`.
+8. Remove the existing functionality in `./src/common`. Remove also the contents of the folder
 `./src/<your_experiment_name>/common`. The provided code is just an example.
 
 ### Creating experiments
