@@ -1,0 +1,9 @@
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.12
+  - pytest=7.4.0
+  - pip:
+    # minimum mlflow packages required for logging in AzureML
+    - azureml-mlflow==1.53.0
+    - mlflow-skinny==2.6.0
