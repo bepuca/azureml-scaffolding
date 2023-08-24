@@ -36,10 +36,10 @@ format:
 
 new-exp: check-arg-exp
 	# Unzip the experiment template
-	unzip experiment_template.zip -d $(CODE_PATH)
+	cp -rP .experiment_template $(CODE_PATH)
 
 	# Rename the freshly created folder to match the requested experiment name
-	mv -f $(CODE_PATH)/experiment_template $(CODE_PATH)/$(exp)
+	mv -f $(CODE_PATH)/.experiment_template $(CODE_PATH)/$(exp)
 
 job: file=azure-ml-job.yaml
 job: check-arg-exp check-exp-exists
