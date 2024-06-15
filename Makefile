@@ -41,11 +41,22 @@ new-exp: check-arg-exp
 	# Rename the freshly created folder to match the requested experiment name
 	mv -f $(CODE_PATH)/.experiment_template $(CODE_PATH)/$(exp)
 
+# Creating a temporary directory for isolating a run before submitting to Azure ML
+run_name:=$(exp)_$(shell date +%Y%m%d_%H%M%S)
+isolate-run: run_dir=$(ISOLATED_RUNS_PATH)/$(run_name)
+isolate-run: check-arg-exp check-exp-exists
+	@echo "Making expierment dir: '$(run_dir)'"
+	@mkdir -p "$(run_dir)"
+	@cp -r  $(CODE_PATH)/$(exp) $(run_dir)
+	@cp -r  $(CODE_PATH)/common $(run_dir)
+	@echo "Experiment isolated in: '$(run_dir)'"
+
 job: file=azure-ml-job.yaml
-job: check-arg-exp check-exp-exists
+job: isolate-run
 	# Submit the job to Azure ML and continue to next step even if submission fails
-	az ml job create -f $(CODE_PATH)/$(exp)/$(file) \
-		--resource-group $(RESOURCE_GROUP) --workspace-name $(WORKSPACE) $(job-xargs) || true
+	az ml job create -f $(ISOLATED_RUNS_PATH)/$(run_name)/$(exp)/$(file) \
+		--resource-group $(RESOURCE_GROUP) --workspace-name $(WORKSPACE) \
+		--set name="$(run_name)" $(job-xargs)  || true
 
 build-exp: check-arg-exp check-exp-exists
 	docker build --tag $(exp):latest $(build-xargs) $(CODE_PATH)/$(exp)/environment
@@ -107,14 +118,3 @@ terminal: build-exp
 # Use the base command `check-arg` to ensure `dep` argument was passed
 check-arg-dep: arg=dep
 check-arg-dep: check-arg
-
-dependency: check-arg-exp check-exp-exists check-arg-dep
-	@dep_dir=`dirname $(dep)`; \
-	dep_obj=`basename $(dep)`; \
-	mkdir -p $(CODE_PATH)/$(exp)/common/$$dep_dir; \
-	cd $(CODE_PATH)/$(exp)/common/$$dep_dir; \
-	subexp_depth=`echo $(exp) | grep -o '/' - | wc -l`; \
-	rel_path=../..; \
-	for i in `seq 1 1 $$subexp_depth`; do rel_path=$$rel_path/..; done; \
-	ln -s $$rel_path/common/$(dep) .
-	@echo "Dependency successfully created!"

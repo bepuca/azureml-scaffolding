@@ -7,6 +7,10 @@
 /models/*
 !/models/.gitkeep
 
+# Isolated runs should not be tracked by git
+/isolated_runs/*
+!/isolated_runs/.gitkeep
+
 # Local entrypoints should be developer-specific
 **/local.py
 

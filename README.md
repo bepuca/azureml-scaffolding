@@ -69,7 +69,7 @@ When starting a new blank project, the easiest is to create the new repository u
 
 Once you have the files in your repository, there are a few steps you need to follow before you are ready to work with it:
 
-1. Modify `conf.env` with the variables of your project.
+1. Modify `config.env` with the variables of your project.
 2. Modify the `name` field in `environment.yaml` at the root of your project to match the name of your project.
 3. Create a new python (conda) environment from `environment.yaml` at root by running `conda env create -f environment.yaml`. Note that with not much work you could change to using other environment systems (e.g., virtualenv).
 4. Activate your newly created environment by running `conda activate -n <name_step_2>`.
@@ -105,7 +105,7 @@ While we aim to provide a template as non-assuming as possible, we did bake a fe
 2. You tackle your machine learning problem through independent, reproducible experiments.
 3. You use Docker for your environments to ensure reproducibility as much as possible and to avoid surprises in production or differences across machines.
 4. You format and lint your code as soon as possible to ensure legibility and catch small bugs early.
-5. You use a UNIX-based machine (Linux, macOS, Windows with WSL or [AzureML Compute Instance](https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-instance)). This is not completely requried, but the main driver of this project is `Makefile` and it is hard to work with it on Windows. For Windows users we recommend setting up Azure ML Compute instance as a dev environment and use this scaffolding from there. There are tools for running `make` in Windows but we do not guarantee our file to work. We may offer an extension to add full compatibility with Windows in the future if there is demand for it.
+5. You use a UNIX-based machine (Linux, macOS, Windows with WSL or [AzureML Compute Instance](https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-instance)). This is not completely requried, but the main driver of this project is `Makefile` and it is hard to work with it on Windows. For Windows users we recommend setting up Azure ML Compute instance as a dev environment and use this scaffolding from there. There are tools for running `make` in Windows but we do not guarantee our file to work.
 
 ### Expectations
 [[back to the top]](#navigation)
@@ -145,6 +145,7 @@ Note this structure only reflects the base template. Adding extensions to your p
 ├── models                       <- Folder to save trained models in your working machine.
 │                                   Everything inside is ignored by git.
 ├── notebooks                    <- Folder for saving the jupyter notebooks of the project.
+├── isolated_runs                <- Folder where runs are isolated before AzureML submission.
 └── src                          <- Source code of the project.
     ├── common                   <- All code to be shared among experiments.
     └── <experiment>             <- All code relevant to one experiment.
@@ -183,12 +184,4 @@ This will display the available commands with a short description of them. For m
 
 Most projects end up needing to reuse some code across experiments. While the usual way of doing it is through registering packages somewhere, we believe it introduces a signficant overhead, specially in the initial stages of a project where things change very quickly. Therefore, the solution we propose is to have a special folder at the experiment level called `common` where you should put all the code that is meant to be used by more than one experiment.
 
-After that, you can make that dependency available to the relevant experiments by using the command `make dependency` (you may run `make help cmd=dependency` for details). Behind the scenes, this will create a symlink inside a folder also called `common` inside your experiment to the original file or folder. For you, it means that after running that command you can import the dependency from any file in the experiment simply by:
-
-```from common import <your_dependency>```
-
-If a dependency created on another machine does not work when you `git pull` (because instead of a symlink you get a text file inside the `common` folder of a given experiment), please check the git `symlinks` option by running:
-
-```git config --get core.symlinks```
-
-This option should never be `false` for the symlink dependencies to work. If it is, change it to true or unset it, delete the branch from your computer and pull again.
+Then, the `Makefile` ensures `common` is available and `import common` works at runtime both when running `make local` (by mounting the folder appropiately in the docker contaienr) and when running `make job` (by isolating the code for the run, which includes `common`, before submitting it to AzureML).

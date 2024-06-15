@@ -1,9 +1,10 @@
 Command:
     job                 : Triggers Azure ML job for experiment.
         This uses (and requires) to have the Azure ML CLI v2 installed. The job specs used are
-        the ones defined in `azure-ml-job.yaml` inside the experiment folder. Note that while
-        a command job is specified by default, you can use any type of job compatible with
-        Azure ML, you just need to change the YAML contents. For more information,
+        the ones defined in `azure-ml-job.yaml` inside the experiment folder. The full run code
+        snapshot is isolated before submitting to AzureML to ensure `common` makes it there. Note
+        that while a command job is specified by default, you can use any type of job compatible
+        with Azure ML, you just need to change the YAML contents. For more information,
         visit https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-overview#job
 
 Arguments:
