@@ -25,8 +25,7 @@ FROM base as devcontainer
 
 # Install poetry for development
 RUN curl -sSL https://install.python-poetry.org | python - \
-    && poetry self add poetry-plugin-export \
-    && poetry config virtualenvs.in-project true
+    && poetry self add poetry-plugin-export
 
 FROM base as job-runner
 

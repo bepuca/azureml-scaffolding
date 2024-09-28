@@ -4,6 +4,6 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
+poetry config virtualenvs.in-project true
 bin/repo/refresh-deps
 bin/repo/hookson
-az extension add --name ml
