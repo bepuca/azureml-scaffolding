@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#? Initialize the repository for development
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+bin/repo/refresh-deps
+bin/repo/hookson
+az extension add --name ml

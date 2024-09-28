@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#? Format and lint all Python files with Ruff and Pyright
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+# Usage documentation
+function usage {
+    cat<<EOF
+Usage: $0 [--fix]
+
+Options:
+  --fix    Automatically fix issues with Ruff
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        --fix) fix=1 ;;
+        *) break ;;
+    esac
+    shift
+done
+
+poetry run ruff format
+
+if [[ $fix ]]; then
+    poetry run ruff check --fix --exit-non-zero-on-fix
+else
+    poetry run ruff check
+fi
+
+poetry run pyright

@@ -1,0 +1,36 @@
+{
+    "name": "scaffolding",
+    "build": {
+      "dockerfile": "../Dockerfile",
+      "target": "devcontainer"
+    },
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "hostRequirements": {"gpu": "optional"},
+    "runArgs": ["--ipc", "host"],
+    "remoteEnv": {
+      // Allows imports directly on subfolders inside src
+      "PYTHONPATH": "${containerWorkspaceFolder}/src"
+    },
+    "remoteUser": "vscode",
+    "customizations": {
+      "vscode": {
+        "settings": {
+          "terminal.integrated.defaultProfile.linux": "zsh",
+          "terminal.integrated.profiles.linux": { "zsh": { "path": "zsh" }
+          }
+        },
+        "extensions": [
+          "ms-python.python",
+          "ms-toolsai.jupyter",
+          "GitHub.copilot",
+          "charliermarsh.ruff",
+          "timonwong.shellcheck",
+          "tamasfe.even-better-toml"
+        ]
+      }
+    },
+    "features": {
+      "ghcr.io/devcontainers/features/azure-cli:1": {}
+    },
+    "postCreateCommand": "bin/repo/init"
+  }

@@ -1,16 +1,38 @@
-[tool.black]
-line-length = 100
-include = '\.pyi?$'
-exclude = '''
-    /(
-        \.git
-      | _build
-      | build
-      | dist
-    ) '''
+[tool.poetry]
+name = "scaffolding"
+description = ""
+package-mode = false
 
-[tool.isort]
-profile = "black"
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+python-dotenv = "^1.0.1"
+pyright = "^1.1.382"
+ruff = "^0.6.8"
+pre-commit = "^3.8.0"
+
+[tool.poetry.group.azureml.dependencies]
+mlflow-skinny = "^2.16.2"
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+show-fixes = true
+lint.select = [
+    "B0",     # bugbear
+    "E",      # pycodestyle
+    "F",      # Pyflakes
+    "I",      # import order
+    "UP",     # pyupgrade
+    "RUF100", # valid noqa annnotations
+]
 
 [tool.pytest.ini_options]
-# None for the moment
+testpaths = ["tests"]
+addopts = "--strict-markers --import-mode=importlib"

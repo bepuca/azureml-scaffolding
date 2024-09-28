@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#? Refresh all project dependencies including the lock file
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+poetry config virtualenvs.in-project true
+poetry lock --no-update
+poetry install

@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#? Export variables from an environment file
+
+function usage {
+    cat<<EOF
+Export variables from an environment file. This file must be sourced, not executed.
+
+Usage: source $0 FILE
+
+Arguments:
+  FILE  Path to the file containing the variables to export.
+        Path is relative to the project root directory.
+
+Example:
+  source $0 .env
+
+An environment file is essentially a Bash script that sets variables and all
+of which will be automatically exported into the environment of the current
+shell. For proper operation, it should only contain variable assignments,
+comments and blank lines for formatting. While it is a Bash script, it is
+not required to have executable permissions or a shebang line because it will
+be sourced.
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [ $# -eq 0 ]; then
+    echo>&2 "File not provided."
+    usage
+    exit 1
+fi
+
+if [ ! -f "$1" ]; then
+    echo>&2 "File not found: $1"
+    exit 1
+fi
+
+echo>&2 "Loading environment from: $1"
+
+set -a # Automatically export all variables
+# shellcheck disable=SC1090
+source "$1"
+set +a # Stop exporting variables
