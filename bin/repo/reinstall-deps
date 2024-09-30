@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#? Re-install all Poetry dependencies from scratch
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+rm -rf .venv
+poetry install
