@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-#? Activate pre-commit hooks
-
-set -eo pipefail
-cd "$(dirname "$0")/../.."
-
-poetry run pre-commit install
