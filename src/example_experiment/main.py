@@ -1,15 +1,15 @@
-from func_to_script import script
+import argparse
+from pathlib import Path
 
 from common.logging.azureml_logger import AzureMLLogger
 
 
-def get_the_ultimate_answer() -> int:
+def get_the_ultimate_answer() -> float:
     """Dummy function to exemplify unit tests"""
-    return 42
+    return 42.0
 
 
-@script
-def main(data_path: str, greeting: str = "Hello"):
+def main(data_path: Path, greeting: str = "Hello"):
     """Example function with the main things needed to get started with AzureML
 
     :param data_path: Path where data is stored. Here to exemplify how to connect AzureML data
@@ -30,12 +30,16 @@ def main(data_path: str, greeting: str = "Hello"):
     metrics = {"answer": get_the_ultimate_answer()}
     logger.log_metrics(metrics)
 
-    values = [1, 0, 1, 2, 3, 2, 4]
+    values = [1.0, 0.0, 1.0, 2.0, 3.0, 2.0, 4.0]
     for v in values:
         metrics = {"value": v}
         logger.log_metrics(metrics)
 
 
 if __name__ == "__main__":
-    # No arguments passed because we leverage the @script decorator
-    main()
+    parser = argparse.ArgumentParser(description="Driver script for Example Experiment")
+    parser.add_argument("--data_path", type=Path, help="Path to data", required=True)
+    parser.add_argument("--greeting", type=str, help="Greeting word", default="Hello")
+
+    args = parser.parse_args()
+    main(data_path=args.data_path, greeting=args.greeting)

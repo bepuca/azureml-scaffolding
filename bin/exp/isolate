@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+#? Isolate artifacts for an experiment run in a separate directory
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+source bin/env .env
+
+function usage {
+    cat<<EOF
+Isolate artifacts for an experiment run in a separate directory
+
+Usage: $0 EXPERIMENT RUN_NAME
+
+Options:
+    -h, --help            Show this help message and exit
+
+Arguments:
+  EXPERIMENT  Directory of the experiment relative to "$CODE_PATH"
+  RUN_NAME    Name of the run
+
+The goal is to isolate the absolute minimum to run an experiment. This aims to
+make the experiment reproducible and portable as well as easy to reason about in
+the future.
+
+The isolated run directory will be created in "$ISOLATED_RUNS/EXPERIMENT/RUN_NAME".
+The isolated run directory will contain all files inside EXPERIMENT and will
+add the common code and the environment files. Thus, the final structure:
+  <run_name>
+  ├── common/
+  ├── environment/
+  │   ├── Dockerfile
+  │   └── requirements.txt
+  ├── <experiment> file1
+  ├── <experiment> file2
+  ├── ...
+
+The requirements.txt will contain only the AzureML, common and experiment
+dependencies.
+
+If an .amlignore is present in the EXPERIMENT directory, it will be moved one
+level up to the isolated run directory so AzureML uses it properly.
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [ $# -ne 2 ]; then
+    echo>&2 "Both EXPERIMENT and RUN_NAME required."
+    usage
+    exit 1
+fi
+
+experiment=$1
+run_name=$2
+if [[ ! -d "$CODE_PATH/$experiment" ]]; then
+    echo>&2 "Experiment directory '$CODE_PATH/$experiment' does not exist."
+    exit 1
+fi
+
+# create isolated run directory
+run_dir="$ISOLATED_RUNS_PATH/$experiment/$run_name"
+mkdir -p "$run_dir"
+
+# copy experiment code and common code to run directory
+cp -r "$CODE_PATH/$experiment" "$run_dir"
+cp -r "$CODE_PATH/common" "$run_dir"
+
+if [[ -f "$run_dir/$experiment/.amlignore" ]]; then
+    # if .amlignore present, ensure it is at top level of snapshot
+    mv "$run_dir/$experiment/.amlignore" "$run_dir/.amlignore"
+fi
+
+# copy artifacts to build environment
+docker_context="$run_dir/environment"
+mkdir "$docker_context"
+cp Dockerfile "$docker_context"
+poetry export -o "$docker_context/requirements.txt" \
+    --only "$experiment" \
+    --only "azureml"
+
+# run directory to stdout so it can be used by other scripts
+echo "$run_dir"

@@ -23,12 +23,13 @@ while :; do
     shift
 done
 
-poetry run ruff format
+source bin/env .env
+poetry run ruff format "$CODE_PATH"
 
 if [[ $fix ]]; then
-    poetry run ruff check --fix --exit-non-zero-on-fix
+    poetry run ruff check --fix --exit-non-zero-on-fix "$CODE_PATH"
 else
-    poetry run ruff check
+    poetry run ruff check "$CODE_PATH"
 fi
 
-poetry run pyright
+poetry run pyright "$CODE_PATH"

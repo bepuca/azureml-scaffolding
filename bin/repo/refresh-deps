@@ -6,3 +6,4 @@ cd "$(dirname "$0")/../.."
 
 poetry lock --no-update
 poetry install
+poetry cache clear . --all

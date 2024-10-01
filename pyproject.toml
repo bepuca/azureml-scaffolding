@@ -15,6 +15,11 @@ pre-commit = "^3.8.0"
 
 [tool.poetry.group.azureml.dependencies]
 mlflow-skinny = "^2.16.2"
+azureml-mlflow="^1.57.0"
+pytz="^2024.2"  # Needed by azureml-mlflow
+
+[tool.poetry.group.example_experiment.dependencies]
+numpy = "*"
 
 [tool.pyright]
 pythonVersion = "3.12"

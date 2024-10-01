@@ -21,7 +21,7 @@ class AzureMLLogger:
         else:
             print(tags)
 
-    def log_metrics(self, metrics: dict[str, int | float]):
+    def log_metrics(self, metrics: dict[str, float]):
         if self.mlflow_run:
             mlflow.log_metrics(metrics)
         else:

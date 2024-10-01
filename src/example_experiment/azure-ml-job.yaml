@@ -7,7 +7,9 @@ experiment_name: <experiment-name>
 
 # What to run
 command: >-
-  python main.py --data_path ${{inputs.data_path}} --greeting ${{inputs.greeting}}
+  python -m example_experiment.main
+  --data_path ${{inputs.data_path}}
+  --greeting ${{inputs.greeting}}
 
 inputs:
   data_path:
@@ -18,11 +20,11 @@ inputs:
   greeting: "Hello"
 
 # What code to make available
-code: .
+code: ..
 
 # Where to run it
 environment:
   build:
-    path: ./environment
+    path: ../environment
 
 compute: azureml:<azure-ml-cluster-name>

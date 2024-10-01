@@ -5,9 +5,15 @@
       "target": "devcontainer"
     },
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-    "hostRequirements": {"gpu": "optional"},
-    "runArgs": ["--ipc", "host"],
+    "hostRequirements": {
+      "gpu": "optional"  // Ensure access to GPU if host has some
+    },
+    "runArgs": [
+      "--ipc", "host"  // Needed for heavy torch training, harmless otherwise
+    ],
     "remoteEnv": {
+      // Ensure Poetry env is always first in PATH
+      "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
       // Allows imports directly on subfolders inside src
       "PYTHONPATH": "${containerWorkspaceFolder}/src"
     },
@@ -15,16 +21,16 @@
     "customizations": {
       "vscode": {
         "settings": {
+          // Define ZSH as default shell for some quality of life goodies
+          // Oh My Zsh comes with the base image
           "terminal.integrated.defaultProfile.linux": "zsh",
-          "terminal.integrated.profiles.linux": { "zsh": { "path": "zsh" }
-          }
+          "terminal.integrated.profiles.linux": { "zsh": { "path": "zsh" }}
         },
         "extensions": [
           "ms-python.python",
           "ms-toolsai.jupyter",
           "GitHub.copilot",
           "charliermarsh.ruff",
-          "timonwong.shellcheck",
           "tamasfe.even-better-toml"
         ]
       }

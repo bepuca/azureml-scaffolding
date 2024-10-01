@@ -42,8 +42,6 @@ if [ ! -f "$1" ]; then
     exit 1
 fi
 
-echo>&2 "Loading environment from: $1"
-
 set -a # Automatically export all variables
 # shellcheck disable=SC1090
 source "$1"
