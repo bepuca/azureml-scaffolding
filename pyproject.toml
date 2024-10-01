@@ -39,5 +39,5 @@ lint.select = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["src"]
 addopts = "--strict-markers --import-mode=importlib"
