@@ -101,6 +101,9 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 
+# Ruff stuff
+.ruff_cache
+
 # SageMath parsed files
 *.sage.py
 
