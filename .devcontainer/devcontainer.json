@@ -27,11 +27,12 @@
           "terminal.integrated.profiles.linux": { "zsh": { "path": "zsh" }}
         },
         "extensions": [
-          "ms-python.python",
-          "ms-toolsai.jupyter",
-          "GitHub.copilot",
-          "charliermarsh.ruff",
-          "tamasfe.even-better-toml"
+            "ms-python.python",
+            "ms-toolsai.jupyter",
+            "GitHub.copilot",
+            "charliermarsh.ruff",
+            "tamasfe.even-better-toml",
+            "jeff-hykin.better-dockerfile-syntax"
         ]
       }
     },
