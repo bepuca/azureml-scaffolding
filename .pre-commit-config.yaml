@@ -4,6 +4,5 @@ repos:
   - id: python
     name: Lint Python
     entry: bin/lint/py
-    args: [--fix]
     language: script
-    types: [ text, python ]
+    types: [ python ]

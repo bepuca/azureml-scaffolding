@@ -4,32 +4,26 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
+source bin/env .env
+bin/chkenv CODE_PATH
+
 # Usage documentation
 function usage {
     cat<<EOF
-Usage: $0 [--fix]
+Format and lint all Python files in ${CODE_PATH} with Ruff and Pyright
 
-Options:
-  --fix    Automatically fix issues with Ruff
+Usage: $0
 EOF
 }
 
 while :; do
     case $1 in
         -h|--help) usage; exit ;;
-        --fix) fix=1 ;;
         *) break ;;
     esac
     shift
 done
 
-source bin/env .env
 poetry run ruff format "$CODE_PATH"
-
-if [[ $fix ]]; then
-    poetry run ruff check --fix --exit-non-zero-on-fix "$CODE_PATH"
-else
-    poetry run ruff check "$CODE_PATH"
-fi
-
+poetry run ruff check --fix --exit-non-zero-on-fix "$CODE_PATH"
 poetry run pyright "$CODE_PATH"
