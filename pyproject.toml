@@ -19,7 +19,6 @@ azureml-mlflow="^1.57.0"
 pytz="^2024.2"  # Needed by azureml-mlflow
 
 [tool.poetry.group.example_experiment.dependencies]
-numpy = "*"
 
 [tool.pyright]
 pythonVersion = "3.12"
