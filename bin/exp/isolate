@@ -27,13 +27,15 @@ The isolated run directory will be created in "$ISOLATED_RUNS/EXPERIMENT/RUN_NAM
 The isolated run directory will contain all files inside EXPERIMENT and will
 add the common code and the environment files. Thus, the final structure:
   <run_name>
+  ├── .amlignore
   ├── common/
   ├── environment/
   │   ├── Dockerfile
   │   └── requirements.txt
-  ├── <experiment> file1
-  ├── <experiment> file2
-  ├── ...
+  └── <experiment>
+      ├── main.py
+      ├── azure-ml-job.yaml
+      └── ...
 
 The requirements.txt will contain only the AzureML, common and experiment
 dependencies.
