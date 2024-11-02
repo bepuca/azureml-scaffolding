@@ -2,7 +2,7 @@
     "name": "scaffolding",
     "build": {
       "dockerfile": "../Dockerfile",
-      "target": "devcontainer"
+      "target": "base"
     },
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "hostRequirements": {
@@ -12,7 +12,7 @@
       "--ipc", "host"  // Needed for heavy torch training, harmless otherwise
     ],
     "remoteEnv": {
-      // Ensure Poetry env is always first in PATH
+      // Ensure repo env is always first in PATH
       "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
       // Allows imports directly on subfolders inside src
       "PYTHONPATH": "${containerWorkspaceFolder}/src"
@@ -20,12 +20,6 @@
     "remoteUser": "vscode",
     "customizations": {
       "vscode": {
-        "settings": {
-          // Define ZSH as default shell for some quality of life goodies
-          // Oh My Zsh comes with the base image
-          "terminal.integrated.defaultProfile.linux": "zsh",
-          "terminal.integrated.profiles.linux": { "zsh": { "path": "zsh" }}
-        },
         "extensions": [
             "ms-python.python",
             "ms-toolsai.jupyter",
@@ -36,10 +30,10 @@
         ]
       }
     },
-    "features": {
-      "ghcr.io/devcontainers/features/azure-cli:1": {
-        "extensions": "ml"
-      }
-    },
+    // "features": {
+    //   "ghcr.io/devcontainers/features/azure-cli:1": {
+    //     "extensions": "ml"
+    //   }
+    // },
     "postCreateCommand": "bin/repo/init"
   }

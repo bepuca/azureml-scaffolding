@@ -4,10 +4,5 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-poetry config warnings.export false
-poetry config virtualenvs.in-project true
-
-poetry self add poetry-plugin-export
-
 bin/repo/refresh-deps
-poetry run pre-commit install
+uv run pre-commit install

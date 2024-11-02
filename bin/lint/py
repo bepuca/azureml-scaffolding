@@ -24,6 +24,6 @@ while :; do
     shift
 done
 
-poetry run ruff format "$CODE_PATH"
-poetry run ruff check --fix --exit-non-zero-on-fix "$CODE_PATH"
-poetry run pyright "$CODE_PATH"
+uv run ruff format "$CODE_PATH"
+uv run ruff check --fix --exit-non-zero-on-fix "$CODE_PATH"
+uv run pyright "$CODE_PATH"

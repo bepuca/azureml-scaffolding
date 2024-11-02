@@ -1,24 +1,34 @@
-[tool.poetry]
+[project]
 name = "scaffolding"
+version = "0.2.0"
 description = ""
-package-mode = false
+readme = "README.md"
+requires-python = "==3.12.*"
+dependencies = [
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
+[dependency-groups]
+dev = [
+    "pytest  ==8.3.*",
+    "python-dotenv  ==1.0.*",
+    "pyright  ==1.1.*",
+    "ruff  ==0.6.*",
+    "pre-commit  ==3.8.*"
+]
+azureml = [
+    "mlflow-skinny  ==2.16.*",
+    "azureml-mlflow  ==1.57.*",
+    "pytz  ==2024.2"
+]
+example_experiment = [
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.3"
-python-dotenv = "^1.0.1"
-pyright = "^1.1.382"
-ruff = "^0.6.8"
-pre-commit = "^3.8.0"
-
-[tool.poetry.group.azureml.dependencies]
-mlflow-skinny = "^2.16.2"
-azureml-mlflow="^1.57.0"
-pytz="^2024.2"  # Needed by azureml-mlflow
-
-[tool.poetry.group.example_experiment.dependencies]
+[tool.uv]
+default-groups = [
+    "dev",
+    "azureml",
+    "example_experiment"
+]
 
 [tool.pyright]
 pythonVersion = "3.12"

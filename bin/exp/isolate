@@ -83,9 +83,10 @@ fi
 docker_context="$run_dir/environment"
 mkdir "$docker_context"
 cp Dockerfile "$docker_context"
-poetry export -o "$docker_context/requirements.txt" \
-    --only "$experiment" \
-    --only "azureml"
+uv export --quiet \
+    --output-file "$docker_context/requirements.txt" \
+    --only-group "$experiment" \
+    --only-group "azureml"
 
 # run directory to stdout so it can be used by other scripts
 echo "$run_dir"
