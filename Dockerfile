@@ -16,16 +16,16 @@ FROM base AS job-runner
 
 # non-root user, created on base image
 USER vscode
+ARG VENV_PATH=/home/vscode/venv
 
 # Create a virtual environment
-RUN python -m venv /home/vscode/venv
+RUN uv venv ${VENV_PATH}
 
 # Ensure all commands use the virtual environment
-ENV VIRTUAL_ENV=/home/vscode/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV PATH="${VENV_PATH}/bin:$PATH"
 
 # Expect requirements.txt in context for running AzureML jobs
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN uv pip install -r requirements.txt
 
 

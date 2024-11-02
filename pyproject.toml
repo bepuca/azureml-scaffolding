@@ -18,7 +18,7 @@ dev = [
 azureml = [
     "mlflow-skinny  ==2.16.*",
     "azureml-mlflow  ==1.57.*",
-    "pytz  ==2024.2"
+    "pytz  ==2024.2", # required my azureml-mlflow
 ]
 example_experiment = [
 ]

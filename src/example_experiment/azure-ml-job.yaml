@@ -8,8 +8,8 @@ experiment_name: <experiment-name>
 # What to run
 command: >-
   python -m example_experiment.main
-  --data_path ${{inputs.data_path}}
-  --greeting ${{inputs.greeting}}
+  --data_path "${{inputs.data_path}}"
+  --greeting "${{inputs.greeting}}"
 
 inputs:
   data_path:
