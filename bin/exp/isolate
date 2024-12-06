@@ -25,23 +25,21 @@ the future.
 
 The isolated run directory will be created in "$ISOLATED_RUNS/EXPERIMENT/RUN_NAME".
 The isolated run directory will contain all files inside EXPERIMENT and will
-add the common code and the environment files. Thus, the final structure:
+add the shared code and the environment files. Thus, the final structure:
   <run_name>
   ├── .amlignore
-  ├── common/
+  ├── azure-ml-job.yaml
+  ├── shared/
   ├── environment/
   │   ├── Dockerfile
   │   └── requirements.txt
   └── <experiment>
+      ├── tests/
       ├── main.py
-      ├── azure-ml-job.yaml
       └── ...
 
-The requirements.txt will contain only the AzureML, common and experiment
-dependencies.
-
-If an .amlignore is present in the EXPERIMENT directory, it will be moved one
-level up to the isolated run directory so AzureML uses it properly.
+The requirements.txt will contain only the dependencies specified for the
+experiment.
 EOF
 }
 
@@ -55,7 +53,7 @@ done
 
 if [ $# -ne 2 ]; then
     echo>&2 "Both EXPERIMENT and RUN_NAME required."
-    usage
+    usage>&2
     exit 1
 fi
 
@@ -71,22 +69,15 @@ run_dir="$ISOLATED_RUNS_PATH/$experiment/$run_name"
 mkdir -p "$run_dir"
 
 # copy experiment code and common code to run directory
-cp -r "$CODE_PATH/$experiment" "$run_dir"
-cp -r "$CODE_PATH/common" "$run_dir"
-
-if [[ -f "$run_dir/$experiment/.amlignore" ]]; then
-    # if .amlignore present, ensure it is at top level of snapshot
-    mv "$run_dir/$experiment/.amlignore" "$run_dir/.amlignore"
-fi
+cp -r "$CODE_PATH/$experiment/src/." "$run_dir"
+cp -r "$CODE_PATH/shared/src/shared" "$run_dir"
 
 # copy artifacts to build environment
 docker_context="$run_dir/environment"
-mkdir "$docker_context"
-cp Dockerfile "$docker_context"
+mkdir -p "$docker_context"
 uv export --quiet \
     --output-file "$docker_context/requirements.txt" \
-    --only-group "$experiment" \
-    --only-group "azureml"
+    --package $experiment
 
 # run directory to stdout so it can be used by other scripts
 echo "$run_dir"
