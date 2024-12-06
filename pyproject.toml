@@ -5,30 +5,19 @@ description = ""
 readme = "README.md"
 requires-python = "==3.12.*"
 dependencies = [
+    "example-experiment",
 ]
 
 [dependency-groups]
 dev = [
     "pytest  ==8.3.*",
+    "pytest-cov ==5.0.*",
     "python-dotenv  ==1.0.*",
     "pyright  ==1.1.*",
-    "ruff  ==0.6.*",
+    "ruff  ==0.8.*",
     "pre-commit  ==3.8.*"
 ]
-azureml = [
-    "mlflow-skinny  ==2.16.*",
-    "azureml-mlflow  ==1.57.*",
-    "pytz  ==2024.2", # required my azureml-mlflow
-]
-example_experiment = [
-]
 
-[tool.uv]
-default-groups = [
-    "dev",
-    "azureml",
-    "example_experiment"
-]
 
 [tool.pyright]
 pythonVersion = "3.12"
@@ -48,5 +37,15 @@ lint.select = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["src"]
+testpaths = ["experiments"]
 addopts = "--strict-markers --import-mode=importlib"
+
+[tool.coverage.run]
+omit = ["*/tests/*"]
+
+[tool.uv.workspace]
+members = ["experiments/*"]
+
+[tool.uv.sources]
+example-experiment = { workspace = true }
+

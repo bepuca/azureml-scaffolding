@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+function usage {
+    cat<<EOF
+Initialize new experiment in the project
+
+Usage: $0 EXPERIMENT
+
+Options:
+    -h, --help            Show this help message and exit
+
+Arguments:
+  EXPERIMENT  Name of the new experiment.
+
+The script will create a new experiment directory in the experiments/ directory
+using the .experiment_template as a template. It will also add the new
+experiment as a workspace to the uv project and install it to the local
+environment.
+EOF
+}
+
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [ $# -eq 0 ]; then
+    echo>&2 "EXPERIMENT not provided."; usage>&2; exit 1;
+fi
+if [ $# -ne 1 ]; then
+    echo>&2 "1 argument expected, $# provided"; usage>&2; exit 1;
+fi
+
+exp=$1
+exp_dir="experiments/$exp"
+
+# create new experiment from the template
+cp -r ".experiment_template" "$exp_dir"
+mv "$exp_dir/src/experiment_template" "$exp_dir/src/$exp"
+
+# use default repo Dockerfile for the experiment
+mkdir -p "$exp_dir/src/environment"
+cp "Dockerfile" "$exp_dir/src/environment/Dockerfile"
+
+# rename references to experiment_template to the name of the new experiment
+files_to_update=(
+    "$exp_dir/README.md"
+    "$exp_dir/debug.example.py"
+    "$exp_dir/src/azure-ml-job.yaml"
+    "$exp_dir/src/$exp/tests/test_main.py"
+)
+for file in "${files_to_update[@]}"; do
+    sed -i "s/experiment_template/$exp/g" "$file"
+done
+
+# add new experiment as workspace to uv project
+uv init --name "$exp" \
+    --package "$exp_dir" \
+    --no-pin-python \
+    --author-from none
+
+# install experiment to local env
+uv add "$exp"
+
+# add dependencies needed to log metrics in AzureML
+azureml_deps=$(cat <<EOF
+mlflow-skinny==2.18.*
+azureml-mlflow==1.58.*
+pytz==2024.2
+EOF
+)
+uv add --package "$exp" $azureml_deps

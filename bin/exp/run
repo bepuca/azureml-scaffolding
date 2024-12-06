@@ -4,7 +4,7 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-source bin/env .env
+source bin/env container.env
 
 function usage {
     cat<<EOF
@@ -61,7 +61,7 @@ if [ $# -eq 0 ]; then
 fi
 experiment=$1
 
-source bin/env .env
+source bin/env container.env
 bin/chkenv AZURE_ML_WORKSPACE RESOURCE_GROUP
 
 run_name=$(bin/exp/name)
