@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#? Initialize new experiment in the project
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
@@ -52,13 +53,17 @@ cp "Dockerfile" "$exp_dir/src/environment/Dockerfile"
 # rename references to experiment_template to the name of the new experiment
 files_to_update=(
     "$exp_dir/README.md"
-    "$exp_dir/debug.example.py"
+    "$exp_dir/src/debug_template.py"
     "$exp_dir/src/azure-ml-job.yaml"
+    "$exp_dir/src/debug_template.py"
     "$exp_dir/src/$exp/tests/test_main.py"
 )
 for file in "${files_to_update[@]}"; do
     sed -i "s/experiment_template/$exp/g" "$file"
 done
+
+# create debug.py so creator has a script to run locally
+cp "$exp_dir/src/debug_template.py" "$exp_dir/src/debug.py"
 
 # add new experiment as workspace to uv project
 uv init --name "$exp" \

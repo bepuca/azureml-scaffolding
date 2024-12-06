@@ -9,17 +9,17 @@ In the [AzureML Scaffolding] project, an experiment is represented as a
 The minimum directory structure of an experiment is the following:
 
 ```text
-example_experiment
-├── debug.example.py            <- Template for local debugging.
-├── debug.py                    <- File for local debugging. Gitignored.
+experiment_template
 ├── README.md                   <- Documentation for the experiment.
 └── src                         <- Source artifacts for the experiment.
     ├── .amlignore              <- Defines what not to upload to AzureML.
     ├── azure-ml-job.yaml       <- Job spec for running experiment in AzureML.
+    ├── debug_template.py       <- Template for local debugging.
+    ├── debug.py                <- File for local debugging. Gitignored.
     ├── environment             <- Environment context for experiment.
     │    ├── Dockerfile         <- Dockerfile to define environment.
     │    └── requirements.txt   <- Required dependencies (auto extracted).
-    └── example_experiment     <- Executable code for the experiment.
+    └── experiment_template     <- Executable code for the experiment.
         ├── main.py             <- Entrypoint file for the experiment.
         └── tests               <- Unit tests for the experiment.
 ```
