@@ -13,9 +13,7 @@
     ],
     "remoteEnv": {
       // Ensure repo env is always first in PATH
-      "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
-      // Allows imports directly on subfolders inside src
-      "PYTHONPATH": "${containerWorkspaceFolder}/src"
+      "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
     },
     "remoteUser": "vscode",
     "customizations": {

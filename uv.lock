@@ -5,6 +5,7 @@ requires-python = "==3.12.*"
 members = [
     "example-experiment",
     "scaffolding",
+    "shared",
 ]
 
 [[package]]
@@ -809,6 +810,7 @@ version = "0.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "example-experiment" },
+    { name = "shared" },
 ]
 
 [package.dev-dependencies]
@@ -822,7 +824,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "example-experiment", editable = "experiments/example_experiment" }]
+requires-dist = [
+    { name = "example-experiment", editable = "experiments/example_experiment" },
+    { name = "shared", editable = "experiments/shared" },
+]
 
 [package.metadata.requires-dev]
 dev = [
@@ -833,6 +838,11 @@ dev = [
     { name = "python-dotenv", specifier = "==1.0.*" },
     { name = "ruff", specifier = "==0.8.*" },
 ]
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+source = { editable = "experiments/shared" }
 
 [[package]]
 name = "six"

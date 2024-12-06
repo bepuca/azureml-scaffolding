@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = "==3.12.*"
 dependencies = [
     "example-experiment",
+    "shared",
 ]
 
 [dependency-groups]
@@ -48,4 +49,5 @@ members = ["experiments/*"]
 
 [tool.uv.sources]
 example-experiment = { workspace = true }
+shared = { workspace = true }
 

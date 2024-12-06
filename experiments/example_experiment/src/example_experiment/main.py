@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from common.logging.azureml_logger import AzureMLLogger
+from shared.logging.azureml_logger import AzureMLLogger
 
 
 def get_the_ultimate_answer() -> float:
