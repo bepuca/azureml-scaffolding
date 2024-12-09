@@ -18,7 +18,7 @@ Options:
 Arguments:
   EXPERIMENT  Directory of the experiment relative to "$CODE_PATH"
 
-This script ensures the experiment is isolated with the minimum artifacts and
+This script ensures the experiment is packaged with the minimum artifacts and
 is executed locally as it would be in AzureML. It is the responsibility of the
 user to define SCRIPT so it does not require command line arguments but
 executes an equivalent payload of what is expected in AzureML.
@@ -53,7 +53,7 @@ experiment=$1
 run_name=$(bin/exp/name)
 # add timestamp locally so runs are sorted chronologically
 local_run_name="$(date +%s)_$run_name"
-run_dir=$(bin/exp/isolate "$experiment" "$local_run_name")
+run_dir=$(bin/exp/pkg "$experiment" "$local_run_name")
 
 pushd "$run_dir" > /dev/null
 if [[ ! -f "$script.py" ]]; then

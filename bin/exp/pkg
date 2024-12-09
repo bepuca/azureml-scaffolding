@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-#? Isolate artifacts for an experiment run in a separate directory
+#? Package artifacts for an experiment run in a separate directory
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-source bin/env container.env
+
 
 function usage {
     cat<<EOF
-Isolate artifacts for an experiment run in a separate directory
+Package artifacts for an experiment run in a separate directory
 
 Usage: $0 EXPERIMENT RUN_NAME
 
@@ -19,12 +19,12 @@ Arguments:
   EXPERIMENT  Directory of the experiment relative to "$CODE_PATH"
   RUN_NAME    Name of the run
 
-The goal is to isolate the absolute minimum to run an experiment. This aims to
+The goal is to package the absolute minimum to run an experiment. This aims to
 make the experiment reproducible and portable as well as easy to reason about in
 the future.
 
-The isolated run directory will be created in "$ISOLATED_RUNS/EXPERIMENT/RUN_NAME".
-The isolated run directory will contain all files inside EXPERIMENT and will
+The run directory will be created in "$RUNS_PATH/EXPERIMENT/RUN_NAME".
+The run directory will contain all files inside EXPERIMENT and will
 add the shared code and the environment files. Thus, the final structure:
   <run_name>
   ├── .amlignore
@@ -57,6 +57,9 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
+source bin/env container.env
+bin/chkenv "CODE_PATH" "RUNS_PATH"
+
 experiment=$1
 run_name=$2
 if [[ ! -d "$CODE_PATH/$experiment" ]]; then
@@ -64,8 +67,8 @@ if [[ ! -d "$CODE_PATH/$experiment" ]]; then
     exit 1
 fi
 
-# create isolated run directory
-run_dir="$ISOLATED_RUNS_PATH/$experiment/$run_name"
+# create run directory
+run_dir="$RUNS_PATH/$experiment/$run_name"
 mkdir -p "$run_dir"
 
 # copy experiment code and common code to run directory
