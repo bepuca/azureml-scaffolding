@@ -12,7 +12,7 @@ Arguments:
         Path is relative to the project root directory.
 
 Example:
-  source $0 .env
+  source $0 container.env
 
 An environment file is essentially a Bash script that sets variables and all
 of which will be automatically exported into the environment of the current

@@ -4,7 +4,7 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-source bin/env .env
+source bin/env container.env
 
 function usage {
     cat<<EOF
@@ -22,7 +22,7 @@ Options:
 Arguments:
   EXPERIMENT  Directory of the experiment relative to "$CODE_PATH"
 
-The script ensures the experiment is isolated with the minimum artifacts and is
+The script ensures the experiment is packaged with the minimum artifacts and is
 submitted to AzureML with the matching name.
 EOF
 }
@@ -61,15 +61,15 @@ if [ $# -eq 0 ]; then
 fi
 experiment=$1
 
-source bin/env .env
+source bin/env container.env
 bin/chkenv AZURE_ML_WORKSPACE RESOURCE_GROUP
 
 run_name=$(bin/exp/name)
 # add timestamp locally so runs are sorted chronologically
 local_run_name="$(date +%s)_$run_name"
-run_dir=$(bin/exp/isolate "$experiment" "$local_run_name")
+run_dir=$(bin/exp/pkg "$experiment" "$local_run_name")
 
-az ml job create -f "$run_dir/$experiment/$file" \
+az ml job create -f "$run_dir/$file" \
 	--resource-group "$RESOURCE_GROUP" --workspace-name "$AZURE_ML_WORKSPACE" \
     --set name="$run_name" \
 	$xargs

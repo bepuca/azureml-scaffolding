@@ -3,7 +3,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
 
 # Name of the experiment where all jobs will end up in the Azure ML dashboard
-experiment_name: <experiment-name>
+experiment_name: example_experiment
 
 # What to run
 command: >-
@@ -20,11 +20,11 @@ inputs:
   greeting: "Hello"
 
 # What code to make available
-code: ..
+code: .
 
 # Where to run it
 environment:
   build:
-    path: ../environment
+    path: ./environment
 
 compute: azureml:<azure-ml-cluster-name>
