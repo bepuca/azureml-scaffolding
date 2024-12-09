@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#? Ensure dev env is in sync with the repo
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+uv sync
+uv run pre-commit install
+
+# It seems that there are some leftover files in the npm cache that are owned by root. This command will fix that.
+sudo rm -rf "$HOME/.npm"
+
+npm install --global --no-fund --no-update-notifier \
+    markdownlint-cli2@0.16.0 \
+    markdown-link-check@3.13.6

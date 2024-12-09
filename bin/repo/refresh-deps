@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#? Refresh all project dependencies including the lock file
-
-set -eo pipefail
-cd "$(dirname "$0")/../.."
-
-uv sync
-uv cache clean

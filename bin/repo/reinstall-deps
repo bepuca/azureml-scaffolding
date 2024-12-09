@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#? Re-install all dependencies from scratch
-
-set -eo pipefail
-cd "$(dirname "$0")/../.."
-
-rm -rf .venv
-bin/repo/refresh-deps
