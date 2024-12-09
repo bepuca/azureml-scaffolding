@@ -2,7 +2,7 @@
     "name": "scaffolding",
     "build": {
       "dockerfile": "../Dockerfile",
-      "target": "base"
+      "target": "devcontainer"
     },
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "hostRequirements": {
@@ -24,14 +24,19 @@
             "GitHub.copilot",
             "charliermarsh.ruff",
             "tamasfe.even-better-toml",
-            "jeff-hykin.better-dockerfile-syntax"
+            "jeff-hykin.better-dockerfile-syntax",
+            "stkb.rewrap",
+            "davidanson.vscode-markdownlint",
+            "timonwong.shellcheck"
         ]
       }
     },
     "features": {
       "ghcr.io/devcontainers/features/azure-cli:1": {
         "extensions": "ml"
-      }
+      },
+      // used for markdown linting
+      "ghcr.io/devcontainers/features/node:1": {}
     },
-    "postCreateCommand": "bin/repo/init"
+    "postCreateCommand": "bin/dev/sync"
   }

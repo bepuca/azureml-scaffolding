@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
-#? Format and lint all Python files with Ruff and Pyright
+#?  Format, line and type check all Python files in ${CODE_PATH}
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-source bin/env container.env
-bin/chkenv CODE_PATH
-
-# Usage documentation
 function usage {
     cat<<EOF
-Format and lint all Python files in ${CODE_PATH} with Ruff and Pyright
+Format, line and type check all Python files in ${CODE_PATH}
 
 Usage: $0
 EOF
@@ -23,6 +19,9 @@ while :; do
     esac
     shift
 done
+
+source bin/env container.env
+bin/chkenv CODE_PATH
 
 uv run ruff format "$CODE_PATH"
 uv run ruff check --fix --exit-non-zero-on-fix "$CODE_PATH"

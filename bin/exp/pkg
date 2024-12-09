@@ -78,7 +78,7 @@ docker_context="$run_dir/environment"
 mkdir -p "$docker_context"
 uv export --quiet \
     --output-file "$docker_context/requirements.txt" \
-    --package $experiment \
+    --package "$experiment" \
     --no-hashes \
     --no-emit-workspace
 

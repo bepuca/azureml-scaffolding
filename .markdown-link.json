@@ -1,0 +1,20 @@
+{
+    "projectBaseUrl":"${workspaceFolder}",
+    "ignorePatterns": [],
+    "replacementPatterns": [
+      {
+        "pattern": "^/",
+        "replacement": "{{BASEURL}}/"
+      },
+      {
+        "pattern": "%20",
+        "replacement": "-",
+        "global": true
+      }
+    ],
+    "timeout": "5s",
+    "retryOn429": true,
+    "retryCount": 2,
+    "fallbackRetryDelay": "5s",
+    "aliveStatusCodes": [200, 203, 206]
+}

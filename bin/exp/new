@@ -75,10 +75,9 @@ uv init --name "$exp" \
 uv add "$exp"
 
 # add dependencies needed to log metrics in AzureML
-azureml_deps=$(cat <<EOF
+azureml_deps="
 mlflow-skinny==2.18.*
 azureml-mlflow==1.58.*
 pytz==2024.2
-EOF
-)
-uv add --package "$exp" $azureml_deps
+"
+echo "$azureml_deps" | xargs uv add --package "$exp"

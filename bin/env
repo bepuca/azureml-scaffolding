@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-#? Export variables from an environment file
+#? Exports variables from an environment file
 
-function usage {
-    cat<<EOF
-Export variables from an environment file. This file must be sourced, not executed.
+default_env="container.env"
+if [[ "$1" == '-h' || "$1" == '--help' ]]; then
 
-Usage: source $0 FILE
+  cat<<EOF
+Exports variables from an environment file.
+
+Usage:
+  source ${BASH_SOURCE[0]} [-h|--help]
+  source ${BASH_SOURCE[0]} [FILE]
 
 Arguments:
-  FILE  Path to the file containing the variables to export.
-        Path is relative to the project root directory.
 
-Example:
-  source $0 container.env
+  FILE  Path to the file containing the variables to export.
+        Default is: "$(dirname "${BASH_SOURCE[0]}")/../container.env"
 
 An environment file is essentially a Bash script that sets variables and all
 of which will be automatically exported into the environment of the current
@@ -21,28 +23,32 @@ comments and blank lines for formatting. While it is a Bash script, it is
 not required to have executable permissions or a shebang line because it will
 be sourced.
 EOF
-}
 
-while :; do
-    case $1 in
-        -h|--help) usage; exit ;;
-        *) break ;;
-    esac
-    shift
-done
+elif [ $# -eq 0 ]; then # no arg?
 
-if [ $# -eq 0 ]; then
-    echo>&2 "File not provided."
-    usage
-    exit 1
-fi
+  # Re-invoke this script with the default environment file
+  # shellcheck disable=SC1090
+  . "${BASH_SOURCE[0]}" "$(dirname "${BASH_SOURCE[0]}")/../$default_env"
 
-if [ ! -f "$1" ]; then
+else
+
+  if [ ! -f "$1" ]; then
     echo>&2 "File not found: $1"
-    exit 1
-fi
+    # If script was sourced then return, otherwise exit
+    # shellcheck disable=SC2317
+    return 1 2>/dev/null || exit 1
+  fi
 
-set -a # Automatically export all variables
-# shellcheck disable=SC1090
-source "$1"
-set +a # Stop exporting variables
+  echo>&2 "Loading environment from: $1"
+
+  if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
+    echo>&2 "Warning! Variables will not be defined or exported into your current shell unless
+        this script is sourced as follows: source ${BASH_SOURCE[0]}"
+  fi
+
+  set -a # Automatically export all variables
+  # shellcheck disable=SC1090
+  source "$1"
+  set +a # Stop exporting variables
+
+fi

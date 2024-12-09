@@ -1,3 +1,5 @@
+# Contributing
+
 After changes, the following workflow should work seamlessly:
 
 1. `bin/exp/new exp_test`

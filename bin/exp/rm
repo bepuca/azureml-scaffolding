@@ -45,5 +45,5 @@ if [[ ! -d "$CODE_PATH/$experiment" ]]; then
     exit 1
 fi
 
-rm -rf "$CODE_PATH/$experiment"
+rm -rf "{$CODE_PATH:?}/$experiment"
 uv remove "$experiment"

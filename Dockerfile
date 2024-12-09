@@ -12,6 +12,13 @@ COPY --from=ghcr.io/astral-sh/uv:0.5.7 /uv /uvx /bin/
 RUN uv python install ${PYTHON_VERSION}
 
 
+FROM base AS devcontainer
+
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends \
+    shellcheck
+
+
 FROM base AS job-runner
 
 # non-root user, created on base image

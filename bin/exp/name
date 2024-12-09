@@ -80,7 +80,7 @@ adjective=${adjectives[$RANDOM % ${#adjectives[@]}]}
 noun=${nouns[$RANDOM % ${#nouns[@]}]}
 
 # Generate 8 random letters
-random_letters=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 6 | head -n 1)
+random_letters=$(tr -dc 'a-z0-9' < /dev/urandom | fold -w 6 | head -n 1)
 
 # Concatenate the parts
 name="${adjective}_${noun}_${random_letters}"

@@ -1,8 +1,20 @@
 repos:
 - repo: local
   hooks:
+  - id: shellcheck
+    name: ShellCheck
+    entry: bin/lint/shell
+    args: [check]
+    language: script
+    files: ^.*\.sh|^bin/
+    exclude: ^.*\.yaml
   - id: python
     name: Lint Python
     entry: bin/lint/py
+    language: python
+  - id: md
+    name: Lint md files
+    entry: bin/lint/md
+    args: [--fix]
     language: script
-    types: [ python ]
+    types: [ text , markdown ]
