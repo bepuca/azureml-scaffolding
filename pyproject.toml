@@ -44,6 +44,9 @@ addopts = "--strict-markers --import-mode=importlib"
 [tool.coverage.run]
 omit = ["*/tests/*"]
 
+[tool.uv]
+environments = ["sys_platform == 'linux'"]
+
 [tool.uv.workspace]
 members = ["experiments/*"]
 

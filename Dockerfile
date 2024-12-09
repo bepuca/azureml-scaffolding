@@ -18,9 +18,13 @@ FROM base AS job-runner
 USER vscode
 ARG VENV_PATH=/home/vscode/venv
 
+# disable caching as we build once
+ENV UV_NO_CACHE=1
+
 # Create a virtual environment
 RUN uv venv ${VENV_PATH}
-
+# Use the virtual environment automatically
+ENV VIRTUAL_ENV="${VENV_PATH}"
 # Ensure all commands use the virtual environment
 ENV PATH="${VENV_PATH}/bin:$PATH"
 
