@@ -51,6 +51,6 @@ environments = ["sys_platform == 'linux'"]
 members = ["experiments/*"]
 
 [tool.uv.sources]
-example-experiment = { workspace = true }
 shared = { workspace = true }
+example-experiment = { workspace = true }
 

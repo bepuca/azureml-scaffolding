@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#? Remove an experiment from the project
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+
+function usage {
+    cat<<EOF
+Remove an experiment from the project
+
+Usage: $0 EXPERIMENT
+
+Options:
+    -h, --help            Show this help message and exit
+
+Arguments:
+  EXPERIMENT  Directory of the experiment relative to "$CODE_PATH"
+
+Remove an experiment from the project. This will remove the experiment directory
+and uninstall it from the uv project.
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [ $# -ne 1 ]; then
+    echo>&2 "EXPERIMENT required."
+    usage>&2
+    exit 1
+fi
+
+source bin/env container.env
+bin/chkenv "CODE_PATH"
+
+experiment=$1
+if [[ ! -d "$CODE_PATH/$experiment" ]]; then
+    echo>&2 "Experiment directory '$CODE_PATH/$experiment' does not exist."
+    exit 1
+fi
+
+rm -rf "$CODE_PATH/$experiment"
+uv remove "$experiment"

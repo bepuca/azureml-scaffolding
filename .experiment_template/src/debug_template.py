@@ -3,6 +3,7 @@ This file should serve as a template on how to debug a similar payload as the
 one specified in the azure-ml-job.yaml. Users should copy it to have their own
 `debug.py`, which is gitignored so it can be modified at will.
 """
+
 from pathlib import Path
 
 from experiment_template.main import main
