@@ -2,7 +2,7 @@ repos:
 - repo: local
   hooks:
   - id: shellcheck
-    name: ShellCheck
+    name: Lint Bash
     entry: bin/lint/shell
     args: [check]
     language: script
@@ -13,7 +13,7 @@ repos:
     entry: bin/lint/py
     language: python
   - id: md
-    name: Lint md files
+    name: Lint Markdown
     entry: bin/lint/md
     args: [--fix]
     language: script
