@@ -39,8 +39,6 @@ else
     return 1 2>/dev/null || exit 1
   fi
 
-  echo>&2 "Loading environment from: $1"
-
   if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
     echo>&2 "Warning! Variables will not be defined or exported into your current shell unless
         this script is sourced as follows: source ${BASH_SOURCE[0]}"
