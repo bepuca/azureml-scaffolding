@@ -1,3 +1,6 @@
+# Requirements are generated dynamically on submission, no need to track them
+requirements.txt
+
 # Local entrypoints should be developer-specific
 **/debug.py
 

@@ -21,8 +21,8 @@ while :; do
 done
 
 source bin/env container.env
-bin/chkenv CODE_PATH
+bin/chkenv PKGS_PATH
 
-uv run ruff format "$CODE_PATH"
-uv run ruff check --fix --exit-non-zero-on-fix "$CODE_PATH"
-uv run pyright "$CODE_PATH"
+uv run ruff format "$PKGS_PATH"
+uv run ruff check --fix --exit-non-zero-on-fix "$PKGS_PATH"
+uv run pyright "$PKGS_PATH"

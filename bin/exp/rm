@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Remove an experiment from the project
+#? Remove an package from the workspace
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
@@ -7,20 +7,22 @@ cd "$(dirname "$0")/../.."
 
 function usage {
     cat<<EOF
-Remove an experiment from the project
+Remove an package from the project
 
-Usage: $0 EXPERIMENT
+Usage: $0 PACKAGE
 
 Options:
     -h, --help            Show this help message and exit
 
 Arguments:
-  EXPERIMENT  Directory of the experiment relative to "$CODE_PATH"
+  PACKAGE  Directory of the package relative to "$PKGS_PATH".
 
-Remove an experiment from the project. This will remove the experiment directory
+Remove a package from the project. This will remove the package directory
 and uninstall it from the uv project.
 EOF
 }
+
+bin/chkenv "PKGS_PATH"
 
 while :; do
     case $1 in
@@ -31,19 +33,16 @@ while :; do
 done
 
 if [ $# -ne 1 ]; then
-    echo>&2 "EXPERIMENT required."
+    echo>&2 "PACKAGE required."
     usage>&2
     exit 1
 fi
 
-source bin/env container.env
-bin/chkenv "CODE_PATH"
-
-experiment=$1
-if [[ ! -d "$CODE_PATH/$experiment" ]]; then
-    echo>&2 "Experiment directory '$CODE_PATH/$experiment' does not exist."
+package=$1
+if [[ ! -d "$PKGS_PATH/$package" ]]; then
+    echo>&2 "Package directory '$PKGS_PATH/$package' does not exist."
     exit 1
 fi
 
-rm -rf "${CODE_PATH:?}/$experiment"
-uv remove "$experiment"
+rm -rf "${PKGS_PATH:?}/$package"
+uv remove "$package"

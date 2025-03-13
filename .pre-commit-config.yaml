@@ -11,7 +11,8 @@ repos:
   - id: python
     name: Lint Python
     entry: bin/lint/py
-    language: python
+    language: system
+    files: ^.*\.py
   - id: md
     name: Lint Markdown
     entry: bin/lint/md

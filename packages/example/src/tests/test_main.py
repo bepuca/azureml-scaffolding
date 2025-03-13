@@ -1,4 +1,4 @@
-from example_experiment.main import get_the_ultimate_answer
+from example.main import get_the_ultimate_answer
 
 
 def test_get_the_ultimate_answer():

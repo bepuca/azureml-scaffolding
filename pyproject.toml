@@ -5,7 +5,7 @@ description = ""
 readme = "README.md"
 requires-python = "==3.12.*"
 dependencies = [
-    "example-experiment",
+    "example",
     "shared",
 ]
 
@@ -18,7 +18,6 @@ dev = [
     "ruff  ==0.8.*",
     "pre-commit  ==3.8.*"
 ]
-
 
 [tool.pyright]
 pythonVersion = "3.12"
@@ -38,7 +37,7 @@ lint.select = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["experiments"]
+testpaths = ["packages"]
 addopts = "--strict-markers --import-mode=importlib"
 
 [tool.coverage.run]
@@ -48,9 +47,9 @@ omit = ["*/tests/*"]
 environments = ["sys_platform == 'linux'"]
 
 [tool.uv.workspace]
-members = ["experiments/*"]
+members = ["packages/*"]
 
 [tool.uv.sources]
 shared = { workspace = true }
-example-experiment = { workspace = true }
+example = { workspace = true }
 

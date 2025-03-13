@@ -1,28 +1,28 @@
 #!/usr/bin/env bash
-#? Initialize new experiment in the project
+#? Initialize new package in the project
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
 function usage {
     cat<<EOF
-Initialize new experiment in the project
+Initialize new package in the project
 
-Usage: $0 EXPERIMENT
+Usage: $0 PACKAGE
 
 Options:
     -h, --help            Show this help message and exit
 
 Arguments:
-  EXPERIMENT  Name of the new experiment.
+  PACKAGE  Name of the new package.
 
-The script will create a new experiment directory in the experiments/ directory
-using the .experiment_template as a template. It will also add the new
-experiment as a workspace to the uv project and install it to the local
-environment.
+The script will create a new package directory in the "$PKGS_PATH" directory
+using the .package_template as a template. It will also add the new package
+to the uv workspace and install it to the local environment.
 EOF
 }
 
+bin/chkenv "PKGS_PATH"
 
 while :; do
     case $1 in
@@ -33,51 +33,35 @@ while :; do
 done
 
 if [ $# -eq 0 ]; then
-    echo>&2 "EXPERIMENT not provided."; usage>&2; exit 1;
+    echo>&2 "PACKAGE not provided."; usage>&2; exit 1;
 fi
 if [ $# -ne 1 ]; then
     echo>&2 "1 argument expected, $# provided"; usage>&2; exit 1;
 fi
 
-exp=$1
-exp_dir="experiments/$exp"
+template_name="package-template"
+pkg=${1//_/-}  # package name always uses dashes
+pkg_dir="$PKGS_PATH/$pkg"
 
-# create new experiment from the template
-cp -r ".experiment_template" "$exp_dir"
-mv "$exp_dir/src/experiment_template" "$exp_dir/src/$exp"
+# create new package from the template
+cp -r ".$template_name" "$pkg_dir"
+mv "$pkg_dir/src/${template_name//-/_}" "$pkg_dir/src/${pkg//-/_}"
 
-# use default repo Dockerfile for the experiment
-mkdir -p "$exp_dir/src/environment"
-cp "Dockerfile" "$exp_dir/src/environment/Dockerfile"
+# use default repo Dockerfile for the package
+mkdir -p "$pkg_dir/src/environment"
+cp "Dockerfile" "$pkg_dir/src/environment/Dockerfile"
 
-# rename references to experiment_template to the name of the new experiment
+# rename references to package_template to the name of the new package
 files_to_update=(
-    "$exp_dir/README.md"
-    "$exp_dir/src/debug_template.py"
-    "$exp_dir/src/azure-ml-job.yaml"
-    "$exp_dir/src/debug_template.py"
-    "$exp_dir/src/$exp/tests/test_main.py"
+    "$pkg_dir/README.md"
+    "$pkg_dir/pyproject.toml"
+    "$pkg_dir/src/azure-ml-job.yaml"
+    "$pkg_dir/src/tests/test_main.py"
 )
 for file in "${files_to_update[@]}"; do
-    sed -i "s/experiment_template/$exp/g" "$file"
+    sed -i "s/$template_name/$pkg/g" "$file"
+    sed -i "s/${template_name//-/_}/${pkg//-/_}/g" "$file"
 done
 
-# create debug.py so creator has a script to run locally
-cp "$exp_dir/src/debug_template.py" "$exp_dir/src/debug.py"
-
-# add new experiment as workspace to uv project
-uv init --name "$exp" \
-    --package "$exp_dir" \
-    --no-pin-python \
-    --author-from none
-
-# install experiment to local env
-uv add "$exp"
-
-# add dependencies needed to log metrics in AzureML
-azureml_deps="
-mlflow-skinny==2.18.*
-azureml-mlflow==1.58.*
-pytz==2024.2
-"
-echo "$azureml_deps" | xargs uv add --package "$exp"
+# add package to uv workspace and install in env
+uv add "$pkg"
