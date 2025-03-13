@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.scripts]
-package-template = "package_template:main"
+package-template = "package_template.__main__:main"
 
 [build-system]
 requires = ["hatchling"]

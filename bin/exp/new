@@ -55,8 +55,9 @@ cp "Dockerfile" "$pkg_dir/src/environment/Dockerfile"
 files_to_update=(
     "$pkg_dir/README.md"
     "$pkg_dir/pyproject.toml"
+    "$pkg_dir/src/${pkg//-/_}/__main__.py"
     "$pkg_dir/src/azure-ml-job.yaml"
-    "$pkg_dir/src/tests/test_main.py"
+    "$pkg_dir/src/tests/test_answer.py"
 )
 for file in "${files_to_update[@]}"; do
     sed -i "s/$template_name/$pkg/g" "$file"

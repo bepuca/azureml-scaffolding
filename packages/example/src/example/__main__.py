@@ -1,16 +1,12 @@
-import argparse
 import sys
 from pathlib import Path
 
 from shared.logging import azureml_logger
 
-
-def get_the_ultimate_answer() -> float:
-    """Dummy function to exemplify unit tests"""
-    return 42.0
+from example.answer import get_the_ultimate_answer
 
 
-def main(data_path: Path, greeting: str = "Hello"):
+def example(data_path: Path, greeting: str = "Hello"):
     """Example function with the main things needed to get started with AzureML
 
     :param data_path: Path where data is stored. Here to exemplify how to connect AzureML data
@@ -40,10 +36,28 @@ def main(data_path: Path, greeting: str = "Hello"):
         azureml_logger.log_metrics(metrics)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Driver script for Example Experiment")
-    parser.add_argument("--data_path", type=Path, help="Path to data", required=True)
-    parser.add_argument("--greeting", type=str, help="Greeting word", default="Hello")
+def main():
+    import argparse
+    import sys
+    from pathlib import Path
 
-    args = parser.parse_args()
-    main(data_path=args.data_path, greeting=args.greeting)
+    assume_debug = len(sys.argv) <= 1
+    if assume_debug:
+        print("WARNING: Using debug args because no args were passed")
+        args_dict = {
+            "data_path": Path("path/to/data"),
+            "greeting": "Hello",
+        }
+    else:
+        parser = argparse.ArgumentParser(description="Driver script for Example Package")
+        parser.add_argument("--data_path", type=Path, help="Path to data", required=True)
+        parser.add_argument("--greeting", type=str, help="Greeting word", required=True)
+
+        args = parser.parse_args()
+        args_dict = vars(args)
+
+    example(**args_dict)
+
+
+if __name__ == "__main__":
+    main()

@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.scripts]
-example = "example:main"
+example = "example.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
