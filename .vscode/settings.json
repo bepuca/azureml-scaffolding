@@ -12,4 +12,5 @@
 
     // shellcheck settings
     "shellcheck.customArgs": ["-x", "-s", "bash"],
+    "shellcheck.ignorePatterns": {"**/*.amlignore": true},
 }
