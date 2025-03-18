@@ -43,12 +43,12 @@ package=$1
 
 run_name=$(bin/exp/name)
 # add timestamp locally so runs are sorted chronologically
-local_run_name="$(date +%s)_$run_name"
+local_run_name="$(date +%Y%m%d_%H%M%S)_$run_name"
 run_dir=$(bin/exp/pkg "$package" "$local_run_name")
 
-pushd "$run_dir" > /dev/null
+pushd "$run_dir/src" > /dev/null
 uv run \
-    --with-requirements environment/requirements.txt \
+    --with-requirements "../environment/requirements.txt" \
     --isolated \
     --no-project \
     -m "$package"

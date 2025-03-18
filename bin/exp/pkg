@@ -68,9 +68,13 @@ fi
 run_dir="$RUNS_PATH/$package/$run_name"
 mkdir -p "$run_dir"
 
-# copy package code and common code to run directory
-cp -r "$PKGS_PATH/$package/src/." "$run_dir"
-cp -r "$PKGS_PATH/shared/src/shared" "$run_dir"
+# copy package code
+cp -r "$PKGS_PATH/$package/." "$run_dir"
+# if shared dir is present, copy it to make it available too
+if [[ -d "$PKGS_PATH/shared" ]]; then
+    cp -r "$PKGS_PATH/shared/src/shared" "$run_dir/src"
+    cp -r "$PKGS_PATH/shared/tests/." "$run_dir/tests/shared"
+fi
 
 # copy artifacts to build environment
 docker_context="$run_dir/environment"
