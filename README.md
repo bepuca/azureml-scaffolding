@@ -34,7 +34,7 @@ productionalizing an iteration or deploying models is not a blocker for that.
 - Code linting and formatting.
 - Extensible CLI composed of scripts to abstract complexity behind simple
   commands. Run `bin/help` for an overview. For instance, running an experiment
-  in AzureML can be done with `bin/exp/aml <experiment_name>`.
+  in AzureML can be done with `bin/pkg/aml <experiment_name>`.
 
 ## User Guide
 
@@ -202,11 +202,11 @@ is a good reference):
 4. `inputs` are defined and used in the `command` rather than hardcoded. Makes
    it easier to inspect.
 
-You can do run the experiment using [`bin/exp/aml`](bin/exp/aml) script. Execute
-`bin/exp/run -h` for details. The script does the following:
+You can do run the experiment using [`bin/pkg/aml`](bin/pkg/aml) script. Execute
+`bin/pkg/run -h` for details. The script does the following:
 
-1. Packaged the experiment (by using [bin/exp/pkg](bin/exp/pkg), an you can run
-   `bin/exp/pkg -h` for details). All artifacts necessary for the experiment are
+1. Packaged the experiment (by using [bin/pkg/iso](bin/pkg/iso), an you can run
+   `bin/pkg/iso -h` for details). All artifacts necessary for the experiment are
    copied and bundled together. The substeps are the following:
    1. Create an isolated run folder in `runs` with a unique name.
    2. Copy the files of your experiment folder.
