@@ -53,12 +53,14 @@ mkdir -p "$env_dir"
 cp "Dockerfile" "$env_dir/Dockerfile"
 
 # rename all references to package_template to the name of the new package
+git add "$pkg_dir"  # ensure git ls-files finds them
 git ls-files "$pkg_dir" | while read -r file; do
     sed -i \
         -e "s/$template_name/$pkg/g" \
         -e "s/${template_name//-/_}/${pkg//-/_}/g" \
         "$file"
 done
+git restore --staged "$pkg_dir"  # revert so user chooses what to commit
 
 # add package to uv workspace and install in env
 uv add "$pkg"
