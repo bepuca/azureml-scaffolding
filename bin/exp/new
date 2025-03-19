@@ -48,20 +48,16 @@ cp -r ".$template_name" "$pkg_dir"
 mv "$pkg_dir/src/${template_name//-/_}" "$pkg_dir/src/${pkg//-/_}"
 
 # use default repo Dockerfile for the package
-mkdir -p "$pkg_dir/src/environment"
-cp "Dockerfile" "$pkg_dir/src/environment/Dockerfile"
+env_dir="$pkg_dir/environment"
+mkdir -p "$env_dir"
+cp "Dockerfile" "$env_dir/Dockerfile"
 
-# rename references to package_template to the name of the new package
-files_to_update=(
-    "$pkg_dir/README.md"
-    "$pkg_dir/pyproject.toml"
-    "$pkg_dir/src/${pkg//-/_}/__main__.py"
-    "$pkg_dir/src/azure-ml-job.yaml"
-    "$pkg_dir/src/tests/test_answer.py"
-)
-for file in "${files_to_update[@]}"; do
-    sed -i "s/$template_name/$pkg/g" "$file"
-    sed -i "s/${template_name//-/_}/${pkg//-/_}/g" "$file"
+# rename all references to package_template to the name of the new package
+git ls-files "$pkg_dir" | while read -r file; do
+    sed -i \
+        -e "s/$template_name/$pkg/g" \
+        -e "s/${template_name//-/_}/${pkg//-/_}/g" \
+        "$file"
 done
 
 # add package to uv workspace and install in env
