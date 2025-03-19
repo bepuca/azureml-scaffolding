@@ -1,0 +1,27 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+experiment_name: example_pipeline
+
+jobs:
+  snapshot:
+    name: Snapshot
+    command: echo "Uploading full pipeline snapshot"
+    compute: azureml:cpu-E4ds-cluster
+    code: .
+    environment:
+      image: mcr.microsoft.com/azureml/inference-base-2204
+  stepa:
+    type: command
+    component: ./stepa/component.yaml
+    compute: azureml:cpu-E4ds-cluster
+    outputs:
+      data_path:
+        type: uri_folder
+        mode: upload
+  stepb:
+    type: command
+    component: ./stepb/component.yaml
+    compute: azureml:cpu-E4ds-cluster
+    inputs:
+      data_path: ${{parent.jobs.stepa.outputs.data_path}}

@@ -41,7 +41,7 @@ package.
 EOF
 }
 
-bin/chkenv "PKGS_PATH" "RUNS_PATH"
+bin/chkenv "PKGS_PATH"
 
 while :; do
     case $1 in
@@ -57,31 +57,29 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
-package=$1
+pipeline=$1
 run_dir=$2
 if [[ ! -d "$PKGS_PATH/$package" ]]; then
     echo>&2 "Package directory '$PKGS_PATH/$package' does not exist."
     exit 1
 fi
 
-# create run directory
-# run_dir="$RUNS_PATH/$package/$run_name"
-mkdir -p "$run_dir"
+pipeline_path="./pipelines/$pipeline/azure-ml-pipeline.yaml"
 
-# copy package code
-cp -r "$PKGS_PATH/$package/." "$run_dir"
-# if shared dir is present, copy it to make it available too
-if [[ -d "$PKGS_PATH/shared" ]]; then
-    cp -r "$PKGS_PATH/shared/src/shared" "$run_dir/src"
-    mkdir -p "$run_dir/tests/shared"
-    cp -r "$PKGS_PATH/shared/tests/." "$run_dir/tests/shared"
-fi
+output=$(uv run python - <<EOF
+import yaml
+with open("$pipeline_path") as f:
+    pipeline = yaml.safe_load(f)
+for package in pipeline["jobs"]:
+    if package != "snapshot":
+        print(package)
+EOF
+)
 
-# copy artifacts to build environment
-docker_context="$run_dir/environment"
-mkdir -p "$docker_context"
-uv export --quiet \
-    --output-file "$docker_context/requirements.txt" \
-    --package "$package" \
-    --no-hashes \
-    --no-emit-workspace
+while read -r package; do
+    bin/pkg/iso "$package" "$run_dir/$package"
+done <<< "$output"
+cp "$pipeline_path" "$run_dir"
+
+# log components to stdout to be available outside
+echo "$output"

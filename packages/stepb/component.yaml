@@ -1,0 +1,26 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: stepb
+display_name: StepB
+
+# What to run
+command: >-
+  cd src &&
+  python -m stepb
+  --data_path "${{inputs.data_path}}"
+
+inputs:
+  data_path:
+    type: uri_folder
+    mode: upload
+
+# What code to make available
+code: .
+
+# Where to run it
+environment:
+  build:
+    path: ./environment
+
+compute: azureml:cpu-E4ds-cluster
