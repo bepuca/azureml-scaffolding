@@ -34,6 +34,7 @@ def example(data_path: Path, greeting: str = "Hello"):
         metrics = {"value": v}
         azureml_logger.log_metrics(metrics)
 
+
 def main():
     import argparse
     import sys
