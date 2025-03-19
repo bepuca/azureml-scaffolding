@@ -14,4 +14,9 @@ for var in "$@"; do
         error=1
     fi
 done
+
+if [ $error -eq 1 ]; then
+    echo>&2 "Have you forgotten to execute 'source bin/env'?"
+fi
+
 exit $error
