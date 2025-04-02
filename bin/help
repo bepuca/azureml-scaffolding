@@ -99,11 +99,11 @@ def main() -> None:
 
     for i, (_, commands) in enumerate(commands_by_group.items()):
         if i > 0:
-            cprint("")
+            cprint()
 
         if len(commands_by_group) > 1:
             cprint(f"# {commands[0].group}", color=Color.BLUE)
-            cprint("")
+            cprint()
 
         for command in commands:
             cprint(f"{command.path_str.ljust(max_file_name_length + 2)} {command.help}")
@@ -114,7 +114,7 @@ class Color(Enum):
     DEFAULT = "\033[0m"
 
 
-def cprint(message: str, color: Color = Color.DEFAULT) -> None:
+def cprint(message: str = "", color: Color = Color.DEFAULT) -> None:
     print(color.value + message if os.isatty(1) else message)
 
 
