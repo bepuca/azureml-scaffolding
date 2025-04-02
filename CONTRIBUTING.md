@@ -6,7 +6,13 @@ After changes, the following workflow should work seamlessly:
 2. Run local in VSCode.
 3. Run tests in VSCode.
 
-4. `bin/pkg/rm example-reader-step && bin/pkg/rm example-writer-step && rm pipelines/example-pipeline.yaml && bin/pipe/new example-pipeline` should be no op
+4. The following should cause no git changes
+```bash
+bin/pkg/rm example-reader-step && \
+bin/pkg/rm example-writer-step && \
+rm pipelines/example-pipeline.yaml \
+&& bin/pipe/new example-pipeline
+```
 
 Removing an experiment
 

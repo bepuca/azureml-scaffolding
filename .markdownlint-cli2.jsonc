@@ -11,8 +11,10 @@
     "showFound": false,
     "ignores": [
       "**/node_modules/**",
+      ".github",
       ".venv",
-      "tmp"
+      "tmp",
+      "runs"
     ],
     "globs": ["**.md"]
 }

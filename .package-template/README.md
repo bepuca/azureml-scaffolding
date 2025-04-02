@@ -1,7 +1,7 @@
 # package_template
 
-This folder contains the code for the package `package_template`. A package is a
-self-contained Python module with its own dependencies, entry point and
+This folder contains the code for the package `package_template`. A package
+is a self-contained Python module with its own dependencies, entry point and
 execution logic. A package is meant to be executed in AzureML for compute,
 traceability or reproducibility purposes. It is executed either as a single job
 or as a step of a pipeline job. here is simply a line of work with a certain
