@@ -7,6 +7,7 @@ experiment_name: example
 
 # What to run
 command: >-
+  cd src &&
   python -m example
   --data_path "${{inputs.data_path}}"
   --greeting "${{inputs.greeting}}"
@@ -16,7 +17,7 @@ inputs:
     # Only works if dataset created using Azure ML CLI v2; run `az ml data create --help` to see how
     #   YAML schema: https://learn.microsoft.com/en-us/azure/machine-learning/reference-yaml-data
     type: uri_folder  # default, can be changed to `uri_file` if data_path points to a file
-    path: azureml:<azure-ml-dataset-name>:<azure-ml-dataset-version>
+    path: azureml:DrivAerNetVTK:1
   greeting: "Hello"
 
 # What code to make available
@@ -27,4 +28,4 @@ environment:
   build:
     path: ./environment
 
-compute: azureml:<azure-ml-cluster-name>
+compute: azureml:cpu-E4ds-cluster

@@ -1,19 +1,18 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 type: command
 
-name: stepb
-display_name: StepB
+name: reader-step
+display_name: Reader Step
 
-# What to run
+# What to run (always cd into src for imports to work)
 command: >-
   cd src &&
-  python -m stepb
+  python -m reader_step
   --data_path "${{inputs.data_path}}"
 
 inputs:
   data_path:
     type: uri_folder
-    mode: upload
 
 # What code to make available
 code: .
@@ -22,5 +21,3 @@ code: .
 environment:
   build:
     path: ./environment
-
-compute: azureml:cpu-E4ds-cluster

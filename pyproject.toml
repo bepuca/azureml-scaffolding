@@ -7,8 +7,6 @@ requires-python = "==3.12.*"
 dependencies = [
     "example",
     "shared",
-    "stepa",
-    "stepb",
 ]
 
 [dependency-groups]
@@ -55,6 +53,4 @@ members = ["packages/*"]
 [tool.uv.sources]
 shared = { workspace = true }
 example = { workspace = true }
-stepa = { workspace = true }
-stepb = { workspace = true }
 

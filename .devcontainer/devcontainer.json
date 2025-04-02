@@ -13,7 +13,9 @@
     ],
     "remoteEnv": {
       // Ensure repo env is always first in PATH
-      "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
+      "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
+      // Make root path easily discoverable
+      "REPO_ROOT": "${containerWorkspaceFolder}"
     },
     "remoteUser": "vscode",
     "customizations": {
