@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#?  Format, line and type check all Python files in ${CODE_PATH}
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+function usage {
+    cat<<EOF
+Format, line and type check all Python files in ${CODE_PATH}
+
+Usage: $0
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+source bin/env container.env
+bin/chkenv PKGS_PATH
+
+uv run ruff format "$PKGS_PATH"
+uv run ruff check --fix --exit-non-zero-on-fix "$PKGS_PATH"
+uv run pyright "$PKGS_PATH"

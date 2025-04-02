@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#? Lints Markdown files and validate their links
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+# Usage documentation
+function usage {
+	cat<<EOF
+Lints Markdown files and validate their links
+Usage: $0 [--fix]
+
+Options:
+  --fix    Automatically fix issues with markdownlint-cli2
+
+It uses markdownlint-cli2 for linting and markdown-link-check for link
+validation.
+EOF
+}
+
+while :; do
+	case $1 in
+		-h|--help) usage; exit ;;
+		--fix) fix=1 ;;
+		*) break ;;
+	esac
+	shift
+done
+
+if [[ $fix ]]; then
+	markdownlint-cli2 "**/*.md" --fix
+else
+	markdownlint-cli2 "**/*.md"
+fi
+
+files_to_check=$(git ls-files '*.md')
+
+# Do not double quote the below expression as it will concatenate all files into a single string
+# shellcheck disable=SC2086
+markdown-link-check $files_to_check --config .markdown-link.json

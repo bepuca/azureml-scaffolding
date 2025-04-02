@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#? Run an experiment as a job in AzureML
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+function usage {
+    cat<<EOF
+Run an experiment in AzureML
+
+Usage: $0 [options] EXPERIMENT
+
+Options:
+    -h, --help         Show this help message and exit.
+    --job-xargs XARGS  Additional arguments to pass to the job create command.
+                       See "az ml job create --help" for more information.
+
+Arguments:
+  EXPERIMENT  Directory of the experiment relative to "$CODE_PATH"
+
+The script ensures the experiment is packaged with the minimum artifacts and is
+submitted to AzureML with the matching name.
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        --job-xargs)
+            if [[ -z "$2" ]]; then
+                echo>&2 "Missing value for --job-xargs."
+                usage >&2
+                exit 1
+            fi
+            xargs=$2
+            shift
+            ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [ $# -eq 0 ]; then
+    echo>&2 "Experiment not provided."
+    usage
+    exit 1
+fi
+pipeline=$1
+
+source bin/env container.env
+bin/chkenv "AZUREML_WORKSPACE" "AZUREML_RESOURCE_GROUP"
+
+run_name=$(bin/pkg/name)
+# add timestamp locally so runs are sorted chronologically
+local_run_name="$(date +%Y%m%d_%H%M%S)_$run_name"
+run_dir="$RUNS_PATH/$pipeline/$local_run_name"
+
+bin/pipe/iso "$pipeline" "$run_dir" > /dev/null
+
+echo "$xargs" | xargs az ml job create -f "$run_dir/$pipeline.yaml" \
+	--resource-group "$AZUREML_RESOURCE_GROUP" \
+    --workspace-name "$AZUREML_WORKSPACE" \
+    --set name="$run_name" \

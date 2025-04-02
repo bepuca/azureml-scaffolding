@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#? Checks if the specified environment variables are set
+
+if [ $# -eq 0 ]; then
+    echo>&2 "Usage: $0 VAR1 [VAR2 ...]"
+    exit 1
+fi
+
+error=0
+for var in "$@"; do
+    if [ -z "${!var}" ]; then
+        echo>&2 "Missing environment variables: $var"
+        missing+=("$var")
+        error=1
+    fi
+done
+
+if [ $error -eq 1 ]; then
+    echo>&2 "Have you forgotten to execute 'source bin/env'?"
+fi
+
+exit $error
