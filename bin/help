@@ -16,11 +16,11 @@ from typing import Final
 # The help pattern (in pseudo-BNF below) is used to extract the description of a
 # command:
 #
-#   HELP        ::= "#?" ( "[" GROUP "]" ) DESCRIPTION
+#   HELP        ::= "#" (" ") "?" ( "[" GROUP "]" ) DESCRIPTION
 #   GROUP       ::= any character except "]"
 #   DESCRIPTION ::= any character
 
-default_help_line_pattern: Final = re.compile(r"^#\? *(?:\[([^\]]+)\] *)?(.+)")
+default_help_line_pattern: Final = re.compile(r"^# ?\? *(?:\[([^\]]+)\] *)?(.+)")
 
 
 def scan_commands(
@@ -63,7 +63,7 @@ def main() -> None:
     The description of a command is the first line of the file that starts with
     the `help_pattern`. A typical help line looks like this:
 
-        "#?" ( "[" GROUP "]" ) DESCRIPTION
+        "# ?" ( "[" GROUP "]" ) DESCRIPTION
 
     The GROUP is optional and is used to group commands together. If no GROUP is
     provided, the command is grouped under a default group.
