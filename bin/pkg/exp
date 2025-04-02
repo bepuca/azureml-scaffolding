@@ -66,6 +66,7 @@ commit_id=$(bin/dev/prep-exp --exp-ref "$EXPERIMENTS_BRANCH" "$message")
 curr_branch=$(git rev-parse --abbrev-ref HEAD)
 git checkout "$EXPERIMENTS_BRANCH"
 
+echo "$(ls ".")"
 if bin/pkg/aml "$package"; then
     # Push commit to experiment branch only if job submission succeeded
     git push "origin" "$commit_id:$EXPERIMENTS_BRANCH"

@@ -4,6 +4,8 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
+echo "YOLO" >&2
+
 function usage {
     cat<<EOF
 Run an experiment in AzureML
