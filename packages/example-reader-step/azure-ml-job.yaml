@@ -3,11 +3,11 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
 
 # Name of the experiment where all jobs will end up in the Azure ML dashboard
-experiment_name: writer_step
+experiment_name: example_reader_step
 
 # What to run
 command: >-
-  python -m writer_step
+  python -m example_reader_step
   --data_path "${{inputs.data_path}}"
   --greeting "${{inputs.greeting}}"
 

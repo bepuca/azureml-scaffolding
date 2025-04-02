@@ -52,6 +52,6 @@ uv run \
     --with-requirements "../environment/requirements.txt" \
     --isolated \
     --no-project \
-    -m "$package"
+    -m "${package//-/_}"
 popd > /dev/null
 

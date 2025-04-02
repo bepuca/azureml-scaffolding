@@ -55,7 +55,7 @@ run_name=$(bin/pkg/name)
 local_run_name="$(date +%Y%m%d_%H%M%S)_$run_name"
 run_dir="$RUNS_PATH/$pipeline/$local_run_name"
 
-bin/pipe/iso "$pipeline" "$run_dir"
+bin/pipe/iso "$pipeline" "$run_dir" > /dev/null
 
 echo "$xargs" | xargs az ml job create -f "$run_dir/$pipeline.yaml" \
 	--resource-group "$AZUREML_RESOURCE_GROUP" \

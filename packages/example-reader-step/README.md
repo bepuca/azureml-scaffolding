@@ -1,6 +1,6 @@
-# writer_step
+# example_reader_step
 
-This folder contains the code for the package `writer_step`. A package is a
+This folder contains the code for the package `example_reader_step`. A package is a
 self-contained Python module with its own dependencies, entry point and
 execution logic. A package is meant to be executed in AzureML for compute,
 traceability or reproducibility purposes. It is executed either as a single job
@@ -13,7 +13,7 @@ a good developer experience.
 The minimum directory structure of an package is the following:
 
 ```text
-writer_step
+example_reader_step
 ├── README.md                   <- Documentation for the package.
 └── src                         <- Source artifacts for the package.
     ├── .amlignore              <- Defines what not to upload to AzureML.
@@ -22,6 +22,6 @@ writer_step
     ├── environment             <- Environment context for package execution.
     │    ├── Dockerfile         <- Dockerfile to define environment.
     │    └── requirements.txt   <- Required dependencies (auto extracted).
-    └── writer_step        <- Executable code for the package.
+    └── example_reader_step        <- Executable code for the package.
         └── main.py             <- Entrypoint file for the package.
 ```

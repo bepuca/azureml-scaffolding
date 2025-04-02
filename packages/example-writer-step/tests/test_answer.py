@@ -1,4 +1,4 @@
-from reader_step.answer import get_the_ultimate_answer
+from example_writer_step.answer import get_the_ultimate_answer
 
 
 def test_get_the_ultimate_answer():

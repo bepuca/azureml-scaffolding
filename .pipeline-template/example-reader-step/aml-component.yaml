@@ -1,13 +1,13 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 type: command
 
-name: reader_step
-display_name: Reader Step
+name: example_reader_step
+display_name: Example Reader Step
 
 # What to run (always cd into src for imports to work)
 command: >-
   cd src &&
-  python -m reader_step
+  python -m example_reader_step
   --data_path "${{inputs.data_path}}"
 
 inputs:

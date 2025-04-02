@@ -1,5 +1,5 @@
 [project]
-name = "reader-step"
+name = "example-reader-step"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.scripts]
-reader-step = "reader_step.__main__:main"
+example-reader-step = "example_reader_step.__main__:main"
 
 [build-system]
 requires = ["hatchling"]

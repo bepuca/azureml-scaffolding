@@ -53,6 +53,6 @@ while read -r package; do
         --with-requirements "../environment/requirements.txt" \
         --isolated \
         --no-project \
-        -m "$package"
+        -m "${package//-/_}"
     popd > /dev/null
 done <<< "$packages"

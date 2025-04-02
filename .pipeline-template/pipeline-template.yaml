@@ -1,7 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 
-experiment_name: example_pipeline
+experiment_name: pipeline-template
 settings:
   default_compute: azureml:cpu-E4ds-cluster
 
@@ -18,9 +18,9 @@ jobs:
       image: mcr.microsoft.com/azureml/inference-base-2204
 
   # step names should match package referenced (but with underscores) for orchestration to work
-  writer_step:
+  example_writer_step:
     type: command
-    component: ./writer-step/aml-component.yaml
+    component: ./example-writer-step/aml-component.yaml
     inputs:
       content: ${{ parent.inputs.content }}
     outputs:
@@ -29,8 +29,8 @@ jobs:
         mode: upload
 
   # step names should match package referenced (but with underscores) for orchestration to work
-  reader_step:
+  example_reader_step:
     type: command
-    component: ./reader-step/aml-component.yaml
+    component: ./example-reader-step/aml-component.yaml
     inputs:
-      data_path: ${{ parent.jobs.writer_step.outputs.data_path }}
+      data_path: ${{ parent.jobs.example_writer_step.outputs.data_path }}
