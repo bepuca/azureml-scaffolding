@@ -10,7 +10,6 @@ error=0
 for var in "$@"; do
     if [ -z "${!var}" ]; then
         echo>&2 "Missing environment variables: $var"
-        missing+=("$var")
         error=1
     fi
 done
