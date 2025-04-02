@@ -7,6 +7,7 @@ After changes, the following workflow should work seamlessly:
 3. Run tests in VSCode.
 
 4. The following should cause no git changes
+
 ```bash
 bin/pkg/rm example-reader-step && \
 bin/pkg/rm example-writer-step && \
