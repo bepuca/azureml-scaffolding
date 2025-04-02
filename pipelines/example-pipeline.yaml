@@ -1,0 +1,36 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+experiment_name: example_pipeline
+settings:
+  default_compute: azureml:cpu-E4ds-cluster
+
+inputs:
+  content: "hello world"
+
+jobs:
+  # always keep the snapshot step so pipeline YAML makes it into the jobs
+  snapshot:
+    name: Snapshot
+    command: echo "Uploading full pipeline snapshot"
+    code: .
+    environment:
+      image: mcr.microsoft.com/azureml/inference-base-2204
+
+  # step names should match package referenced (but with underscores) for orchestration to work
+  writer_step:
+    type: command
+    component: ./writer-step/aml-component.yaml
+    inputs:
+      content: ${{ parent.inputs.content }}
+    outputs:
+      data_path:
+        type: uri_folder
+        mode: upload
+
+  # step names should match package referenced (but with underscores) for orchestration to work
+  reader_step:
+    type: command
+    component: ./reader-step/aml-component.yaml
+    inputs:
+      data_path: ${{ parent.jobs.writer_step.outputs.data_path }}

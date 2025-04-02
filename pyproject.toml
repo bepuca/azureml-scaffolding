@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = "==3.12.*"
 dependencies = [
     "example",
+    "reader-step",
     "shared",
+    "writer-step",
 ]
 
 [dependency-groups]
@@ -53,4 +55,6 @@ members = ["packages/*"]
 [tool.uv.sources]
 shared = { workspace = true }
 example = { workspace = true }
+reader-step = { workspace = true }
+writer-step = { workspace = true }
 

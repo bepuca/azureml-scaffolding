@@ -14,8 +14,6 @@ Options:
     -h, --help         Show this help message and exit.
     --job-xargs XARGS  Additional arguments to pass to the job create command.
                        See "az ml job create --help" for more information.
-    --file, -f  FILE   Filepath name for the job configuration YAML inside EXPERIMENT.
-                       Default: "azure-ml-job.yaml"
 
 Arguments:
   EXPERIMENT  Directory of the experiment relative to "$CODE_PATH"
@@ -25,7 +23,6 @@ submitted to AzureML with the matching name.
 EOF
 }
 
-file="azure-ml-pipeline.yaml"
 while :; do
     case $1 in
         -h|--help) usage; exit ;;
@@ -36,15 +33,6 @@ while :; do
                 exit 1
             fi
             xargs=$2
-            shift
-            ;;
-        -f|--file)
-            if [[ -z "$2" ]]; then
-                echo>&2 "Missing value for --file."
-                usage >&2
-                exit 1
-            fi
-            file=$2
             shift
             ;;
         *) break ;;
@@ -69,7 +57,7 @@ run_dir="$RUNS_PATH/$pipeline/$local_run_name"
 
 bin/pipe/iso "$pipeline" "$run_dir"
 
-echo "$xargs" | xargs az ml job create -f "$run_dir/$file" \
+echo "$xargs" | xargs az ml job create -f "$run_dir/$pipeline.yaml" \
 	--resource-group "$AZUREML_RESOURCE_GROUP" \
     --workspace-name "$AZUREML_WORKSPACE" \
     --set name="$run_name" \

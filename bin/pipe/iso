@@ -64,7 +64,7 @@ if [[ ! -d "$PKGS_PATH/$package" ]]; then
     exit 1
 fi
 
-pipeline_path="./pipelines/$pipeline/azure-ml-pipeline.yaml"
+pipeline_path="./pipelines/$pipeline.yaml"
 
 output=$(uv run python - <<EOF
 import yaml
@@ -72,7 +72,7 @@ with open("$pipeline_path") as f:
     pipeline = yaml.safe_load(f)
 for package in pipeline["jobs"]:
     if package != "snapshot":
-        print(package)
+        print(package.replace("_", "-"))
 EOF
 )
 
