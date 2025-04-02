@@ -22,6 +22,8 @@ from typing import Final
 
 default_help_line_pattern: Final = re.compile(r"^# ?\? *(?:\[([^\]]+)\] *)?(.+)")
 
+DEFAULT_GROUP = "Misc"
+
 
 def scan_commands(
     files: Iterable[Path],
@@ -29,7 +31,7 @@ def scan_commands(
     help_line_pattern: re.Pattern[str] | None = None,
     group_index: str | int = 1,
     help_index: str | int = 2,
-    default_group: str = "Misc",
+    default_group: str = DEFAULT_GROUP,
 ) -> Iterator[tuple[Path, str, str]]:
     """
     Scan the files, yielding the file, group, and help text.
