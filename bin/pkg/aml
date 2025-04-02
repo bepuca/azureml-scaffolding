@@ -59,7 +59,6 @@ if [ $# -eq 0 ]; then
 fi
 experiment=$1
 
-source bin/env container.env
 bin/chkenv "AZUREML_WORKSPACE" "AZUREML_RESOURCE_GROUP"
 
 run_name=$(bin/pkg/name)
