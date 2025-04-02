@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Run pytest for the project with coverage
+#? [Development] Run pytest for the project with coverage
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

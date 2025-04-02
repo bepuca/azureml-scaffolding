@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Find account, container and subdir for a named data asset
+#? [Data] Find account, container and subdir for a named data asset
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

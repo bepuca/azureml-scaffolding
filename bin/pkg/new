@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Initialize new package in the project
+#? [Package] Initialize new package in the project
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

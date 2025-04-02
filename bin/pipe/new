@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Initialize new pipeline in the project
+#? [Pipeline] Initialize new pipeline in the project
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

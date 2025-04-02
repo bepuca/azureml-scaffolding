@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Checks shell scripts for potential issues
+#? [Linting] Checks shell scripts for potential issues
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
