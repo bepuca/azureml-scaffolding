@@ -19,6 +19,10 @@ from typing import Final
 #   HELP        ::= "#" (" ") "?" ( "[" GROUP "]" ) DESCRIPTION
 #   GROUP       ::= any character except "]"
 #   DESCRIPTION ::= any character
+#
+# Example:
+#
+#     #? [Utility] This is a super duper useful command
 
 default_help_line_pattern: Final = re.compile(r"^# ?\? *(?:\[([^\]]+)\] *)?(.+)")
 
