@@ -59,17 +59,12 @@ if [ $# -eq 0 ]; then
     usage
     exit 1
 fi
-experiment=$1
+package=$1
 
 bin/chkenv "AZUREML_WORKSPACE" "AZUREML_RESOURCE_GROUP"
 
-run_name=$(bin/pkg/name)
-# add timestamp locally so runs are sorted chronologically
-local_run_name="$(date +%Y%m%d_%H%M%S)_$run_name"
-run_dir="$RUNS_PATH/$experiment/$local_run_name"
-bin/pkg/iso "$experiment" "$run_dir"
+source bin/lib.sh  # import: prep_run, run_aml
+read -r run_name run_dir <<< "$(prep_run "$package")"
+bin/pkg/iso "$package" "$run_dir"
 
-echo "$xargs" | xargs az ml job create -f "$run_dir/$file" \
-	--resource-group "$AZUREML_RESOURCE_GROUP" \
-    --workspace-name "$AZUREML_WORKSPACE" \
-    --set name="$run_name" \
+run_aml "$run_name" "$run_dir" "$file" "$xargs"

@@ -41,18 +41,12 @@ if [ $# -eq 0 ]; then
 fi
 pipeline=$1
 
-run_name=$(bin/pkg/name)
-# add timestamp locally so runs are sorted chronologically
-local_run_name="$(date +%Y%m%d_%H%M%S)_$run_name"
-run_dir="$RUNS_PATH/$pipeline/$local_run_name"
+source bin/lib.sh  # import: prep_run, run_local
+read -r _ run_dir <<< "$(prep_run "$pipeline")"
 packages="$(bin/pipe/iso "$pipeline" "$run_dir")"
 
 while read -r package; do
     pushd "$run_dir/$package/src" > /dev/null
-    uv run \
-        --with-requirements "../environment/requirements.txt" \
-        --isolated \
-        --no-project \
-        -m "${package//-/_}"
+    run_local "$package"
     popd > /dev/null
 done <<< "$packages"

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-#? Prepare git to track all changes since main in execution
+#? Trigger an experiment in Azure ML from a commit in the experiments branch.
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
 function usage {
     cat<<EOF
-Prepare git to track all changes since main in execution
+Trigger an experiment in Azure ML from a commit in the experiments branch.
 
 Usage: $0 [options] FLOW MESSAGE
 
