@@ -112,16 +112,23 @@ def main() -> None:
             cprint()
 
         for command in commands:
-            cprint(f"{command.path_str.ljust(max_file_name_length + 2)} {command.help}")
+            cprint(command.path_str, color=Color.CYAN, end="")
+            cprint(f"{' ' * (max_file_name_length + 2 - len(command.path_str))} {command.help}")
 
 
 class Color(Enum):
+    CYAN = "\033[96m"
     BLUE = "\033[94m"
     DEFAULT = "\033[0m"
 
 
-def cprint(message: str = "", color: Color = Color.DEFAULT) -> None:
-    print(color.value + message if os.isatty(1) else message)
+def cprint(
+    message: str = "",
+    color: Color = Color.DEFAULT,
+    *,
+    end: str | None = "\n",
+) -> None:
+    print(color.value + message if os.isatty(1) else message, end=end)
 
 
 if __name__ == "__main__":
