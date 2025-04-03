@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Generate a random name for an experiment run
+#? [Package] Generate a random name for an experiment run
 
 # Adjectives and nouns copied from Moby project:
 #    https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go

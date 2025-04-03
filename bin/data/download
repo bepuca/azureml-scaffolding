@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Download data from Azure Blob Storage
+#? [Data] Download data from Azure Blob Storage
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

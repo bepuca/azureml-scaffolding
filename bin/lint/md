@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Lints Markdown files and validate their links
+#? [Linting] Lints Markdown files and validate their links
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Ensure dev env is in sync with the repo
+#? [Development] Ensure dev env is in sync with the repo
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

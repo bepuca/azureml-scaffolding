@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Exports variables from an environment file
+#? [Environment] Exports variables from an environment file
 
 default_env="container.env"
 if [[ "$1" == '-h' || "$1" == '--help' ]]; then

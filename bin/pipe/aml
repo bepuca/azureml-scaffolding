@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Run an experiment as a job in AzureML
+#? [Pipeline] Run an experiment as a job in AzureML
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

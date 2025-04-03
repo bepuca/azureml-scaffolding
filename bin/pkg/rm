@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Remove an package from the workspace
+#? [Package] Remove an package from the workspace
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#?  Format, line and type check all Python files in ${CODE_PATH}
+#? [Linting] Format, line and type check all Python files in ${CODE_PATH}
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

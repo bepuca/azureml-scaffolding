@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? List data in a Blob Storage Container
+#? [Data] List data in a Blob Storage Container
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

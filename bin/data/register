@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Register a data asset in AzureML
+#? [Data] Register a data asset in AzureML
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

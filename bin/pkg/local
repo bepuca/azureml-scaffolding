@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Execute package locally as it would in AzureML
+#? [Package] Execute package locally as it would in AzureML
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."

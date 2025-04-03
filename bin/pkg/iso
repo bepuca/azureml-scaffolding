@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? Isolate artifacts for an package run in a separate directory
+#? [Package] Isolate artifacts for an package run in a separate directory
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
