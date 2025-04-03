@@ -34,12 +34,25 @@ function check_all {
     "$0" check "${MAPFILE[@]}"
 }
 
+function check_git {
+    if ! git ls-files '?' --format=test 1>/dev/null 2>&1; then
+        if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+            echo >&2 'Not in a Git repository.'
+        else
+            echo >&2 'You need a version of Git whose "ls-files" sub-command supports the "--format" option.'
+        fi
+        exit 1
+    fi
+}
+
 case "$1" in
     "")
+        check_git
         check_all
         exit
         ;;
     ls-tracked)
+        check_git
         git ls-files --format="%(objectmode):%(path)" |
             grep -E '^100755:' | # Only executable files
             while IFS=: read -r mode path; do
