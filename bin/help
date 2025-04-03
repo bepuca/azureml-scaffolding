@@ -24,7 +24,7 @@ from typing import Final
 #
 #     #? [Utility] This is a super duper useful command
 
-default_help_line_pattern: Final = re.compile(r"^# ?\? *(?:\[([^\]]+)\] *)?(.+)")
+default_help_line_pattern: Final = re.compile(r"^# ?\? *(?:\[(?P<group>[^\]]+)\] *)?(?P<help>.+)")
 
 DEFAULT_GROUP = "Misc"
 
