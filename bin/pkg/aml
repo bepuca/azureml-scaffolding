@@ -4,7 +4,6 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-echo "YOLO" >&2
 
 function usage {
     cat<<EOF
@@ -28,6 +27,7 @@ EOF
 }
 
 file="azure-ml-job.yaml"
+exp=""
 while :; do
     case $1 in
         -h|--help) usage; exit ;;
@@ -49,6 +49,15 @@ while :; do
             file=$2
             shift
             ;;
+        -e|--exp)
+            if [[ -z "$2" ]]; then
+                echo>&2 "Missing value for --exp."
+                usage >&2
+                exit 1
+            fi
+            exp=$2
+            shift
+            ;;
         *) break ;;
     esac
     shift
@@ -63,8 +72,28 @@ package=$1
 
 bin/chkenv "AZUREML_WORKSPACE" "AZUREML_RESOURCE_GROUP"
 
-source bin/lib.sh  # import: prep_run, run_aml
+source bin/utils/lib.sh  # import: prep_run, run_aml
 read -r run_name run_dir <<< "$(prep_run "$package")"
 bin/pkg/iso "$package" "$run_dir"
 
-run_aml "$run_name" "$run_dir" "$file" "$xargs"
+run_args=("$run_name" "$run_dir" "$file" "$xargs")
+
+if [[ -z "$exp" ]]; then
+    # If no experiment is provided, run the job from current branch
+    run_aml "${run_args[@]}"
+    exit
+fi
+
+bin/chkenv "EXPERIMENTS_BRANCH"
+
+commit_id=$(bin/utils/prep-exp --exp-ref "$EXPERIMENTS_BRANCH" "$exp")
+curr_branch=$(git rev-parse --abbrev-ref HEAD)
+git checkout "$EXPERIMENTS_BRANCH"
+
+if run_aml "${run_args[@]}"; then
+    # Push commit to experiment branch only if job submission succeeded
+    git push "origin" "$commit_id:$EXPERIMENTS_BRANCH"
+fi
+
+# Restore working directory to the original branch.
+git checkout "$curr_branch"

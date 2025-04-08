@@ -4,6 +4,7 @@ if [ "${BASH_SOURCE[0]}" = "$0" ]; then
     exit 1
 fi
 
+# Name a run and create its directory
 prep_run() {
     bin/chkenv "RUNS_PATH"
     run_group=$1  # usually package or pipeline name
@@ -15,6 +16,7 @@ prep_run() {
     echo "$run_name" "$run_dir"
 }
 
+# Execute a package in its isolated environment
 run_local() {
     package=$1
     uv run \
@@ -24,6 +26,7 @@ run_local() {
         -m "${package//-/_}"
 }
 
+# Submit a job to AzureML
 run_aml() {
     bin/chkenv "AZUREML_WORKSPACE" "AZUREML_RESOURCE_GROUP"
 
