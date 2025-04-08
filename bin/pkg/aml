@@ -77,7 +77,6 @@ read -r run_name run_dir <<< "$(prep_run "$package")"
 bin/pkg/iso "$package" "$run_dir"
 
 run_args=("$run_name" "$run_dir" "$file" "$xargs")
-
 if [[ -z "$exp" ]]; then
     # If no experiment is provided, run the job from current branch
     run_aml "${run_args[@]}"
