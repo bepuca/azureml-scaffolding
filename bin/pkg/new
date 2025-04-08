@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+#? [Package] Initialize new package in the project
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+function usage {
+    cat<<EOF
+Initialize new package in the project
+
+Usage: $0 PACKAGE
+
+Options:
+    -h, --help            Show this help message and exit
+
+Arguments:
+  PACKAGE  Name of the new package.
+
+The script will create a new package directory in the "$PKGS_PATH" directory
+using the .package_template as a template. It will also add the new package
+to the uv workspace and install it to the local environment.
+EOF
+}
+
+bin/chkenv "PKGS_PATH"
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [ $# -eq 0 ]; then
+    echo>&2 "PACKAGE not provided."; usage>&2; exit 1;
+fi
+if [ $# -ne 1 ]; then
+    echo>&2 "1 argument expected, $# provided"; usage>&2; exit 1;
+fi
+
+template_name="package-template"
+pkg=${1//_/-}  # package name always uses dashes
+pkg_dir="$PKGS_PATH/$pkg"
+
+# create new package from the template
+cp -r ".$template_name" "$pkg_dir"
+mv "$pkg_dir/src/${template_name//-/_}" "$pkg_dir/src/${pkg//-/_}"
+
+# use default repo Dockerfile for the package
+env_dir="$pkg_dir/environment"
+mkdir -p "$env_dir"
+cp "Dockerfile" "$env_dir/Dockerfile"
+
+# rename all references to package_template to the name of the new package
+git add "$pkg_dir"  # ensure git ls-files finds them
+git ls-files "$pkg_dir" | while read -r file; do
+    sed -i \
+        -e "s/$template_name/$pkg/g" \
+        -e "s/${template_name//-/_}/${pkg//-/_}/g" \
+        "$file"
+done
+git restore --staged "$pkg_dir"  # revert so user chooses what to commit
+
+# add package to uv workspace and install in env
+uv add "$pkg"

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+#? [Data] List data in a Blob Storage Container
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+function usage {
+    cat<<EOF
+List data in Blob Storage Container
+
+Usage: $0 ACCOUNT CONTAINER [PREFIX]
+
+Arguments:
+  ACCOUNT    Name of the Blob Storage Account to inspect.
+  CONTAINER  Name of the Blob Storage Container to inspect.
+  PREFIX     Optional prefix to filter the list of blobs.
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [[ $# -lt 2 || $# -gt 3 ]]; then
+    echo>&2 "1 or 2 arguments expected, but $# supplied."
+    usage >&2
+    exit 1
+fi
+
+account=$1
+container=$2
+prefix=${3:-""}
+
+source bin/env container.env
+
+args="
+    --auth-mode login
+    --account-name $account
+    --container $container
+    --query [].name
+    --output table
+"
+
+if [[ -n "$prefix" ]]; then
+    args+="--prefix $prefix"
+fi
+
+echo "$args" | xargs az storage blob list

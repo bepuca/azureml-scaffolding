@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+#? Show this help
+
+import os
+import re
+from collections import OrderedDict
+from collections.abc import Iterable, Iterator
+from dataclasses import dataclass
+from enum import Enum
+from itertools import groupby
+from operator import itemgetter
+from os import fspath
+from pathlib import Path
+from typing import Final
+
+# The help pattern (in pseudo-BNF below) is used to extract the description of a
+# command:
+#
+#   HELP        ::= "#" (" ") "?" ( "[" GROUP "]" ) DESCRIPTION
+#   GROUP       ::= any character except "]"
+#   DESCRIPTION ::= any character
+#
+# Example:
+#
+#     #? [Utility] This is a super duper useful command
+
+default_help_line_pattern: Final = re.compile(r"^# ?\? *(?:\[(?P<group>[^\]]+)\] *)?(?P<help>.+)")
+
+DEFAULT_GROUP = "Misc"
+
+
+def scan_commands(
+    files: Iterable[Path],
+    *,
+    help_line_pattern: re.Pattern[str] | None = None,
+    group_index: str | int = 1,
+    help_index: str | int = 2,
+    default_group: str = DEFAULT_GROUP,
+) -> Iterator[tuple[Path, str, str]]:
+    """
+    Scan the files, yielding the file, group, and help text.
+    """
+    help_line_pattern = help_line_pattern or default_help_line_pattern
+    for file in files:
+        with file.open() as lines:
+            match = next((m for line in lines if (m := help_line_pattern.match(line))), None)
+        group, help_ = (
+            ((match.group(group_index) or default_group).strip(), match.group(help_index).strip())
+            if match
+            else (default_group, "")
+        )
+        yield (file, group, help_)
+
+
+@dataclass(frozen=True)
+class Command:
+    path: Path
+    path_str: str
+    group: str
+    group_key: str
+    help: str
+
+
+def main() -> None:
+    """
+    Print the description of all the commands (executable scripts) in the same
+    directory as this script, including sub-directories. Commands are grouped.
+
+    The description of a command is the first line of the file that starts with
+    the `help_pattern`. A typical help line looks like this:
+
+        "# ?" ( "[" GROUP "]" ) DESCRIPTION
+
+    The GROUP is optional and is used to group commands together. If no GROUP is
+    provided, the command is grouped under a default group.
+    """
+    scan_root_path = Path(__file__).parent
+
+    commands = [
+        Command(
+            path=file,
+            path_str=fspath(file.relative_to(scan_root_path.parent)),
+            group=group,
+            group_key=group.lower(),  # normalized for grouping/sorting
+            help=help_,
+        )
+        for file, group, help_ in scan_commands(
+            path
+            for path in scan_root_path.rglob("*")
+            if path.is_file() and os.access(path, os.X_OK)
+        )
+        if fspath(file) != __file__  # exclude this file
+    ]
+
+    max_file_name_length = max(len(c.path_str) for c in commands)
+
+    commands_by_group = OrderedDict(
+        (group, list(m[-1] for m in members))
+        for group, members in groupby(
+            # sort by group, then by path
+            sorted(((c.group_key, c.path_str, c) for c in commands), key=itemgetter(0, 1)),
+            key=itemgetter(0),
+        )
+    )
+
+    for i, (_, commands) in enumerate(commands_by_group.items()):
+        if i > 0:
+            cprint()
+
+        if len(commands_by_group) > 1:
+            cprint(f"# {commands[0].group}", color=Color.BLUE)
+            cprint()
+
+        for command in commands:
+            cprint(command.path_str, color=Color.CYAN, end="")
+            cprint(f"{' ' * (max_file_name_length + 2 - len(command.path_str))} {command.help}")
+
+
+class Color(Enum):
+    CYAN = "\033[96m"
+    BLUE = "\033[94m"
+    DEFAULT = "\033[0m"
+
+
+def cprint(
+    message: str = "",
+    color: Color = Color.DEFAULT,
+    *,
+    end: str | None = "\n",
+) -> None:
+    print(color.value + message if os.isatty(1) else message, end=end)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#? [Development] Run pytest for the project with coverage
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+source bin/env container.env
+bin/chkenv "CODE_PATH"
+
+uv run pytest --cov "$CODE_PATH"

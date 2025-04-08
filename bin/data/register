@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#? [Data] Register a data asset in AzureML
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+function usage {
+    cat<<EOF
+Register a data asset in AzureML
+
+Usage: $0 SPECFILE
+
+Arguments:
+  SPECFILE  Local path to the data asset YAML specification file.
+            Absolute or relative to the project root.
+
+The YAML reference docs: https://aka.ms/ml-cli-v2-data-yaml-reference.
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [[ $# -ne 1 ]]; then
+    echo>&2 "Exactly 1 arguments expected, but $# supplied."
+    usage >&2
+    exit 1
+fi
+
+specfile=$1
+
+source bin/env container.env
+bin/chkenv AZUREML_WORKSPACE AZUREML_RESOURCE_GROUP
+
+az ml data create --file "$specfile" \
+    --workspace-name "$AZUREML_WORKSPACE" \
+    --resource-group "$AZUREML_RESOURCE_GROUP"

@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+#? Trigger a package experiment in Azure ML from a commit in experiments branch.
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+function usage {
+    cat<<EOF
+Trigger a package experiment in Azure ML from a commit in experiments branch.
+
+Usage: $0 [options] FLOW MESSAGE
+
+Options:
+  -h, --help         Show this help message and exit.
+
+Arguments:
+    PACKAGE  Name of the package to execute for the experiment.
+    MESSAGE  Subject for the message of the commit to run. Useful to identify
+             the experiment associated with the commit.
+
+An experiment is an execution in Azure ML for the purpose of validating an
+hypothesis. For better traceability, we create a commit to
+associate with the experiment that contains all the changes, but only the
+changes, the current branch has since the last commit in the main branch.
+
+Then, we trigger the run from this commit in the experiments branch ensuring
+a link to it is available in the Azure ML UI.
+
+If submission succeeds, the commit is pushed to the remote experiments branch.
+EOF
+}
+
+
+function invalid_usage {
+    echo >&2 "$1"
+    usage >&2
+    exit 1
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break
+    esac
+    shift
+done
+
+bin/chkenv \
+    AZUREML_WORKSPACE \
+    AZUREML_RESOURCE_GROUP \
+    EXPERIMENTS_BRANCH
+
+if [ -z "$1" ]; then invalid_usage "Missing or empty argument: PACKAGE"; fi
+package=$1
+shift
+if [ -z "$1" ]; then invalid_usage "Missing or empty argument: MESSAGE"; fi
+message=$1
+shift
+
+if [ $# -ne 0 ]; then invalid_usage "Unexpected argument: $1"; fi
+
+# Prepare the experiment commit.
+commit_id=$(bin/dev/prep-exp --exp-ref "$EXPERIMENTS_BRANCH" "$message")
+
+# Trigger experiment from the experiments branch
+curr_branch=$(git rev-parse --abbrev-ref HEAD)
+git checkout "$EXPERIMENTS_BRANCH"
+
+if bin/pkg/aml "$package"; then
+    # Push commit to experiment branch only if job submission succeeded
+    git push "origin" "$commit_id:$EXPERIMENTS_BRANCH"
+fi
+
+# Restore working directory to the original branch.
+git checkout "$curr_branch"
