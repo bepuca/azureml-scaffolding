@@ -1,60 +1,16 @@
-[project]
-name = "scaffolding"
-version = "0.2.0"
-description = ""
-readme = "README.md"
-requires-python = "==3.12.*"
-dependencies = [
-    "example",
-    "example-reader-step",
-    "example-writer-step",
-    "shared",
-]
-
-[dependency-groups]
-dev = [
-    "pytest  ==8.3.*",
-    "pytest-cov ==5.0.*",
-    "python-dotenv  ==1.0.*",
-    "pyright  ==1.1.*",
-    "ruff  ==0.8.*",
-    "pre-commit  ==3.8.*"
-]
-
-[tool.pyright]
-pythonVersion = "3.12"
-typeCheckingMode = "basic"
-
-[tool.ruff]
-src = ["packages/**/src"]
+[tool.black]
 line-length = 100
-target-version = "py312"
-show-fixes = true
-lint.select = [
-    "B0",     # bugbear
-    "E",      # pycodestyle
-    "F",      # Pyflakes
-    "I",      # import order
-    "UP",     # pyupgrade
-    "RUF100", # valid noqa annnotations
-]
+include = '\.pyi?$'
+exclude = '''
+    /(
+        \.git
+      | _build
+      | build
+      | dist
+    ) '''
+
+[tool.isort]
+profile = "black"
 
 [tool.pytest.ini_options]
-testpaths = ["packages"]
-addopts = "--strict-markers --import-mode=importlib"
-
-[tool.coverage.run]
-omit = ["*/tests/*"]
-
-[tool.uv]
-environments = ["sys_platform == 'linux'"]
-
-[tool.uv.workspace]
-members = ["packages/*"]
-
-[tool.uv.sources]
-shared = { workspace = true }
-example = { workspace = true }
-example-writer-step = { workspace = true }
-example-reader-step = { workspace = true }
-
+# None for the moment

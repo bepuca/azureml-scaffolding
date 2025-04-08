@@ -1,0 +1,25 @@
+# To prevent unnecessary files from being included in
+# the AzureML code snapshot, make an ignore file (.amlignore).
+# Place this file in the Snapshot directory and add the
+# filenames to ignore in it. The .amlignore file uses
+# the same syntax and patterns as the .gitignore file.
+
+# This script
+.amlignore
+
+# Local scripts are personal testing ground for each dev
+local.py
+
+# Unit tests are irrelevant for AzureML jobs
+tests/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Unit test cache
+.pytest_cache/
+
+# macOS stuff
+**/.DS_Store

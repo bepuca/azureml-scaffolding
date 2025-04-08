@@ -1,0 +1,10 @@
+# Environment for project ops (format, lint, docs)
+name: <project_name>
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.12
+  - black=23.7.0
+  - flake8=6.0.0
+  - isort=5.12.0
+  - pre_commit=3.3.3

@@ -1,0 +1,14 @@
+Command:
+    terminal            : Spins interactive terminal inside Docker environment for experiment.
+        This command is useful to get a working terminal inside the environment of the experiment
+        to investigate things like package installed or folder structure interactively. It
+        ensures the files available inside are the same that are available in Azure ML when
+        submitting a job.
+
+Arguments:
+    exp [Required] : Name of the experiment for which to spin the terminal; it is defined by the
+                     folder name containing the experiment.
+
+Examples:
+    Spin up a terminal for an experiment
+        make terminal exp=example_experiment

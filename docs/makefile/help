@@ -1,0 +1,2 @@
+Command:
+    help                : Show this help. Call `make help cmd=<cmd>` for detailed help.

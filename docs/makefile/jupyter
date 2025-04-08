@@ -1,0 +1,22 @@
+Command:
+    jupyter             : Spins jupyter lab inside Docker environment for experiment.
+        It uses the image created in `build-exp` command for the same experiment. This command
+        makes sure all code (and only) for the experiment is available in the same way it is
+        when submitted to Azure ML through the `job` command. Additionally, the notebooks folder
+        is also mounted. This is the recommended way of working with jupyter in this project, as
+        it ensures the environment matches the one the experiment uses everywhere.
+
+Arguments:
+    exp [Required] : Name of the experiment for which to spin jupyter; it is defined by the
+                     folder name containing the experiment.
+    port           : (Default 8888) Port where jupyter runs and is exposed.
+    run-xargs      : Extra arguments to be passed to the `docker run` command. It must be a
+                     single string.
+
+Examples:
+    Spin up the default jupyter lab without any extra configuration
+        make jupyter exp=example_experiment
+
+    Spin up jupyter lab exposed in a different port (useful when host machine is already using
+    the port, like Azure ML compute instances) and allowing the use of GPUs.
+        make jupyter exp=example_experiment port=8890 run-xargs="--gpus all"

@@ -1,0 +1,25 @@
+Command:
+    local               : Executes python file inside Docker environment for experiment.
+        It is called `local` referencing that it runs in the host machine where the command is
+        called from and not in the cloud. By default, the script ran is `local.py`, which is what
+        comes predefined. This command makes sure all code (and only) for the experiment is
+        available in the same way it is when submitted to Azure ML through the `job` command.
+        This is the recommended way of executing scripts in this project for testing purposes,
+        as it makes sure the environment matches the one the experiment uses everywhere.
+
+Arguments:
+    exp [Required] : Name of the experiment for which to run script; it is defined by the folder
+                     name containing the experiment.
+    script         : (Default local.py) Python file to run. It must be inside the experiment
+                     folder. If not at root level of experiment, the full path from the experiment
+                     root level has to be passed.
+    run-xargs      : Extra arguments to be passed to the `docker run` command. It must be a
+                     single string.
+    script-xargs   : Extra arguments to be passed to the script. It must be a single string.
+
+Examples:
+    Run default local.py without extra configuration
+        make local exp=example_experiment
+
+    Run custom file that requires an extra input and allow use of GPUs
+        make local exp=example_experiment run-xargs="--gpus all" script-xargs="--greeting Welcome"
