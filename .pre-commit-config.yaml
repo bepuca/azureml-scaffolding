@@ -7,7 +7,7 @@ repos:
     args: [check]
     language: script
     files: ^.*\.sh|^bin/
-    exclude: ^.*\.yaml
+    exclude: ^.*\.yaml|^.env.*
   - id: python
     name: Lint Python
     entry: bin/lint/py
