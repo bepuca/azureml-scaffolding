@@ -1,52 +1,100 @@
 #!/usr/bin/env bash
 #? [Environment] Exports variables from an environment file
 
-default_env="container.env"
-if [[ "$1" == '-h' || "$1" == '--help' ]]; then
+__env_base_dir_path=$(dirname "${BASH_SOURCE[0]}")
+__env_default_envfile=$__env_base_dir_path/../.env.local:$__env_base_dir_path/../.env
 
-  cat<<EOF
+if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
+    # Process arguments only if script isn't sourced
+    if [[ "$1" == '-h' || "$1" == '--help' ]]; then
+        cat<<EOF
 Exports variables from an environment file.
 
 Usage:
   source ${BASH_SOURCE[0]} [-h|--help]
-  source ${BASH_SOURCE[0]} [FILE]
+  source ${BASH_SOURCE[0]}
 
-Arguments:
+An environment file contains key-value pairs, one per line, in the format:
 
-  FILE  Path to the file containing the variables to export.
-        Default is: "$(dirname "${BASH_SOURCE[0]}")/../container.env"
+  VAR1=value1
+  VAR2=value2
 
-An environment file is essentially a Bash script that sets variables and all
-of which will be automatically exported into the environment of the current
-shell. For proper operation, it should only contain variable assignments,
-comments and blank lines for formatting. While it is a Bash script, it is
-not required to have executable permissions or a shebang line because it will
-be sourced.
+The script will export these variables into the current shell. If a variable
+is already defined, it will be skipped. Variable substitution is also supported
+in the values, using the syntax \${VAR}.
+
+Blank lines and comments (lines starting with #) in an environment file are
+ignored.
+
+Take note of the following:
+
+- Values that span multiple lines are not supported.
+- Quoting of values has no special meaning; they are treated as literals.
+
+If the environment variable ENVFILE is defined, it will be used instead to
+specify the path to one or more environment files, separated by colon (:).
+If a file does not exist, it will be skipped. The files will be used in the
+order they are specified. As a result, variables defined in earlier files will
+take precedence because those defined in later files will be skipped.
+
+If ENVFILE is not defined, the following default value will be assumed:
+
+  $__env_default_envfile
+
+Therefore, by default, the script will look for an environment file named
+".env" in the base directory, followed by ".env.local". The former is required,
+but not the latter.
+
+If ENVDEBUG is set to some non-blank value, debug information will be printed
+to standard error, which can be useful for debugging and troubleshooting.
 EOF
-
-elif [ $# -eq 0 ]; then # no arg?
-
-  # Re-invoke this script with the default environment file
-  # shellcheck disable=SC1090
-  . "${BASH_SOURCE[0]}" "$(dirname "${BASH_SOURCE[0]}")/../$default_env"
-
-else
-
-  if [ ! -f "$1" ]; then
-    echo>&2 "File not found: $1"
-    # If script was sourced then return, otherwise exit
-    # shellcheck disable=SC2317
-    return 1 2>/dev/null || exit 1
-  fi
-
-  if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
-    echo>&2 "Warning! Variables will not be defined or exported into your current shell unless
-        this script is sourced as follows: source ${BASH_SOURCE[0]}"
-  fi
-
-  set -a # Automatically export all variables
-  # shellcheck disable=SC1090
-  source "$1"
-  set +a # Stop exporting variables
-
+        exit 0
+    elif [[ $# -gt 0 ]]; then
+        echo >&2 "Error: Invalid argument: $1"
+        exit 1
+    fi
 fi
+
+ENVFILE=${ENVFILE:-$__env_default_envfile}
+
+# Split the colon-separated list of files into an array
+IFS=':' read -r -a __env_files <<< "$ENVFILE"
+
+if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
+    echo >&2 "Warning! Variables will not be defined or exported into your current shell unless this script is sourced as follows: source ${BASH_SOURCE[0]}"
+fi
+
+__env_debug() {
+    [ -n "$ENVDEBUG" ]
+}
+
+__env_load() {
+    local __env_file __env_line __env_var __env_val
+    __env_file=$1
+    while IFS= read -r __env_line; do
+        if [[ "$__env_line" =~ ^[[:space:]]*# || "$__env_line" =~ ^[[:space:]]*$ ]]; then
+            continue # Skip comments and blank lines
+        fi
+        # Split line by "=" into variable name and value
+        IFS='=' read -r __env_var __env_val <<< "$__env_line"
+        __env_var=${__env_var#"${__env_var%%[![:space:]]*}"} # Remove leading whitespace
+        __env_var=${__env_var%"${__env_var##*[![:space:]]}"} # Remove trailing whitespace
+        if [ ! -v "$__env_var" ]; then # Only export if variable is not already defined
+            __env_val=$(envsubst <<< "$__env_val") # Perform variable substitution in value
+            __env_debug && echo >&2 "$__env_file: exported: $__env_var=$__env_val"
+            export "$__env_var=$__env_val"
+        elif __env_debug; then
+            echo >&2 "$__env_file: skipped: $__env_var (already defined)"
+        fi
+    done < "$__env_file"
+}
+
+for __env_file in "${__env_files[@]}"; do
+    if [ -f "$__env_file" ]; then
+        __env_load "$__env_file"
+    elif __env_debug; then
+        echo >&2 "Skipping non-existent file: $__env_file"
+    fi
+done
+
+unset "${!__env_@}" # Clean-up our variables for when sourced
