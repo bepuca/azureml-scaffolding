@@ -4,7 +4,7 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-function usage {
+usage() {
     cat<<EOF
 Download data from Blob Storage Container in the data directory.
 
@@ -29,17 +29,13 @@ while :; do
     shift
 done
 
-if [[ $# -ne 3 ]]; then
-    echo>&2 "Exactly 3 arguments expected, but $# supplied."
-    usage >&2
-    exit 1
-fi
+. bin/lib/utils.sh
+if [[ $# -ne 3 ]]; then utils::invalid_usage "Exactly 3 arguments expected, but $# supplied." >&2; fi
 
 account=$1
 container=$2
 pattern=$3
 
-source bin/env container.env
 bin/chkenv TENANT_ID
 
 AZCOPY_AUTO_LOGIN_TYPE=azcli AZCOPY_TENANT_ID="$TENANT_ID" azcopy copy \

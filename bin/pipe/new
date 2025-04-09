@@ -4,22 +4,23 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-function usage {
+usage() {
     cat<<EOF
 Initialize new pipeline in the project
 
 Usage: $0 [--no-packages] PIPELINE
 
 Options:
-    -h, --help            Show this help message and exit
-    --no-packages         Do not create new example packages.
+    -h, --help     Show this help message and exit
+    --no-packages  Do not create new example packages.
 
 Arguments:
   PIPELINE  Name of the new pipeline.
 
-The script will create a new AzureML pipeline YAML in the "$PIPES_PATH"
-directory using the .pipeline-template/example-pipeline.yaml as a template.
-By default, it will create two new packages: reader-step and writer-step,
+The script will create a new AzureML pipeline YAML in the "\$PIPES_PATH"
+directory using the '.pipeline-template/example-pipeline.yaml' as a template.
+
+By default, it will create two new packages: 'reader-step' and 'writer-step',
 which are referenced by the pipeline to illustrate how a package to be used
 as component looks like. This behavior can be suppressed with --no-packages.
 EOF
@@ -37,12 +38,8 @@ while :; do
     shift
 done
 
-if [ $# -eq 0 ]; then
-    echo>&2 "PIPELINE not provided."; usage>&2; exit 1;
-fi
-if [ $# -ne 1 ]; then
-    echo>&2 "1 argument expected, $# provided"; usage>&2; exit 1;
-fi
+. bin/lib/utils.sh
+if [ $# -eq 0 ]; then utils::invalid_usage "PIPELINE not provided."; fi
 
 template_name="pipeline-template"
 template_dir=".$template_name"

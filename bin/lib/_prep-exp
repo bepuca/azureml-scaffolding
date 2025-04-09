@@ -4,19 +4,19 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-function usage {
+usage() {
     cat<<EOF
 Prepare git state for proper experiment tracing.
 
 Usage: $0 [options] MESSAGE
 
 Options:
-  -h, --help         Show this help message and exit.
-  --remote NAME      Name of the remote to use. Default is "origin".
-  --main-ref REF     Reference to the main branch. Default is "main".
-  --exp-ref REF      Branch name for experiments. Default is "experiments".
-  --src-ref REF      Reference to use as source for the experiment. Default is
-                     the "HEAD" of the current branch.
+  -h, --help      Show this help message and exit.
+  --remote NAME   Name of the remote to use. Default is "origin".
+  --main-ref REF  Reference to the main branch. Default is "main".
+  --exp-ref REF   Branch name for experiments. Default is "experiments".
+  --src-ref REF   Reference to use as source for the experiment. Default is
+                  the "HEAD" of the current branch.
 
 Arguments:
     MESSAGE  Subject for the message of the commit to run. Useful to identify

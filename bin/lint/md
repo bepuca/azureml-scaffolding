@@ -5,7 +5,7 @@ set -eo pipefail
 cd "$(dirname "$0")/../.."
 
 # Usage documentation
-function usage {
+usage() {
 	cat<<EOF
 Lints Markdown files and validate their links
 Usage: $0 [--fix]

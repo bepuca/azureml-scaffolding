@@ -4,27 +4,25 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-function usage {
+usage() {
     cat<<EOF
 Execute package locally as it would in AzureML
 
 Usage: $0 PACKAGE
 
 Options:
-    -h, --help         Show this help message and exit.
+    -h, --help  Show this help message and exit.
 
 Arguments:
-  PACKAGE  Directory of the package relative to "$PKGS_PATH".
+  PACKAGE  Name of the package directory in "\$PKGS_PATH".
 
-This script ensures the package is isolated with the minimum artifacts and
+This script ensures the package is isolated with the minimum files necessary and
 is executed locally as it would be in AzureML. The execution is driven by the
 usual package entrypoint '__main__.py'. It is the responsibility of the
 user to define the entrypoint so it does not require command line arguments but
 executes an equivalent payload of what is expected in AzureML.
 EOF
 }
-
-bin/chkenv "PKGS_PATH"
 
 while :; do
     case $1 in
@@ -34,11 +32,8 @@ while :; do
     shift
 done
 
-if [ $# -eq 0 ]; then
-    echo>&2 "Package not provided."
-    usage
-    exit 1
-fi
+. bin/lib/utils.sh
+if [ $# -eq 0 ]; then utils::invalid_usage "Package not provided."; fi
 package=$1
 
 . bin/lib/run.sh

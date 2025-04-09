@@ -1,47 +1,40 @@
 #!/usr/bin/env bash
-#? [Pipeline] Isolate artifacts for an package run in a separate directory
+#? [Pipeline] Isolate files for pipeline run in a separate directory
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-function usage {
+usage() {
     cat<<EOF
-Isolate artifacts for an package run in a separate directory
+Isolate files for an pipeline run in a separate directory
 
-Usage: $0 PACKAGE RUN_NAME
+Usage: $0 PIPELINE RUN_NAME
 
 Options:
-    -h, --help            Show this help message and exit
+    -h, --help  Show this help message and exit
 
 Arguments:
-  PACKAGE     Directory of the package relative to "$PKGS_PATH"
-  RUN_NAME    Name of the run
+  PIPELINE  Name of pipeline YAML (without extension) in "\$PIPES_PATH".
+  RUN_DIR   Path to the run directory where to isolate to.
 
-The goal is to isolate the absolute minimum to run a package. This aims to
-make the run reproducible and portable as well as easy to reason about in
-the future.
+The goal is to isolate the absolute minimum to have a successful execution.
+This aims to make the run reproducible and portable as well as easy to reason
+about in the future.
 
-The run directory will be created in "$RUNS_PATH/PACKAGE/RUN_NAME".
-The run directory will contain all files inside PACKAGE and will
-add the 'shared' code and the environment files. Thus, the final structure:
-  <run_name>
-  ├── .amlignore
-  ├── azure-ml-job.yaml
-  ├── shared/
-  ├── tests/
-  ├── environment/
-  │   ├── Dockerfile
-  │   └── requirements.txt
-  └── <package>
-      ├── __main__.py
-      └── ...
+Each step is expected to be named after the package (but dashes are replaced by
+underscores).
 
-The requirements.txt will contain only the dependencies specified for the
-package.
+RUN_DIR will contain the PIPELINE YAML file and each package as isolated by
+'bin/pkg/iso'. Thus, the final structure:
+<run_name>
+├── <PIPELINE>.yaml
+├── <package1>/
+│   └── ...
+└── <package2>/
+    └── ...
 EOF
 }
 
-bin/chkenv "PKGS_PATH"
 
 while :; do
     case $1 in
@@ -51,20 +44,18 @@ while :; do
     shift
 done
 
-if [ $# -ne 2 ]; then
-    echo>&2 "Both PACKAGE and RUN_NAME required."
-    usage>&2
-    exit 1
-fi
+. bin/lib/utils.sh
+if [ $# -ne 2 ]; then utils::invalid_usage "Both PIPELINE and RUN_DIR required."; fi
 
+bin/chkenv "PKGS_PATH" "PIPES_PATH"
 pipeline=$1
 run_dir=$2
-if [[ ! -d "$PKGS_PATH/$package" ]]; then
-    echo>&2 "Package directory '$PKGS_PATH/$package' does not exist."
+
+pipeline_path="./$PIPES_PATH/$pipeline.yaml"
+if [[ ! -f "$pipeline_path" ]]; then
+    echo>&2 "Pipeline file '$pipeline_path' does not exist."
     exit 1
 fi
-
-pipeline_path="./pipelines/$pipeline.yaml"
 
 output=$(uv run python - <<EOF
 import yaml
@@ -81,5 +72,5 @@ while read -r package; do
 done <<< "$output"
 cp "$pipeline_path" "$run_dir"
 
-# log components to stdout to be available outside
+# log components to stdout to be available to the caller, needed for local run
 echo "$output"

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-#? [Linting] Format, line and type check all Python files in ${CODE_PATH}
+#? [Linting] Format, line and type check all Python files in $PKGS_PATH
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
 function usage {
     cat<<EOF
-Format, line and type check all Python files in ${CODE_PATH}
+Format, line and type check all Python files in \$PKGS_PATH
 
 Usage: $0
 EOF
@@ -20,7 +20,6 @@ while :; do
     shift
 done
 
-source bin/env container.env
 bin/chkenv PKGS_PATH
 
 uv run ruff format "$PKGS_PATH"

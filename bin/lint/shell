@@ -29,7 +29,7 @@ Example:
 EOF
 }
 
-function check_all {
+check_all() {
     mapfile -t < <("$0" ls-tracked) # Read into an array
     # If the array is empty, print a message and exit
     if [ ${#MAPFILE[@]} -eq 0 ]; then
@@ -39,7 +39,7 @@ function check_all {
     "$0" check "${MAPFILE[@]}"
 }
 
-function check_git {
+check_git() {
     if ! git ls-files '?' --format=test 1>/dev/null 2>&1; then
         if ! git rev-parse --is-inside-work-tree &>/dev/null; then
             echo >&2 'Not in a Git repository.'
