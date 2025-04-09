@@ -32,7 +32,7 @@ in \$EXPERIMENTS_BRANCH. That commit is accessible from the AzureML job.
 EOF
 }
 
-. bin/utils/utils.sh
+. bin/lib/utils.sh
 exp=""
 while :; do
     case $1 in
@@ -55,4 +55,4 @@ shift
 opts=("--pipeline")
 if [[ -n "$exp" ]]; then opts+=("--exp" "$exp"); fi
 
-bin/utils/_aml "${opts[@]}" "$pipeline" "$pipeline.yaml" "$@"
+bin/lib/_aml "${opts[@]}" "$pipeline" "$pipeline.yaml" "$@"

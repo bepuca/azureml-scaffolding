@@ -41,7 +41,7 @@ EOF
 }
 
 
-. bin/utils/utils.sh
+. bin/lib/utils.sh
 while :; do
     case $1 in
         -h|--help) usage; exit ;;

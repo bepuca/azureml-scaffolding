@@ -37,7 +37,7 @@ in \$EXPERIMENTS_BRANCH. That commit is accessible from the AzureML job.
 EOF
 }
 
-. bin/utils/utils.sh
+. bin/lib/utils.sh
 exp=""
 pipeline=false
 while :; do
@@ -71,7 +71,7 @@ fi
 
 bin/chkenv "AZUREML_WORKSPACE" "AZUREML_RESOURCE_GROUP"
 
-source bin/utils/run.sh
+source bin/lib/run.sh
 read -r run_name run_dir <<< "$(run::prepare "$artifact")"
 if [[ "$pipeline" == true ]]; then
     bin/pipe/iso "$artifact" "$run_dir" > /dev/null
@@ -93,7 +93,7 @@ else
     # If an experiment name is provided, track changes and run from experiments branch
     bin/chkenv "EXPERIMENTS_BRANCH"
 
-    commit_id=$(bin/utils/_prep-exp --exp-ref "$EXPERIMENTS_BRANCH" "$exp")
+    commit_id=$(bin/lib/_prep-exp --exp-ref "$EXPERIMENTS_BRANCH" "$exp")
     curr_branch=$(git rev-parse --abbrev-ref HEAD)
     git checkout "$EXPERIMENTS_BRANCH"
 

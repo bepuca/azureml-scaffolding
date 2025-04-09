@@ -35,7 +35,7 @@ in \$EXPERIMENTS_BRANCH. That commit is accessible from the AzureML job.
 EOF
 }
 
-. bin/utils/utils.sh
+. bin/lib/utils.sh
 exp=""
 file="azure-ml-job.yaml"
 while :; do
@@ -64,4 +64,4 @@ shift
 opts=()
 if [[ -n "$exp" ]]; then opts+=("--exp" "$exp"); fi
 
-bin/utils/_aml "${opts[@]}" "$artifact" "$file" "$@"
+bin/lib/_aml "${opts[@]}" "$artifact" "$file" "$@"

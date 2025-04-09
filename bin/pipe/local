@@ -41,7 +41,7 @@ if [ $# -eq 0 ]; then
 fi
 pipeline=$1
 
-. bin/utils/run.sh
+. bin/lib/run.sh
 read -r _ run_dir <<< "$(run::prepare "$pipeline")"
 packages="$(bin/pipe/iso "$pipeline" "$run_dir")"
 

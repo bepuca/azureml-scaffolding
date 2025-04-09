@@ -41,7 +41,7 @@ if [ $# -eq 0 ]; then
 fi
 package=$1
 
-. bin/utils/run.sh
+. bin/lib/run.sh
 read -r _ run_dir <<< "$(run::prepare "$package")"
 bin/pkg/iso "$package" "$run_dir"
 
