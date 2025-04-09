@@ -1,0 +1,20 @@
+Command:
+    test                : Runs pytest inside Docker environment for experiment.
+        Run pytest on all tests found inside the experiment folder and inside the common folder.
+        Note that for this command to run, you need pytest in your docker image. This is the
+        recommended way of testing in this project, as it makes sure the environment matches the
+        one the experiment uses everywhere.
+
+Arguments:
+    exp [Required] : Name of the experiment for which to run tests; it is defined by the folder
+                     name containing the experiment.
+    run-xargs      : Extra arguments to be passed to the `docker run` command. It must be a
+                     single string.
+    test-xargs     : Extra arguments to be passed to pytest. It must be a single string.
+
+Examples:
+    Run tests without extra configuration
+        make test exp=example_experiment
+
+    Run tests using GPUs and stop after first failure
+        make test exp=example_experiment run-xargs="--gpus all" test-xargs="-x"

@@ -1,0 +1,19 @@
+Command:
+    build-exp           : Builds experiment environment Docker image.
+        It buils the experiment Docker image as defined by the Dockerfile inside the env folder
+        and it tags it as <experiment_name>:latest. The tagging is important because other
+        commands that make use of the image expect that naming.
+
+Arguments:
+    exp [Required] : Name of the experiment for which to build the image; it is defined by the
+                     folder name containing the experiment.
+    build-xargs    : Optional extra arguments to be passed to the `docker build` command. It should
+                     be a single string.
+
+Examples:
+    Build the image for an experiment without any extra configuration
+        make build-exp exp=example_experiment
+
+    Build the image for an experiment with some extra configuration. In this case, setting a build
+    time argument
+        make build-exp exp=example_experiment build-xargs="--build-arg MY_VAR=my_value"
