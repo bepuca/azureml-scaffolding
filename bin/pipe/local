@@ -45,9 +45,8 @@ pipeline=$1
 read -r _ run_dir <<< "$(run::prepare "$pipeline")"
 packages="$(bin/pipe/iso "$pipeline" "$run_dir")"
 
-. bin/utils/local.sh
 while read -r package; do
     pushd "$run_dir/$package/src" > /dev/null
-    local::run "$package"
+    run::local "$package"
     popd > /dev/null
 done <<< "$packages"

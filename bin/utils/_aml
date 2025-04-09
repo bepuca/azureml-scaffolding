@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#? [Library] Base script to execute a run in AzureML
+#? Base script to execute a run in AzureML
 
 set -eo pipefail
 cd "$(dirname "$0")/../.."
@@ -80,29 +80,26 @@ else
 fi
 
 aml_run() {
-    # echo "$xargs" | xargs az ml job create -f "$run_dir/$file" \
-	# --resource-group "$AZUREML_RESOURCE_GROUP" \
-    # --workspace-name "$AZUREML_WORKSPACE" \
-    # --set name="$run_name" \
-    # "${job_xargs[@]}"
-    echo "$run_dir" "$file" "$run_name" "${job_xargs[@]}"
+    az ml job create -f "$run_dir/$file" \
+	--resource-group "$AZUREML_RESOURCE_GROUP" \
+    --workspace-name "$AZUREML_WORKSPACE" \
+    --set name="$run_name" \
+    "${job_xargs[@]}"
 }
 if [[ -z "$exp" ]]; then
     # If no experiment name is provided, run the job from current branch
     aml_run
 else
-    # If an experiment name is provided, track changes and run from experiment branch
+    # If an experiment name is provided, track changes and run from experiments branch
     bin/chkenv "EXPERIMENTS_BRANCH"
 
-    . bin/utils/exp.sh
-    commit_id=$(exp::prepare --exp-ref "$EXPERIMENTS_BRANCH" "$exp")
+    commit_id=$(bin/utils/_prep-exp --exp-ref "$EXPERIMENTS_BRANCH" "$exp")
     curr_branch=$(git rev-parse --abbrev-ref HEAD)
     git checkout "$EXPERIMENTS_BRANCH"
 
     if aml_run; then
         # Push commit to experiment branch only if job submission succeeded
-        # git push "origin" "$commit_id:$EXPERIMENTS_BRANCH"
-        echo "Pushing"
+        git push "origin" "$commit_id:$EXPERIMENTS_BRANCH"
     fi
 
     # Restore working directory to the original branch.

@@ -1,3 +1,5 @@
+# Library file for functions related to runs
+
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
     echo >&2 "This script must be sourced, not executed."
     exit 1
@@ -21,6 +23,23 @@ run::prepare() {
     local run_dir="$RUNS_PATH/$run_group/$local_run_name"
     echo "$run_name" "$run_dir"
 }
+
+run::local() {
+    if [ $# -eq 0 ]; then
+        echo>&2 "PACKAGE not provided."
+        echo>&2 "Usage: ${FUNCNAME[0]} PACKAGE"
+        exit 1
+    fi
+
+    local package=$1
+    uv run \
+        --with-requirements "../environment/requirements.txt" \
+        --isolated \
+        --no-project \
+        -m "${package//-/_}"
+}
+
+
 # Create a random and memorable name for a run
 run::name() {
     # Adjectives and nouns copied from Moby project:

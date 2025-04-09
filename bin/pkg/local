@@ -45,7 +45,6 @@ package=$1
 read -r _ run_dir <<< "$(run::prepare "$package")"
 bin/pkg/iso "$package" "$run_dir"
 
-. bin/utils/local.sh
 pushd "$run_dir/src" > /dev/null
-local::run "$package"
+run::local "$package"
 popd > /dev/null

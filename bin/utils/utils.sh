@@ -1,3 +1,5 @@
+# Library file for general utility functions
+
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
     echo >&2 "This script must be sourced, not executed."
     exit 1
