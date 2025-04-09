@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#? Show this help
+# ? Show this help
 
 import os
 import re
@@ -52,6 +52,15 @@ def scan_commands(
         yield (file, group, help_)
 
 
+def should_display_help(filepath: Path) -> bool:
+    return (
+        filepath.is_file()
+        and os.access(filepath, os.X_OK)
+        and not filepath.suffix
+        and not filepath.name.startswith("_")
+    )
+
+
 @dataclass(frozen=True)
 class Command:
     path: Path
@@ -87,7 +96,7 @@ def main() -> None:
         for file, group, help_ in scan_commands(
             path
             for path in scan_root_path.rglob("*")
-            if path.is_file() and os.access(path, os.X_OK)
+            if should_display_help(path)
         )
         if fspath(file) != __file__  # exclude this file
     ]
