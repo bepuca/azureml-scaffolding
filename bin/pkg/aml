@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+#? [Package] Execute a package in AzureML
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+
+usage() {
+    cat<<EOF
+Execute a package in AzureML
+
+Usage: $0 [options] PACKAGE [-- JOB-XARGS]
+
+Options:
+    -h, --help            Show this help message and exit.
+    -f, --file FILE       Filepath for the job configuration YAML inside PACKAGE.
+                          Default: "azure-ml-job.yaml"
+    -e, --exp EXPERIMENT  Name or short description of the experiment to run.
+                          If provided, execution is tracked in \$EXPERIMENTS_BRANCH
+                          with all changes since main in commit with message EXPERIMENT.
+                          If not provided, job runs from current branch.
+    JOB-XARGS             Additional arguments to pass to the job create command.
+                          See "az ml job create --help" for more information.
+
+Arguments:
+    PACKAGE  Name of package to execute in AzureML.
+
+The script ensures the PACKAGE is isolated with the minimum necessary files to
+run successfully in its own environment. Then, the execution is submitted to
+AzureML with a run name matching the one created locally to isolate such files.
+
+If the job is submitted as an experiment - i.e. with the --exp option - a commit
+is created with the message EXPERIMENT and all changes since main are tracked
+in \$EXPERIMENTS_BRANCH. That commit is accessible from the AzureML job.
+EOF
+}
+
+. bin/lib/utils.sh
+exp=""
+file="azure-ml-job.yaml"
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        -f|--file)
+            if [[ -z "$2" ]]; then utils::invalid_usage "Missing value for --file."; fi
+            file=$2
+            shift
+            ;;
+        -e|--exp)
+            if [[ -z "$2" ]]; then utils::invalid_usage "Missing value for --exp."; fi
+            exp=$2
+            shift
+            ;;
+        *) break ;;
+    esac
+    shift
+done
+
+
+if [[ -z "$1" || "$1" == "--" ]]; then utils::invalid_usage "Missing or empty argument: PACKAGE"; fi
+artifact=$1
+shift
+
+opts=()
+if [[ -n "$exp" ]]; then opts+=("--exp" "$exp"); fi
+
+bin/lib/_aml "${opts[@]}" "$artifact" "$file" "$@"

@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+#? [Data] Download data from Azure Blob Storage
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+function usage {
+    cat<<EOF
+Download data from Blob Storage Container in the data directory.
+
+Usage: $0 ACCOUNT CONTAINER PATTERN
+
+Arguments:
+  ACOUNT     Name of the Blob Storage Account to download from.
+  CONTAINER  Name of the Blob Storage Container to download from.
+  PATTERN    The regex pattern used to filter files to download.
+             Separate multiple patterns with ;.
+
+To download a data asset, combine with bin/data/find:
+    bin/data/find NAME VERSION | xargs $0
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [[ $# -ne 3 ]]; then
+    echo>&2 "Exactly 3 arguments expected, but $# supplied."
+    usage >&2
+    exit 1
+fi
+
+account=$1
+container=$2
+pattern=$3
+
+source bin/env container.env
+bin/chkenv TENANT_ID
+
+AZCOPY_AUTO_LOGIN_TYPE=azcli AZCOPY_TENANT_ID="$TENANT_ID" azcopy copy \
+    "https://$account.blob.core.windows.net/$container" \
+    "data" \
+    --recursive --include-regex "$pattern"

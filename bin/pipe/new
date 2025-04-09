@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+#? [Pipeline] Initialize new pipeline in the project
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+function usage {
+    cat<<EOF
+Initialize new pipeline in the project
+
+Usage: $0 [--no-packages] PIPELINE
+
+Options:
+    -h, --help            Show this help message and exit
+    --no-packages         Do not create new example packages.
+
+Arguments:
+  PIPELINE  Name of the new pipeline.
+
+The script will create a new AzureML pipeline YAML in the "$PIPES_PATH"
+directory using the .pipeline-template/example-pipeline.yaml as a template.
+By default, it will create two new packages: reader-step and writer-step,
+which are referenced by the pipeline to illustrate how a package to be used
+as component looks like. This behavior can be suppressed with --no-packages.
+EOF
+}
+
+bin/chkenv "PIPES_PATH" "PKGS_PATH"
+
+create_packages=true
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        --no-packages) create_packages=false ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [ $# -eq 0 ]; then
+    echo>&2 "PIPELINE not provided."; usage>&2; exit 1;
+fi
+if [ $# -ne 1 ]; then
+    echo>&2 "1 argument expected, $# provided"; usage>&2; exit 1;
+fi
+
+template_name="pipeline-template"
+template_dir=".$template_name"
+packages=("example-writer-step" "example-reader-step")
+pipeline=$1
+
+cp "$template_dir/$template_name.yaml" "$PIPES_PATH/$pipeline.yaml"
+sed -i -e "s/$template_name/$pipeline/g" "$PIPES_PATH/$pipeline.yaml"
+
+if [[ "$create_packages" == true ]]; then
+    for pkg in "${packages[@]}"; do
+        bin/pkg/new "$pkg"
+        pkg_dir="$PKGS_PATH/$pkg"
+        cp "$template_dir/$pkg/__main__.py" "$pkg_dir/src/${pkg//-/_}/__main__.py"
+        cp "$template_dir/$pkg/aml-component.yaml" "$pkg_dir/aml-component.yaml"
+
+        rm -r "$pkg_dir/tests" "$pkg_dir/azure-ml-job.yaml" "$pkg_dir/src/${pkg//-/_}/answer.py"
+    done
+fi

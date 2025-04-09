@@ -1,0 +1,44 @@
+{
+    "name": "scaffolding",
+    "build": {
+      "dockerfile": "../Dockerfile",
+      "target": "devcontainer"
+    },
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "hostRequirements": {
+      "gpu": "optional"  // Ensure access to GPU if host has some
+    },
+    "runArgs": [
+      "--ipc", "host"  // Needed for heavy torch training, harmless otherwise
+    ],
+    "remoteEnv": {
+      // Ensure repo env is always first in PATH
+      "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
+      // Make root path easily discoverable
+      "REPO_ROOT": "${containerWorkspaceFolder}"
+    },
+    "remoteUser": "vscode",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+            "ms-python.python",
+            "ms-toolsai.jupyter",
+            "GitHub.copilot",
+            "charliermarsh.ruff",
+            "tamasfe.even-better-toml",
+            "jeff-hykin.better-dockerfile-syntax",
+            "stkb.rewrap",
+            "davidanson.vscode-markdownlint",
+            "timonwong.shellcheck"
+        ]
+      }
+    },
+    "features": {
+      "ghcr.io/devcontainers/features/azure-cli:1": {
+        "extensions": "ml"
+      },
+      // used for markdown linting
+      "ghcr.io/devcontainers/features/node:1": {}
+    },
+    "postCreateCommand": "bin/dev/sync"
+  }

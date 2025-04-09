@@ -1,18 +1,8 @@
-# PROJECT SPECIFIC
-# Nothing inside data should be tracked by git
-/data/*
-!/data/.gitkeep
-
-# Nothing inside models should be tracked by git
-/models/*
-!/models/.gitkeep
-
-# Isolated runs should not be tracked by git
-/isolated_runs/*
-!/isolated_runs/.gitkeep
+# Requirements are generated dynamically on submission, no need to track them
+requirements.txt
 
 # Local entrypoints should be developer-specific
-**/local.py
+**/debug.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -30,7 +20,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -114,17 +103,20 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 
+# Ruff stuff
+.ruff_cache
+
 # SageMath parsed files
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+.env.local
 
 # Spyder project settings
 .spyderproject

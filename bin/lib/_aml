@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+#? Base script to execute a run in AzureML
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+usage() {
+    cat<<EOF
+Base script to execute a run in AzureML
+
+Usage: $0 [options] ARTIFACT FILE [-- JOB-XARGS]
+
+Options:
+    -h, --help            Show this help message and exit.
+    --pipeline            If present, files isolated as a pipeline. Package otherwise.
+    -e, --exp EXPERIMENT  Name or short description of the experiment to run.
+                          If provided, execution is tracked in \$EXPERIMENTS_BRANCH
+                          with all changes since main in commit with message EXPERIMENT.
+                          If not provided, job runs from current branch.
+    JOB-XARGS             Additional arguments to pass to the job create command.
+                          See "az ml job create --help" for more information.
+
+Arguments:
+  ARTIFACT  Name of package or pipeline to run in AzureML.
+  FILE      YAML filepath in isolated run with the AzureML job specification.
+
+This script is not intended to be run directly. It is used by other scripts to
+execute a run in AzureML.
+
+The script ensures the ARTIFACT is isolated with the minimum necessary files to
+run successfully in its own environment(s). Then, the execution is submitted to
+AzureML with a run name matching the one created locally to isolate such files.
+
+If the job is submitted as an experiment - i.e. with the --exp option - a commit
+is created with the message EXPERIMENT and all changes since main are tracked
+in \$EXPERIMENTS_BRANCH. That commit is accessible from the AzureML job.
+EOF
+}
+
+. bin/lib/utils.sh
+exp=""
+pipeline=false
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        --pipeline) pipeline=true ;;
+        -e|--exp)
+            if [[ -z "$2" ]]; then utils::invalid_usage "Missing value for --exp."; fi
+            exp=$2
+            shift
+            ;;
+        *) break ;;
+    esac
+    shift
+done
+
+if [[ -z "$1" || "$1" == "--" ]]; then utils::invalid_usage "Missing or empty argument: ARTIFACT"; fi
+artifact=$1
+shift
+
+if [[ -z "$1" || "$1" == "--" ]]; then utils::invalid_usage "Missing or empty argument: FILE"; fi
+file=$1
+shift
+
+job_xargs=()
+if [[ $# -gt 0 ]]; then
+    if [[ "$1" != "--" ]]; then utils::invalid_usage "Unexpected argument: $1"; fi
+    shift  # remove "--" if present
+    job_xargs=("$@")
+fi
+
+bin/chkenv "AZUREML_WORKSPACE" "AZUREML_RESOURCE_GROUP"
+
+source bin/lib/run.sh
+read -r run_name run_dir <<< "$(run::prepare "$artifact")"
+if [[ "$pipeline" == true ]]; then
+    bin/pipe/iso "$artifact" "$run_dir" > /dev/null
+else
+    bin/pkg/iso "$artifact" "$run_dir" > /dev/null
+fi
+
+aml_run() {
+    az ml job create -f "$run_dir/$file" \
+	--resource-group "$AZUREML_RESOURCE_GROUP" \
+    --workspace-name "$AZUREML_WORKSPACE" \
+    --set name="$run_name" \
+    "${job_xargs[@]}"
+}
+if [[ -z "$exp" ]]; then
+    # If no experiment name is provided, run the job from current branch
+    aml_run
+else
+    # If an experiment name is provided, track changes and run from experiments branch
+    bin/chkenv "EXPERIMENTS_BRANCH"
+
+    commit_id=$(bin/lib/_prep-exp --exp-ref "$EXPERIMENTS_BRANCH" "$exp")
+    curr_branch=$(git rev-parse --abbrev-ref HEAD)
+    git checkout "$EXPERIMENTS_BRANCH"
+
+    if aml_run; then
+        # Push commit to experiment branch only if job submission succeeded
+        git push "origin" "$commit_id:$EXPERIMENTS_BRANCH"
+    fi
+
+    # Restore working directory to the original branch.
+    git checkout "$curr_branch"
+fi
+
