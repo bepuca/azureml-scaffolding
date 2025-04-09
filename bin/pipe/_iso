@@ -25,7 +25,7 @@ Each step is expected to be named after the package (but dashes are replaced by
 underscores).
 
 RUN_DIR will contain the PIPELINE YAML file and each package as isolated by
-'bin/pkg/iso'. Thus, the final structure:
+'bin/pkg/_iso'. Thus, the final structure:
 <run_name>
 ├── <PIPELINE>.yaml
 ├── <package1>/
@@ -68,7 +68,7 @@ EOF
 )
 
 while read -r package; do
-    bin/pkg/iso "$package" "$run_dir/$package"
+    bin/pkg/_iso "$package" "$run_dir/$package"
 done <<< "$output"
 cp "$pipeline_path" "$run_dir"
 

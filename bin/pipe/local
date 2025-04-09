@@ -44,7 +44,7 @@ pipeline=$1
 
 . bin/lib/run.sh
 read -r _ run_dir <<< "$(run::prepare "$pipeline")"
-packages="$(bin/pipe/iso "$pipeline" "$run_dir")"
+packages="$(bin/pipe/_iso "$pipeline" "$run_dir")"
 
 while read -r package; do
     pushd "$run_dir/$package/src" > /dev/null

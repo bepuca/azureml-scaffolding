@@ -74,9 +74,9 @@ bin/chkenv "AZUREML_WORKSPACE" "AZUREML_RESOURCE_GROUP"
 source bin/lib/run.sh
 read -r run_name run_dir <<< "$(run::prepare "$artifact")"
 if [[ "$pipeline" == true ]]; then
-    bin/pipe/iso "$artifact" "$run_dir" > /dev/null
+    bin/pipe/_iso "$artifact" "$run_dir" > /dev/null
 else
-    bin/pkg/iso "$artifact" "$run_dir" > /dev/null
+    bin/pkg/_iso "$artifact" "$run_dir" > /dev/null
 fi
 
 aml_run() {
