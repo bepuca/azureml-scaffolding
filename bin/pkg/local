@@ -38,7 +38,7 @@ package=$1
 
 . bin/lib/run.sh
 read -r _ run_dir <<< "$(run::prepare "$package")"
-bin/pkg/iso "$package" "$run_dir"
+bin/pkg/_iso "$package" "$run_dir"
 
 pushd "$run_dir/src" > /dev/null
 run::local "$package"
