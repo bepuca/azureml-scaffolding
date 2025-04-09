@@ -41,10 +41,11 @@ if [ $# -eq 0 ]; then
 fi
 package=$1
 
-source bin/lib.sh # import: prep_run, run_local
-read -r _ run_dir <<< "$(prep_run "$package")"
+. bin/utils/run.sh
+read -r _ run_dir <<< "$(run::prepare "$package")"
 bin/pkg/iso "$package" "$run_dir"
 
+. bin/utils/local.sh
 pushd "$run_dir/src" > /dev/null
-run_local "$package"
+local::run "$package"
 popd > /dev/null

@@ -41,12 +41,13 @@ if [ $# -eq 0 ]; then
 fi
 pipeline=$1
 
-source bin/lib.sh  # import: prep_run, run_local
-read -r _ run_dir <<< "$(prep_run "$pipeline")"
+. bin/utils/run.sh
+read -r _ run_dir <<< "$(run::prepare "$pipeline")"
 packages="$(bin/pipe/iso "$pipeline" "$run_dir")"
 
+. bin/utils/local.sh
 while read -r package; do
     pushd "$run_dir/$package/src" > /dev/null
-    run_local "$package"
+    local::run "$package"
     popd > /dev/null
 done <<< "$packages"
