@@ -4,25 +4,23 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-function usage {
+usage() {
     cat<<EOF
 Initialize new package in the project
 
 Usage: $0 PACKAGE
 
 Options:
-    -h, --help            Show this help message and exit
+    -h, --help  Show this help message and exit
 
 Arguments:
   PACKAGE  Name of the new package.
 
-The script will create a new package directory in the "$PKGS_PATH" directory
-using the .package_template as a template. It will also add the new package
+The script will create a new package directory in the "\$PKGS_PATH" directory
+using the '.package_template' as a template. It will also add the new package
 to the uv workspace and install it to the local environment.
 EOF
 }
-
-bin/chkenv "PKGS_PATH"
 
 while :; do
     case $1 in
@@ -32,16 +30,11 @@ while :; do
     shift
 done
 
-if [ $# -eq 0 ]; then
-    echo>&2 "PACKAGE not provided."; usage>&2; exit 1;
-fi
-if [ $# -ne 1 ]; then
-    echo>&2 "1 argument expected, $# provided"; usage>&2; exit 1;
-fi
-
-template_name="package-template"
+. bin/lib/utils.sh
+if [ $# -eq 0 ]; then utils::invalid_usage "PACKAGE not provided."; fi
 pkg=${1//_/-}  # package name always uses dashes
 pkg_dir="$PKGS_PATH/$pkg"
+template_name="package-template"
 
 # create new package from the template
 cp -r ".$template_name" "$pkg_dir"

@@ -4,7 +4,7 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-function usage {
+usage() {
     cat<<EOF
 List data in Blob Storage Container
 
@@ -25,28 +25,25 @@ while :; do
     shift
 done
 
+. bin/lib/utils.sh
 if [[ $# -lt 2 || $# -gt 3 ]]; then
-    echo>&2 "1 or 2 arguments expected, but $# supplied."
-    usage >&2
-    exit 1
+    utils::invalid_usage "2 or 3 arguments expected, but $# supplied."
 fi
 
 account=$1
 container=$2
 prefix=${3:-""}
 
-source bin/env container.env
-
-args="
-    --auth-mode login
-    --account-name $account
-    --container $container
-    --query [].name
-    --output table
-"
+args=(
+    "--auth-mode" "login"
+    "--account-name" "$account"
+    "--container" "$container"
+    "--query" "[].name"
+    "--output" "table"
+)
 
 if [[ -n "$prefix" ]]; then
-    args+="--prefix $prefix"
+    args+=("--prefix" "$prefix")
 fi
 
-echo "$args" | xargs az storage blob list
+az storage blob list "${args[@]}"

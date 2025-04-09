@@ -4,14 +4,14 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-function usage {
+usage() {
     cat<<EOF
 Find account, container and subdir for a named data asset
 
 Usage: $0 NAME VERSION
 
 Arguments:
-  NAME  Name of the data asset to find.
+  NAME     Name of the data asset to find.
   VERSION  Version of the data asset to find.
 
 Outputs <storage_account> <container> <subdir> to stdout.
@@ -27,16 +27,11 @@ while :; do
     shift
 done
 
-if [[ $# -ne 2 ]]; then
-    echo>&2 "Exactly 2 arguments expected, but $# supplied."
-    usage >&2
-    exit 1
-fi
-
+. bin/lib/utils.sh
+if [[ $# -ne 2 ]]; then utils::invalid_usage "Exactly 2 arguments expected, but $# supplied."; fi
 name=$1
 version=$2
 
-source bin/env container.env
 bin/chkenv AZUREML_WORKSPACE AZUREML_RESOURCE_GROUP
 
 dataset_path="$(az ml data show --name "$name" \
@@ -44,6 +39,7 @@ dataset_path="$(az ml data show --name "$name" \
     --workspace-name "$AZUREML_WORKSPACE" \
     --resource-group "$AZUREML_RESOURCE_GROUP" \
     --query "path" --output tsv)"
+
 # URI is of the form: .../datastores/<datastore_name>/paths/<dataset_subfolder>
 datastore_path="${dataset_path#*datastores/}" # Remove everything before "datastores"
 datastore="${datastore_path%%/paths*}"        # Remove everything after "paths"
