@@ -1,24 +1,30 @@
 # AzureML Scaffolding
 
-The goal of this project is to provide a minimal scaffolding to make it easier
-to work effectively with [Azure Machine
-Learning](https://docs.microsoft.com/en-us/azure/machine-learning/). We
-crytsallize here the learnings of numerous Data Science and Machine Learning
-projects and aim to offer what we believe is a solid set-up with a good
+The AzureML Scaffolding aims to be both a minimal template and a reference for
+ implementing [Hypothesis Driven Development] in [Azure Machine Learning]. We
+crystallize here the learnings of numerous Data Science and Machine Learning
+projects and aim to offer what we believe is a solid stating set-up with a good
 developer experience that just works. That way, you can focus on building and
 shipping - which is what ultimately matters - and start doing so in a matter of
 minutes.
 
-Our main focus is on the (often overlooked) Data Scientist's inner loop - that
-is, the work done during investigation/experimentation phase until model is
-"ready" for deployment. The common problem we noticed while working on multiple
-projects with different teams and organizations is that whenever we introduce
-any MLOps concepts and start operationalizing the project - it's usually a
-one-way ticket which changes the DS inner loop and makes it hard to continue
-experimenting and improving the solution. The main idea is to lower the friction
-of using AzureML and enable what we call `Continuous Experimentation`. This
-means that the data scientists are always enabled to keep experimenting and
-productionalizing an iteration or deploying models is not a blocker for that.
+[Hypothesis Driven Development]: https://www.bepuca.dev/posts/hdd-for-ai/
+[Azure Machine Learning]:
+    https://learn.microsoft.com/en-us/azure/machine-learning/
+
+## Principles
+
+- **Continuous Experimentation** - Multiple lines of experimentation and
+  deployment can coexist without influencing each other.
+- **Full Reproducibility** - All meaningful executions are self-contained,
+  tracked and can be reproduced at any time.
+- **Minimal Assumptions** - Users have full freedom on what to run.
+- **Minimum Viable Compute** - Code runs the same everywhere, from laptops to
+  beefy VMs to multi-node cluster. No surprising errors when you change machine.
+- **Good Developer Experience** - Once the basics are grasped, it should be easy
+  and pleasant to use.
+- **Extensible** - No two projects are made equal. It should be easy to modify
+  and extend the scaffolding to fit your needs.
 
 ## Features Overview
 
@@ -26,15 +32,120 @@ productionalizing an iteration or deploying models is not a blocker for that.
 - Running multiple experiments with independent AzureML configurations.
 - Sharing (not duplicating) code between experiments.
 - Local and remote execution - develop and quickly test code locally and execute
-  full scale pipelines on [AzureML compute
-  targets](https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-target).
+  full scale pipelines on [AzureML compute targets].
 - Leveraging Docker containers to ensure compatibility of environments between
   local and remote execution.
 - Clear separation between data science/ML and AzureML specific code.
-- Code linting and formatting.
+- Standardized (optional) code linting and formatting.
 - Extensible CLI composed of scripts to abstract complexity behind simple
-  commands. Run `bin/help` for an overview. For instance, running an experiment
-  in AzureML can be done with `bin/pkg/aml <experiment_name>`.
+  commands. Run `bin/help` for an overview. For instance, running a
+  package-based experiment in AzureML can be done with `bin/pkg/aml --exp "My
+  experiment" <package>`.
+
+[AzureML compute targets]:
+    https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-target
+
+## Concepts
+
+### Packages
+
+A package is a self-contained unit of code that can be executed in isolation
+from the rest of the codebase. In this project, packages are Python packages
+defined in the `packages` folder. Their minimal structure is:
+
+```text
+<package-name>/
+├── azure-ml-job.yaml
+├── environment/
+│   └── Dockerfile
+├── pyproject.toml
+├── README.md
+├── src/
+│   └── <package_name>
+│       ├── __init__.py
+│       └── __main__.py
+└── tests/
+```
+
+It is worth explaining a few things here:
+
+- **`__main__.py`** - This is the entrypoint of the package. When leveraging the
+  `bin` scripts for local execution, this is the executed file.
+- **`pyproject.toml`** - The dependencies of the package should be defined here.
+  This is what is used to build an isolated environment for execution.
+- **`environment/`** - This is the environment context. It should contain a
+  `Dockerfile` that accepts a `requirements.txt` and builds an environment from
+  it. The `requirements.txt` is generated from the dependencies defined in the
+  `pyproject.toml` file at run time. We need a separated `environment/` folder
+  because AzureML can cache the environment built from it if nothing changes.
+  Having it at top level would mean a rebuild for every package change.
+- **`azure-ml-job.yaml`** - This is the AzureML job specification for the
+  package. It defines the compute target, the environment to use, the code to
+  upload and the command to run. This is what is used to run the package in
+  AzureML. This job can be of two types:
+  - **[Command job]** - This is the simplest job type. It runs a command in a
+    container. This is the most common type of job and the one we use for most
+    of our experiments.
+  - **[Pipeline job]** - This is a more complex job type that allows to chain
+    multiple commands. The difference with a [Pipeline] as defined in this
+    project, is that defining a pipeline job within a package means all steps
+    will have all the same code and share the environment. This is usually an
+    advanced pattern for people familiar with AzureML and the benefits of
+    pipelines.
+
+An example package is provided in [`.package-template`]. It
+is useful as a reference and used by `bin/pkg/new` to create a new package.
+
+[Command job]:
+    https://learn.microsoft.com/en-us/azure/machine-learning/reference-yaml-job-command?view=azureml-api-2
+[Pipeline job]:
+    https://learn.microsoft.com/en-us/azure/machine-learning/reference-yaml-job-pipeline?view=azureml-api-2
+[`.package-template`]: .package-template
+
+#### Shared package
+
+This project supports a special package called `shared`. This package is meant
+to contain code that needs to be shared across multiple packages. At execution
+time, it is bundled with the package so it is available for execution. Points to
+have in mind:
+
+- The `pyproject.toml` of the `shared` package **should not contain
+  dependencies**. It is the responsibility of the package to install what it
+  needs.
+- Due to the above point, not all files can be imported from all packages. This
+  is okay as long as the structure and imports are well thought.
+
+### Pipelines
+
+A pipeline defines a sequence of steps to execute. It is defined by a [Pipeline
+job] YAML `<pipeline-name>.yaml` in the `pipelines` folder. If unfamiliar with
+AzureML pipelines, reading the [pipeline documentation] is encouraged. As a
+primer, a pipeline has the following properties:
+
+- One step outputs can be connected to the inputs of another one.
+- Steps connected will run sequentially, but the rest can run in parallel if
+  sufficient compute is available.
+- Steps are cached. If submitted with the same code and environement, they will
+  not be re-executed. This is useful for long running steps that do not change
+  often.
+- Each step of the pipeline must reference a package. To do so, packages meant
+  to be used in pipelines should implement a [Component job] YAML defined.
+- Component inputs are displayed in AzureML UI. This helps with traceability.
+
+An example pipeline is provided in
+[`.pipeline-template/pipeline-template.yaml`]. It is useful as a reference and
+used by `bin/pipe/new` to create a new pipeline. The rest of the files in that
+directory serve to create the example packages used by the pipeline. They
+contain example [`aml-component.yaml`].
+
+[pipeline documentation]:
+    https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-component-pipelines-cli?view=azureml-api-2
+[Component job]:
+    https://learn.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command?view=azureml-api-2
+[`.pipeline-template/pipeline-template.yaml`]:
+    .pipeline-template/pipeline-template.yaml
+[`aml-component.yaml`]:
+    .pipeline-template/example-reader-step/aml-component.yaml
 
 ## User Guide
 
@@ -205,9 +316,9 @@ is a good reference):
 You can do run the experiment using [`bin/pkg/aml`](bin/pkg/aml) script. Execute
 `bin/pkg/run -h` for details. The script does the following:
 
-1. Packaged the experiment (by using [bin/pkg/iso](bin/pkg/iso), an you can run
-   `bin/pkg/iso -h` for details). All artifacts necessary for the experiment are
-   copied and bundled together. The substeps are the following:
+1. Packaged the experiment (by using [bin/pkg/_iso](bin/pkg/_iso), an you can
+   run `bin/pkg/_iso -h` for details). All artifacts necessary for the
+   experiment are copied and bundled together. The substeps are the following:
    1. Create an isolated run folder in `runs` with a unique name.
    2. Copy the files of your experiment folder.
    3. Copy the `shared` folder.
