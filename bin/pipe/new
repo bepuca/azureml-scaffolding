@@ -26,7 +26,6 @@ as component looks like. This behavior can be suppressed with --no-packages.
 EOF
 }
 
-bin/chkenv "PIPES_PATH" "PKGS_PATH"
 
 create_packages=true
 while :; do
@@ -40,6 +39,8 @@ done
 
 . bin/lib/utils.sh
 if [ $# -eq 0 ]; then utils::invalid_usage "PIPELINE not provided."; fi
+
+bin/chkenv "PIPES_PATH" "PKGS_PATH"
 
 template_name="pipeline-template"
 template_dir=".$template_name"
