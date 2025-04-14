@@ -12,7 +12,8 @@ building and shipping valuable ML solutions through efficient experimentation
 and iteration.
 
 [Hypothesis Driven Development]: https://www.bepuca.dev/posts/hdd-for-ai/
-[Azure Machine Learning]: https://learn.microsoft.com/en-us/azure/machine-learning/
+[Azure Machine Learning]:
+    https://learn.microsoft.com/en-us/azure/machine-learning/
 
 ## Principles
 
@@ -122,8 +123,8 @@ $ bin/help
 ```
 
 Most scripts have their own help, exposed through the `-h` or `--help` flags.
-You can use these to get more information about the specific command you
-are interested in. For example:
+You can use these to get more information about the specific command you are
+interested in. For example:
 
 ```text
 $ bin/pkg/new -h
@@ -147,12 +148,62 @@ to use them.
 
 ## Data
 
+We recommend using [AzureML Data Assets] to manage data. This makes it easy to
+share data across people and machines and ensures traceability and lineage.
+
+[AzureML Data Assets]:
+    https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-data-assets?view=azureml-api-2&tabs=cli
+
+### Registering data
+
+The first step is to register the data in AzureML. In general, this means
+uploading the data and labeling it with a name and a version. The [AzureML Data
+Assets] page gives a good overview. In this project, we can use the following
+(which is a thin wrapper around the AzureML CLI) to register the data:
+
+```bash
+bin/data/register <specfile_path>
+```
+
+The `<specfile_path>` is the path to the YAML file that defines the data asset.
+The minimal example is:
+
+```yaml
+$schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
+
+type: uri_folder
+name: <NAME OF DATA ASSET>
+version: <VERSION>
+description: <DESCRIPTION>
+path: ./relative/path/to/data
+```
+
+Once data is registered, it can be referenced in any AzureML YAML as
+`azureml:<NAME OF DATA ASSET>:<VERSION>`. This is the recommended way to
+reference data in AzureML. Data then is mounted or downloaded to the compute
+target when the job is executed. This ensures clarity and traceability of the
+data used in each job.
+
+### Downloading data
+
+Usually one person will register the data but many may wish to use it. Or even
+the same person in a different machine. For this, it is convenient to be able to
+download a data asset. This can be done using:
+
+```bash
+bin/data/find NAME VERSION | xargs bin/data/download
+```
+
+The data will be downloaded in the `data` folder. We use two commands because
+`bin/data/download` may be leveraged to download any data in Azure Blob Storage,
+registered or not.
+
 ### Packages
 
 A package is a self-contained unit of code that can be executed in isolation
 from the rest of the codebase. In this project, packages are Python packages
-defined in the `packages` folder. They are the base unit of execution.
-Their minimal file structure is:
+defined in the `packages` folder. They are the base unit of execution. Their
+minimal file structure is:
 
 ```text
 <package-name>/
@@ -227,10 +278,10 @@ While you can create a package manually, we recommend using:
 bin/pkg/new <package-name>
 ```
 
-This creates the package from the `.package_template`, which ensures
-the package is created with the correct structure and files. Additionally, the
-command renames things in some files to match your package name and makes sure
-the package is added to the `uv workspace` and, thus, the local environment.
+This creates the package from the `.package_template`, which ensures the package
+is created with the correct structure and files. Additionally, the command
+renames things in some files to match your package name and makes sure the
+package is added to the `uv workspace` and, thus, the local environment.
 
 #### Adding dependencies to a package
 
@@ -240,8 +291,8 @@ the project). You can do that in different ways:
 
 - **Manually** - You can add the dependencies manually to the `pyproject.toml`
   file in the `dependencies` key.
-- **Using uv** - You can use the [uv] CLI to add dependencies. Run `uv add --help`
-  for details. A short example is:
+- **Using uv** - You can use the [uv] CLI to add dependencies. Run `uv add
+  --help` for details. A short example is:
 
   ```bash
   uv add --package <your-package> <dependency>  # e.g. `ruff==0.5.0`
@@ -262,8 +313,8 @@ helps us **shorten feedback loops and speed up development**.
 
 Thus, the first step is usually to run the package locally. The easiest way to
 execute any code locally is leveraging VSCode. The [Python extension] allows
-users to easily run or debug any script. For this, it is easiest to have
-scripts that do not require any arguments.
+users to easily run or debug any script. For this, it is easiest to have scripts
+that do not require any arguments.
 
 The problem with the previous approach is that it uses the project environment.
 This environment contains the dependencies of all packages as well as some extra
@@ -281,9 +332,9 @@ This command will:
    prefixed with the date and time of the execution to make it easier to reason
    about the runs.
 2. Export the package dependencies into a `requirements.txt`. This captures
-   everything, but not more, that needs to be in the environment for the
-   payload to run. These first two steps ensure we can always recover a result
-   if we have the run directory.
+   everything, but not more, that needs to be in the environment for the payload
+   to run. These first two steps ensure we can always recover a result if we
+   have the run directory.
 3. Execute the `__main__.py` of the package. This file is expected to be the
    entrypoint of the package, following [Python's standard practice for exposing
    a package CLI].
@@ -293,8 +344,8 @@ This command will:
 > values if none passed. This way, we can quickly change things locally without
 > having a potentially long command, which tends to be cumbersome. An example of
 > this pattern can be found in the
-> [`package-template`](.package-template/src/package_template/__main__.py).
-> That script also show how to log tags and metrics to AzureML.
+> [`package-template`](.package-template/src/package_template/__main__.py). That
+> script also show how to log tags and metrics to AzureML.
 
 Once the isolated run succeeds locally, we are probably ready to submit the same
 payload to AzureML. To do so:
@@ -317,9 +368,9 @@ Executing a run for a package in this manner, ensures the following:
 
 - All files (but only the files) required for the execution are uploaded to
   AzureML and present in the job UI.
-- The environment is built using only the `environment/` context, which, in turn,
-  uses the `requirements.txt` generated. The environment definition is also
-  bundled in the code, and thus it is always reproducible.
+- The environment is built using only the `environment/` context, which, in
+  turn, uses the `requirements.txt` generated. The environment definition is
+  also bundled in the code, and thus it is always reproducible.
 - Downloading the code snapshot in AzureML and submitting directly that folder
   to AzureML will produce the exact same results.
 - Runs are present in AzureML. If linked to data, it is clear what data was used
@@ -349,25 +400,25 @@ the following benefits:
 
 - The `experiments` branch will contain all experiments and will be persisted
   beyond the branches that were used to create them. This is useful to avoid
-  having to keep all branches around forever. Otherwise, if AzureML links to
-  a commit of a branch that is deleted, the link becomes broken.
+  having to keep all branches around forever. Otherwise, if AzureML links to a
+  commit of a branch that is deleted, the link becomes broken.
 - The commit message will contain the name of the experiment. This makes it
   easier to find experiments (provided that devs put effort in naming).
 - The commit contains all changes made since main, no matter how many commits
   are in your branch at the moment. This allows for good atomic commits when
   developing but a single clear view of what is being tested in an experiment.
-  Without this, AzureML links to the latest commit, which is usually a subset
-  of the differences from main.
+  Without this, AzureML links to the latest commit, which is usually a subset of
+  the differences from main.
 
 ### Pipelines
 
 While most projects will start with one or a few isolated packages, many may
 benefit from leveraging pipelines at later stages. A pipeline defines a sequence
-of steps to execute. It is defined by a [Pipeline
-job] YAML `<pipeline-name>.yaml` in the `pipelines` folder. If unfamiliar with
-AzureML pipelines, reading the [pipeline documentation] is encouraged. As a
-primer, a pipeline has the following properties (which would inform when you
-want to use them):
+of steps to execute. It is defined by a [Pipeline job] YAML
+`<pipeline-name>.yaml` in the `pipelines` folder. If unfamiliar with AzureML
+pipelines, reading the [pipeline documentation] is encouraged. As a primer, a
+pipeline has the following properties (which would inform when you want to use
+them):
 
 - One step outputs can be connected to the inputs of another one.
 - Steps connected will run sequentially, but the rest can run in parallel if
@@ -436,8 +487,8 @@ This command will:
    be executed without arguments and that inputs are outputs are properly
    connected where needed.
 
-Once this succeed, once more we can execute the pipeline in AzureML in a
-similar way:
+Once this succeed, once more we can execute the pipeline in AzureML in a similar
+way:
 
 ```bash
 bin/pipe/aml <pipeline-name>
@@ -492,15 +543,13 @@ of using Azure Machine Learning (which is built on top of
   experiment will be fully reproducible as the artifacts needed to build the
   environment and run the experiment are uploaded as a self-contained snapshot.
   We strongly recommend using tags to log any input that is not hard-coded but
-  affects behavior (as we do in the
-  `example_experiment`).
-  Otherwise these values would be lost.
+  affects behavior (as we do in the `example_experiment`). Otherwise these
+  values would be lost.
 - **Progress tracking** - If you use metrics (and we believe you should), you
   will track some sort of performance or quality of your experiments (as we do
-  in the
-  `example_experiment`).
-  Over time, you may try to improve these numbers. By having all your runs
-  together in AzureML, it is easy to display them and observe progress.
+  in the `example_experiment`). Over time, you may try to improve these numbers.
+  By having all your runs together in AzureML, it is easy to display them and
+  observe progress.
 - **Shareability** - Everyone with read access to the workspace will be able to
   see the runs and inspect results. This is usually helpful when not working
   alone in a project.
