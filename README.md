@@ -15,7 +15,31 @@ efficient experimentation and iteration.
 [Azure Machine Learning]:
     https://learn.microsoft.com/en-us/azure/machine-learning/
 
+## Table of Contents
+
+- [Why Azure Machine Learning?](#why-azure-machine-learning)
+- [Core Design Principles](#core-design-principles)
+- [Key Capabilities](#key-capabilities)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Data](#data)
+    - [Registering data](#registering-data)
+    - [Downloading data](#downloading-data)
+  - [Packages](#packages)
+    - [Shared package](#shared-package)
+    - [Creating a new package](#creating-a-new-package)
+    - [Adding dependencies to a package](#adding-dependencies-to-a-package)
+    - [Executing a package](#executing-a-package)
+  - [Pipelines](#pipelines)
+    - [Creating a new pipeline](#creating-a-new-pipeline)
+    - [Executing a pipeline](#executing-a-pipeline)
+  - [Linting](#linting)
+  - [Testing](#testing)
+
 ## Why Azure Machine Learning?
+
+[Back to the Top](#table-of-contents)
 
 Azure Machine Learning provides essential capabilities for enterprise ML
 development that this scaffolding leverages:
@@ -38,6 +62,8 @@ development that this scaffolding leverages:
 
 ## Core Design Principles
 
+[Back to the Top](#table-of-contents)
+
 This scaffolding was built around four key principles that guide how ML projects
 should operate:
 
@@ -55,6 +81,8 @@ should operate:
   maintaining consistency.
 
 ## Key Capabilities
+
+[Back to the Top](#table-of-contents)
 
 AzureML Scaffolding enables you to:
 
@@ -92,6 +120,8 @@ AzureML Scaffolding enables you to:
     https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
 
 ## Installation
+
+[Back to the Top](#table-of-contents)
 
 1. From your project folder, download all files in this repository. **The
    following command will overwrite any existing files matching the names of
@@ -150,6 +180,8 @@ AzureML Scaffolding enables you to:
 [create a new package]: #creating-a-new-package
 
 ## Usage
+
+[Back to the Top](#table-of-contents)
 
 The main interface of this project is the script-based CLI in the `bin` folder.
 These scripts abstract away the complexity in simple commands and ensure best
@@ -254,6 +286,8 @@ these variables are set in your shell:
 
 ### Data
 
+[Back to the Top](#table-of-contents)
+
 We recommend using [AzureML Data Assets] to manage data. This makes it easy to
 share data across people and machines and ensures traceability and lineage.
 
@@ -261,6 +295,8 @@ share data across people and machines and ensures traceability and lineage.
     https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-data-assets?view=azureml-api-2&tabs=cli
 
 #### Registering data
+
+[Back to the Top](#table-of-contents)
 
 The first step is to register the data in AzureML. In general, this means
 uploading the data and labeling it with a name and a version. The [AzureML Data
@@ -292,6 +328,8 @@ data used in each job.
 
 #### Downloading data
 
+[Back to the Top](#table-of-contents)
+
 Usually one person will register the data but many may wish to use it. Or even
 the same person in a different machine. For this, it is convenient to be able to
 download a data asset. This can be done using:
@@ -306,6 +344,8 @@ because `bin/data/download` may be leveraged alone to download any data in
 Azure Blob Storage, registered or not.
 
 ### Packages
+
+[Back to the Top](#table-of-contents)
 
 A package is a self-contained unit of code that can be executed in isolation
 from the rest of the codebase. In this project, packages are Python packages
@@ -372,6 +412,8 @@ environment.
 
 #### Shared package
 
+[Back to the Top](#table-of-contents)
+
 This project supports a special package called `shared`. This package is meant
 to contain code that needs to be shared across multiple packages. At execution
 time, it is bundled with the package so it is available for execution. Points to
@@ -385,6 +427,8 @@ have in mind:
   well thought.
 
 #### Creating a new package
+
+[Back to the Top](#table-of-contents)
 
 While you can create a package manually, we recommend using:
 
@@ -400,6 +444,8 @@ package is added to the `uv workspace` and, thus, the local environment. The
 it if you wish to do so.
 
 #### Adding dependencies to a package
+
+[Back to the Top](#table-of-contents)
 
 To add dependencies needed for a package, you should add them to the
 corresponding `pyproject.toml` file (and never to the master `pyproject.toml` of
@@ -418,6 +464,8 @@ the project). You can do that in different ways:
 > to avoid surprises. For example, `numpy==2.2.*` instead of `numpy>=2.2.0`.
 
 #### Executing a package
+
+[Back to the Top](#table-of-contents)
 
 We are strong proponents of the **Minimum Viable Compute** and this project aims
 to support it. We start developing in our laptops, move to bigger Virtual
@@ -528,6 +576,8 @@ the following benefits:
 
 ### Pipelines
 
+[Back to the Top](#table-of-contents)
+
 While most projects will start with one or a few isolated packages, many may
 benefit from leveraging pipelines at later stages. A pipeline defines a sequence
 of steps to execute. It is defined by a [Pipeline job] YAML
@@ -572,6 +622,8 @@ contain an example [Component] YAML: [`aml-component.yaml`].
 
 #### Creating a new pipeline
 
+[Back to the Top](#table-of-contents)
+
 While you can create a pipeline manually, we recommend using:
 
 ```bash
@@ -586,6 +638,8 @@ pipeline. This is recommended for the first times. Once familiar, you may choose
 to use the `--no-packages` flag to avoid adding them.
 
 #### Executing a pipeline
+
+[Back to the Top](#table-of-contents)
 
 Similarly to packages, we can run a pipeline locally or in AzureML.
 
@@ -628,6 +682,8 @@ This command will:
 This command also accepts the `--exp` or `-e` flag to create an experiment.
 
 ### Linting
+
+[Back to the Top](#table-of-contents)
 
 In this project, the main driver for linting is the [`pre-commit`] hooks, which
 are installed by default and defined in [`.pre-commit-config.yaml`]. These block
@@ -684,6 +740,8 @@ that execute the following commands (which may be called manually too):
 [`.markdownlint-cli2.jsonc`]: .markdownlint-cli2.jsonc
 
 ### Testing
+
+[Back to the Top](#table-of-contents)
 
 We use and recommend [pytest] for testing. A little wrapper command
 `bin/dev/test` is provided to run the tests with coverage.
