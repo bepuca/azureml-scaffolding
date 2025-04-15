@@ -143,8 +143,15 @@ $ bin/pkg/new -h
   to the uv workspace and install it to the local environment.
 ```
 
-In the following sections, we explain the main concepts of the project and how
-to use them.
+These scripts are created to provide a good developer experience. To that end,
+they work in harmony with many other artifacts in the repo. You are encouraged
+to modify them to suit your needs, but beware that most decisions have been
+thought through and changing them may break some behavior:
+
+- The .`devcontainer` folder implements the definition for a devcontainer. It
+  uses a Dockerfile and installs extensions that are useful as well as features.
+- The `.vscode` folder contains the configuration for VSCode. It includes
+  some configuration to make sure VSCode leverages the tools correctly.
 
 ### Data
 
@@ -194,8 +201,8 @@ download a data asset. This can be done using:
 bin/data/find NAME VERSION | xargs bin/data/download
 ```
 
-The data will be downloaded in the `data` folder, which is ignored by git and
-it the recommended place for it. Downloading a data asset chains two commands
+The data will be downloaded in the `data` folder, which is ignored by git and it
+the recommended place for it. Downloading a data asset chains two commands
 because  `bin/data/download` may be leveraged alone to download any data in
 Azure Blob Storage, registered or not.
 
@@ -245,9 +252,9 @@ It is worth explaining a few things here:
     multiple commands. The difference with a [Pipeline] as defined in this
     project, is that defining a pipeline job within a package means all steps
     will have all the same code and share the environment. Thus, any change in
-    the package will eliminate the cache. The main benefit of this pattern is
-    to avoid defining multiple packages for steps that largely use the same
-    code. For instance, a training and inference step.
+    the package will eliminate the cache. The main benefit of this pattern is to
+    avoid defining multiple packages for steps that largely use the same code.
+    For instance, a training and inference step.
 
 An example package is provided in [`.package-template`]. It is useful as a
 reference and used by `bin/pkg/new` to create a new package.
@@ -283,9 +290,9 @@ bin/pkg/new <package-name>
 This creates the package from the `.package_template`, which ensures the package
 is created with the correct structure and files. Additionally, the command
 renames things in some files to match your package name and makes sure the
-package is added to the `uv workspace` and, thus, the local environment.
-The `Dockerfile` provided by the command works as it should, but feel free to
-change it if you wish to do so.
+package is added to the `uv workspace` and, thus, the local environment. The
+`Dockerfile` provided by the command works as it should, but feel free to change
+it if you wish to do so.
 
 #### Adding dependencies to a package
 
@@ -516,6 +523,65 @@ This command will:
 This command also accepts the `--exp` or `-e` flag to create an experiment.
 
 ### Linting
+
+In this project, the main driver for linting is the [`pre-commit`] hooks, which
+are installed by default and defined in [`.pre-commit-config.yaml`]. These block
+commits unless the code passes all checks. By default, we have 3 hooks enabled
+that execute the following commands (which may be called manually too):
+
+- **[`bin/lint/py`]** - Checks all Python files in the `packages` folder. It
+  runs the following tools:
+  - **[ruff]** - This is a fast linter and formatter for Python. It is used to
+    format the code and check for common issues. Configuration is found in the
+    [`pyproject.toml`].
+  - **[pyright]** - This is a type checker for Python. By default, it is set to
+    `basic` mode. This means it will check for type errors if you define type
+    hints but will not do anything if you do not. Some teams prefer to set it to
+    `strict` mode, in which case all code must be type hinted. Configuration is
+    found in the [`pyproject.toml`].
+
+- **[`bin/lint/md`]** - Checks all Markdown files in the project. It runs the
+  following tools:
+  - **[markdownlint-cli2]** - This is a linter for Markdown files. It is used to
+    check for common issues in Markdown files. Configuration is found in the
+    [`.markdownlint-cli2.jsonc`].
+  - **[markdown-link-check]** - This is a linter for Markdown links. It is used
+    to check for broken links in Markdown files. Configuration is found in the
+    [`.markdown-link.json`].
+
+- **[`bin/lint/shell`]** - Checks shell files in the project. It runs the
+  following tool:
+  - **[shellcheck]** - This is a linter for shell scripts. It is used to check
+  for common issues in shell scripts. This is a bit more complex and
+  configuration is found in the caller script itself.
+
+> **Tip**: In most cases, the user may ignore linting until the hooks run.
+> However, sometimes it is useful to run some of it manually. VSCode will
+> pick up `pyright` automatically and show errors in the editor. For `ruff`,
+> the default devcontainer installs the extension and will show errors.
+> Additionally, the `ruff` extension offers format imports and format code
+> commands exposed in the command palette. For markdown, some errors are raised
+> in the editor. We install the rewrap extension. The command "Rewrap Comment"
+> in VSCode is useful to ensure the line length is respected. For `shellcheck`,
+> the extension is installed and will also show errors in the editor.
+
+[`pre-commit`]: https://pre-commit.com/
+[ruff]: https://docs.astral.sh/ruff/
+[pyright]: https://github.com/microsoft/pyright
+[markdownlint-cli2]: https://github.com/DavidAnson/markdownlint-cli2
+[markdown-link-check]: https://github.com/tcort/markdown-link-check
+[shellcheck]: https://www.shellcheck.net/
+[`bin/lint/py`]: bin/lint/py
+[`bin/lint/md`]: bin/lint/md
+[`bin/lint/shell`]: bin/lint/shell
+[`pyproject.toml`]: pyproject.toml
+[`.pre-commit-config.yaml`]: .pre-commit-config.yaml
+[`.markdownlint-cli2.jsonc`]: .markdownlint-cli2.jsonc
+
+### Testing
+
+We use and recommend [pytest] for testing. A little wrapper command `bin/dev/test`
+is provided to run the tests with coverage.
 
 ### Setting up Scaffolding in your project
 
