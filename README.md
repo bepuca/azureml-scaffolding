@@ -70,7 +70,48 @@ and iteration.
 
 ## Installation
 
-TODO
+1. TODO: How to do this?
+2. Modify the [`pyproject.toml`](pyproject.toml) for your project.
+   1. Get familiar with [uv] if it is your first time working with it.
+   2. Modify the `name`, `version` and `description` to match your project's.
+   3. By default, we use `python 3.12`. To change it for the environment and all
+      tools used:
+      1. Modify the `requires-python` key.
+      2. Modify the `pythonVersion` in the `[tool.pyright]`.
+      3. Modify the `target-version` in the `[tool.ruff]`.
+      4. Modify the `ARG PYTHON_VERSION` in the [`Dockerfile`](Dockerfile).
+3. Modify the [`.env`](.env) file to match your Azure.
+   1. Change the `AZUREML_WORKSPACE` value to the name of your workspace.
+   2. Change the `AZUREML_RESOURCE_GROUP` value to the name of the resource
+      group your workspace belongs to.
+   3. Change the `AZUREML_TENANT_ID` value to the tenant ID of your Azure
+      subscription.
+4. Change the `name` key in the [`.devcontainer/devcontainer.json`] file to
+   match your project name. This is the name of the container that will be created.
+5. Run the action `Dev Containers: Rebuild and Reopen in Container` in VSCode
+   using the [Command Palette]. This will build the Dev Container for the first
+   time. After it finishes, you are all set.
+6. Define the default compute in the templates yamls.
+7. If it is the first time you use AzureML Scaffolding for a project of yours,
+   make sure to get familiar with this document.
+8. If you do not wish to persist any of the example packages provided with the
+   template, you can remove them by running the following:
+
+   ```bash
+   bin/pkg/rm example
+   bin/pkg/rm example-reader-step
+   bin/pkg/rm example-writer-step
+   ```
+
+9. If you had existing code, move it to become one or more [packages]. You may
+   need to [create a new package] and ensure the dependencies in its
+   `pyproject.toml` match your existing requirements.
+
+[uv]: https://docs.astral.sh/uv/
+[Command Palette]:
+    https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette
+[packages]: #packages
+[create a new package]: #creating-a-new-package
 
 ## Usage
 
@@ -271,7 +312,10 @@ It is worth explaining a few things here:
     For instance, a training and inference step.
 
 An example package is provided in [`.package-template`]. It is useful as a
-reference and used by `bin/pkg/new` to create a new package.
+reference and used by `bin/pkg/new` to create a new package. Most files there
+serve as live documentation. It includes examples on how to log metrics and
+tags, how to define the YAML file, how to import and how to define the
+environment.
 
 [Command job]:
     https://learn.microsoft.com/en-us/azure/machine-learning/reference-yaml-job-command?view=azureml-api-2
@@ -598,31 +642,6 @@ We use and recommend [pytest] for testing. A little wrapper command `bin/dev/tes
 is provided to run the tests with coverage.
 
 ### Setting up Scaffolding in your project
-
-1. TODO: How to do this?
-2. Modify the [`pyproject.toml`](pyproject.toml) for your project.
-   1. Get familiar with [uv] if it is your first time working with it.
-   2. Modify the `name`, `version` and `description` to match your project's.
-   3. By default, we use `python 3.12`. To change it for the environment and all
-      tools used:
-      1. Modify the `requires-python` key.
-      2. Modify the `pythonVersion` in the `[tool.pyright]`.
-      3. Modify the `target-version` in the `[tool.ruff]`.
-      4. Modify the `ARG PYTHON_VERSION` in the [`Dockerfile`](Dockerfile).
-3. Modify the [`.env`](.env) file to match your Azure.
-   1. Change the `AZUREML_WORKSPACE` value to the name of your workspace.
-   2. Change the `AZUREML_RESOURCE_GROUP` value to the name of the resource
-      group your workspace belongs to.
-   3. Change the `AZUREML_TENANT_ID` value to the tenant ID of your Azure
-      subscription.
-4. Run the action `Dev Containers: Rebuild and Reopen in Container` in VSCode
-   using the [Command Palette]. This will build the Dev Container for the first
-   time. After it finishes, you are all set.
-5. Define the default compute in the templates yamls.
-
-[uv]: https://docs.astral.sh/uv/
-[Command Palette]:
-    https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette
 
 This will submit the job and run your experiment in the cloud. The main benefits
 of using Azure Machine Learning (which is built on top of
