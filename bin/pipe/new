@@ -57,6 +57,6 @@ if [[ "$create_packages" == true ]]; then
         cp "$template_dir/$pkg/__main__.py" "$pkg_dir/src/${pkg//-/_}/__main__.py"
         cp "$template_dir/$pkg/aml-component.yaml" "$pkg_dir/aml-component.yaml"
 
-        rm -r "$pkg_dir/tests" "$pkg_dir/azure-ml-job.yaml" "$pkg_dir/src/${pkg//-/_}/answer.py"
+        rm -r "$pkg_dir/tests" "$pkg_dir/aml-job.yaml" "$pkg_dir/src/${pkg//-/_}/answer.py"
     done
 fi

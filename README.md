@@ -314,7 +314,7 @@ minimal file structure is:
 
 ```text
 <package-name>/
-├── azure-ml-job.yaml
+├── aml-job.yaml
 ├── environment/
 │   └── Dockerfile
 ├── pyproject.toml
@@ -340,7 +340,7 @@ It is worth explaining a few things here:
   `pyproject.toml` file at run time. We need a separate `environment/` folder
   because AzureML can cache the environment built from it if nothing changes.
   Having it at top level would mean a rebuild for every package change.
-- **`azure-ml-job.yaml`** - This is the AzureML job specification for the
+- **`aml-job.yaml`** - This is the AzureML job specification for the
   package. It defines the compute target, the environment to use, the code to
   upload and the command to run. This is what is used to run the package in
   AzureML. This job can be of two types:
@@ -471,7 +471,7 @@ This command will:
 
 1. Isolate the package in the exact same way as `bin/pkg/local`.
 2. Submit the package for execution to AzureML. The specification of the job is
-   defined in the `azure-ml-job.yaml` file. This file is expected to be present
+   defined in the `aml-job.yaml` file. This file is expected to be present
    in the package root folder. The command will use the isolated run folder as
    the context for the job submission. It is the responsibility of the user to
    point that file to `__main__.py` to make the payload equivalent to the one
@@ -493,7 +493,7 @@ Executing a run for a package in this manner, ensures the following:
   grouped together in AzureML under the experiment with the same name as the
   package (defined by the `experiment_name` key in the YAML).
 
-> **Tip**: Getting the `azure-ml-job.yaml` right the first time can be a bit
+> **Tip**: Getting the `aml-job.yaml` right the first time can be a bit
 > fiddly. For that, we recommend using the one in the `.package-template` as a
 > reference and starting point.
 

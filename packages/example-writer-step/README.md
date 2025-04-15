@@ -17,7 +17,7 @@ example_writer_step
 ├── README.md                   <- Documentation for the package.
 └── src                         <- Source artifacts for the package.
     ├── .amlignore              <- Defines what not to upload to AzureML.
-    ├── azure-ml-job.yaml       <- Job spec for running package in AzureML.
+    ├── aml-job.yaml       <- Job spec for running package in AzureML.
     ├── tests                   <- Unit tests for the package.
     ├── environment             <- Environment context for package execution.
     │    ├── Dockerfile         <- Dockerfile to define environment.

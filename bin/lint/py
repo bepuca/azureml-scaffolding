@@ -20,6 +20,7 @@ while :; do
     shift
 done
 
+. bin/env
 bin/chkenv PKGS_PATH
 
 uv run ruff format "$PKGS_PATH"

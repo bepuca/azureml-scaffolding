@@ -9,7 +9,7 @@ def example(data_path: Path, greeting: str = "Hello"):
     """Example function with the main things needed to get started with AzureML
 
     :param data_path: Path where data is stored. Here to exemplify how to connect AzureML data
-        (see `azure-ml-job.yaml`).
+        (see `aml-job.yaml`).
     :param greeting: Word with which to greet the world.
     """
 
