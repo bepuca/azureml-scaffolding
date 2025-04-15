@@ -1,7 +1,7 @@
 {
     "name": "scaffolding",
     "build": {
-      "dockerfile": "../Dockerfile",
+      "dockerfile": "Dockerfile",
       "target": "devcontainer"
     },
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",

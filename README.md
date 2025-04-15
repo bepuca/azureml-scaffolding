@@ -113,7 +113,8 @@ AzureML Scaffolding enables you to:
       1. Modify the `requires-python` key.
       2. Modify the `pythonVersion` in the `[tool.pyright]`.
       3. Modify the `target-version` in the `[tool.ruff]`.
-      4. Modify the `ARG PYTHON_VERSION` in the [`Dockerfile`](Dockerfile).
+      4. Modify the `ARG PYTHON_VERSION` in the
+         [`Dockerfile`](.devcontainer/Dockerfile).
 3. Modify the [`.env`](.env) file to match your Azure.
    1. Change the `AZUREML_WORKSPACE` value to the name of your workspace.
    2. Change the `AZUREML_RESOURCE_GROUP` value to the name of the resource
@@ -247,7 +248,7 @@ these variables are set in your shell:
 > details, run `bin/env -h`.
 
 [multi-stage]: https://docs.docker.com/build/building/multi-stage/
-[`Dockerfile`]: Dockerfile
+[`Dockerfile`]: .devcontainer/Dockerfile
 [`devcontainer.json`]: .devcontainer/devcontainer.json
 [devcontainer features]: https://containers.dev/features
 

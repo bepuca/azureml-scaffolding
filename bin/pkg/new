@@ -43,7 +43,7 @@ mv "$pkg_dir/src/${template_name//-/_}" "$pkg_dir/src/${pkg//-/_}"
 # use default repo Dockerfile for the package
 env_dir="$pkg_dir/environment"
 mkdir -p "$env_dir"
-cp "Dockerfile" "$env_dir/Dockerfile"
+cp ".devcontainer/Dockerfile" "$env_dir/Dockerfile"
 
 # rename all references to package_template to the name of the new package
 git add "$pkg_dir"  # ensure git ls-files finds them
