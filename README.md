@@ -93,7 +93,18 @@ AzureML Scaffolding enables you to:
 
 ## Installation
 
-1. TODO: How to do this?
+1. From your project folder, download all files in this repository. **The
+   following command will overwrite any existing files matching the names of
+   those in this repository.** It is recommended to run the following only on
+   a git repository with all changes committed:
+
+   ```bash
+   curl -L https://github.com/bepuca/azureml-scaffolding/archive/v2.zip -o temp.zip \
+   && unzip -o temp.zip \
+   && cp -a azureml-scaffolding-2/. . \
+   && rm -rf temp.zip azureml-scaffolding-2
+   ```
+
 2. Modify the [`pyproject.toml`](pyproject.toml) for your project.
    1. Get familiar with [uv] if it is your first time working with it.
    2. Modify the `name`, `version` and `description` to match your project's.
