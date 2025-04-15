@@ -3,7 +3,7 @@ type: pipeline
 
 experiment_name: example-pipeline
 settings:
-  default_compute: azureml:cpu-E4ds-cluster
+  default_compute: azureml:<azure-ml-cluster-name>
 
 inputs:
   content: "hello world"
