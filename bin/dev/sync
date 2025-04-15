@@ -4,6 +4,29 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
+usage() {
+    cat<<EOF
+Ensure dev env is in sync with the repo
+
+Usage: $0
+
+Options:
+    -h, --help  Show this help message and exit
+
+Ensures 'uv.lock' is updated and the environment matches it.
+Enables the pre-commit hooks for the project.
+Installs both markdownlint-cli2 and markdown-link-check.
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
 uv sync
 uv run pre-commit install
 

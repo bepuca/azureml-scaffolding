@@ -4,7 +4,25 @@
 set -eo pipefail
 cd "$(dirname "$0")/../.."
 
-source bin/env container.env
-bin/chkenv "CODE_PATH"
+usage() {
+    cat<<EOF
+Run pytest for the project with coverage
 
-uv run pytest --cov "$CODE_PATH"
+Usage: $0
+
+Options:
+    -h, --help  Show this help message and exit
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+bin/chkenv "PKGS_PATH"
+
+uv run pytest --cov "$PKGS_PATH"
