@@ -146,7 +146,7 @@ $ bin/pkg/new -h
 In the following sections, we explain the main concepts of the project and how
 to use them.
 
-## Data
+### Data
 
 We recommend using [AzureML Data Assets] to manage data. This makes it easy to
 share data across people and machines and ensures traceability and lineage.
@@ -154,7 +154,7 @@ share data across people and machines and ensures traceability and lineage.
 [AzureML Data Assets]:
     https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-data-assets?view=azureml-api-2&tabs=cli
 
-### Registering data
+#### Registering data
 
 The first step is to register the data in AzureML. In general, this means
 uploading the data and labeling it with a name and a version. The [AzureML Data
@@ -184,7 +184,7 @@ reference data in AzureML. Data then is mounted or downloaded to the compute
 target when the job is executed. This ensures clarity and traceability of the
 data used in each job.
 
-### Downloading data
+#### Downloading data
 
 Usually one person will register the data but many may wish to use it. Or even
 the same person in a different machine. For this, it is convenient to be able to
@@ -194,9 +194,10 @@ download a data asset. This can be done using:
 bin/data/find NAME VERSION | xargs bin/data/download
 ```
 
-The data will be downloaded in the `data` folder. We use two commands because
-`bin/data/download` may be leveraged to download any data in Azure Blob Storage,
-registered or not.
+The data will be downloaded in the `data` folder, which is ignored by git and
+it the recommended place for it. Downloading a data asset chains two commands
+because  `bin/data/download` may be leveraged alone to download any data in
+Azure Blob Storage, registered or not.
 
 ### Packages
 
@@ -282,6 +283,8 @@ This creates the package from the `.package_template`, which ensures the package
 is created with the correct structure and files. Additionally, the command
 renames things in some files to match your package name and makes sure the
 package is added to the `uv workspace` and, thus, the local environment.
+The `Dockerfile` provided by the command works as it should, but feel free to
+change it if you wish to do so.
 
 #### Adding dependencies to a package
 
