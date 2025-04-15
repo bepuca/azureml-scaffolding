@@ -17,7 +17,6 @@ jobs:
     environment:
       image: mcr.microsoft.com/azureml/inference-base-2204
 
-  # step names should match package referenced (but with underscores) for orchestration to work
   example_writer_step:
     type: command
     component: ./example-writer-step/aml-component.yaml
@@ -28,7 +27,6 @@ jobs:
         type: uri_folder
         mode: upload
 
-  # step names should match package referenced (but with underscores) for orchestration to work
   example_reader_step:
     type: command
     component: ./example-reader-step/aml-component.yaml

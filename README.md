@@ -653,8 +653,8 @@ bin/pipe/local <pipeline-name>
 
 This command will:
 
-1. Parse the pipeline YAML file to identify the packages used. This requires the
-   step name to match the package name (with dashes changed to underscores).
+1. Parse the pipeline YAML file to identify the packages used. This expects the
+   `component` key to be of the form `./<package-name>/...`.
 2. Isolate the packages in the `runs/<pipeline-name>/<run-id>` folder. In this
    case, at the top level of the folder there will only be the pipeline YAML.
    Each package is isolated in its own subfolder in the same way `bin/pkg`

@@ -61,9 +61,13 @@ output=$(uv run python - <<EOF
 import yaml
 with open("$pipeline_path") as f:
     pipeline = yaml.safe_load(f)
-for package in pipeline["jobs"]:
-    if package != "snapshot":
-        print(package.replace("_", "-"))
+seen_components = set()
+for step, specs in pipeline["jobs"].items():
+    if step != "snapshot":
+        package = specs["component"].split("/")[1]
+        if package not in seen_components:
+            seen_components.add(package)
+            print(package)
 EOF
 )
 
