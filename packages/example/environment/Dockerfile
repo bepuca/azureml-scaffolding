@@ -8,7 +8,7 @@ ARG PYTHON_VERSION=3.12
 
 ENV UV_LINK_MODE="copy"
 ENV UV_PYTHON=${PYTHON_VERSION}
-COPY --from=ghcr.io/astral-sh/uv:0.6.7 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.6.14 /uv /uvx /bin/
 RUN uv python install ${PYTHON_VERSION}
 
 
