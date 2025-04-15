@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#? [Package] Remove a package from the workspace
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+usage() {
+    cat<<EOF
+Remove a package from the workspace
+
+Usage: $0 PACKAGE
+
+Options:
+    -h, --help  Show this help message and exit
+
+Arguments:
+  PACKAGE  Directory of the package relative to "\$PKGS_PATH".
+
+Remove a package from the project. This will remove the package directory
+and uninstall it from the uv project.
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+. bin/lib/utils.sh
+if [ $# -ne 1 ]; then utils::invalid_usage "PACKAGE not provided."; fi
+package=$1
+
+bin/chkenv "PKGS_PATH"
+if [[ ! -d "$PKGS_PATH/$package" ]]; then
+    echo>&2 "Package directory '$PKGS_PATH/$package' does not exist."
+    exit 1
+fi
+
+rm -rf "${PKGS_PATH:?}/$package"
+uv remove "$package"

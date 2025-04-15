@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+#? [Package] Isolate files for a package run in a separate directory
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+usage() {
+    cat<<EOF
+Isolate files for a package run in a separate directory
+
+Usage: $0 PACKAGE RUN_NAME
+
+Options:
+    -h, --help            Show this help message and exit
+
+Arguments:
+  PACKAGE  Directory of the package relative to "$PKGS_PATH"
+  RUN_DIR  Path to the run directory where to isolate to.
+
+The goal is to isolate the absolute minimum to have a successful execution.
+This aims to make the run reproducible and portable as well as easy to reason
+about in the future.
+
+The run directory will contain all files inside PACKAGE and will
+add the 'shared' code and the environment files. Thus, the final structure:
+  <run_name>
+  ├── .amlignore
+  ├── aml-job.yaml
+  ├── shared/
+  ├── tests/
+  ├── environment/
+  │   ├── Dockerfile
+  │   └── requirements.txt
+  └── <package>
+      ├── __main__.py
+      └── ...
+
+The requirements.txt will contain only the dependencies specified for the
+package.
+EOF
+}
+
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+. bin/lib/utils.sh
+if [ $# -ne 2 ]; then utils::invalid_usage "Both PACKAGE and RUN_NAME required."; fi
+package=$1
+run_dir=$2
+
+bin/chkenv "PKGS_PATH"
+if [[ ! -d "$PKGS_PATH/$package" ]]; then
+    echo>&2 "Package directory '$PKGS_PATH/$package' does not exist."
+    exit 1
+fi
+
+# ensure run_dir exists
+mkdir -p "$run_dir"
+
+# copy package code
+cp -r "$PKGS_PATH/$package/." "$run_dir"
+# if shared dir is present, copy it to make it available too
+if [[ -d "$PKGS_PATH/shared" ]]; then
+    cp -r "$PKGS_PATH/shared/src/shared" "$run_dir/src"
+    mkdir -p "$run_dir/tests/shared"
+    cp -r "$PKGS_PATH/shared/tests/." "$run_dir/tests/shared"
+fi
+
+# copy artifacts to build environment
+docker_context="$run_dir/environment"
+mkdir -p "$docker_context"
+uv export --quiet \
+    --output-file "$docker_context/requirements.txt" \
+    --package "$package" \
+    --no-hashes \
+    --no-emit-workspace

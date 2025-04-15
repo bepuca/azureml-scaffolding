@@ -1,0 +1,34 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+experiment_name: example-pipeline
+settings:
+  default_compute: azureml:<azure-ml-cluster-name>
+
+inputs:
+  content: "hello world"
+
+jobs:
+  # always keep the snapshot step so pipeline YAML makes it into the jobs
+  snapshot:
+    name: Snapshot
+    command: echo "Uploading full pipeline snapshot"
+    code: .
+    environment:
+      image: mcr.microsoft.com/azureml/inference-base-2204
+
+  example_writer_step:
+    type: command
+    component: ./example-writer-step/aml-component.yaml
+    inputs:
+      content: ${{ parent.inputs.content }}
+    outputs:
+      data_path:
+        type: uri_folder
+        mode: upload
+
+  example_reader_step:
+    type: command
+    component: ./example-reader-step/aml-component.yaml
+    inputs:
+      data_path: ${{ parent.jobs.example_writer_step.outputs.data_path }}

@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+#? Prepare git state for proper experiment tracing
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+usage() {
+    cat<<EOF
+Prepare git state for proper experiment tracing.
+
+Usage: $0 [options] MESSAGE
+
+Options:
+  -h, --help      Show this help message and exit.
+  --remote NAME   Name of the remote to use. Default is "origin".
+  --main-ref REF  Reference to the main branch. Default is "main".
+  --exp-ref REF   Branch name for experiments. Default is "experiments".
+  --src-ref REF   Reference to use as source for the experiment. Default is
+                  the "HEAD" of the current branch.
+
+Arguments:
+    MESSAGE  Subject for the message of the commit to run. Useful to identify
+             the experiment associated with the commit.
+
+This script is not intended to be run directly. It is used by other scripts
+when a run needs to be tracked as an experiment.
+
+For traceability of experiments, this script creates a commit on the 'exp-ref'
+branch that contains all the changes, and only the changes, from the last commit
+on 'main-ref' until the 'src-ref'.
+
+The script will:
+
+- Ensure that the working directory is clean.
+- Ensure that the remote is up to date.
+- Ensure that the current branch is up to date with the upstream main branch.
+- Ensure that the exp-ref branch is up to date with the main branch.
+- Create a new commit on the local exp-ref branch with all modifications in the
+  source reference.
+EOF
+}
+
+
+. bin/lib/utils.sh
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        --remote|--main|--exp-ref|--src-ref)
+            if [ -z "$2" ]; then utils::invalid_usage "Missing argument for: $1"; fi
+            option_name=${1:2} # remove the leading "--"
+            option_name=${option_name//[!a-z]/_} # replace non-alphabetic characters
+            printf -v "opt_${option_name}" "%s" "$2" # assign prefixed variable
+            shift
+            ;;
+        *) break
+    esac
+    shift
+done
+
+# Set default values for options.
+
+remote=${opt_remote:-origin}
+main_ref=${opt_main:-main}
+exp_ref=${opt_exp_ref:-experiments}
+remote_exp_ref=${EXP_REF:-$remote/$exp_ref}
+src_ref=${opt_src_ref:-HEAD}
+
+if [ -z "$1" ]; then utils::invalid_usage "Missing or empty argument: MESSAGE"; fi
+message=$1
+shift
+
+if [ $# -ne 0 ]; then utils::invalid_usage "Unexpected argument: $1"; fi
+
+# Make sure that the working directory is clean.
+
+if ! git diff --quiet; then
+    echo >&2 "Working directory is dirty. Retry after committing or stashing changes." &&
+    exit 1
+fi
+
+# Resolve the source into a symbolic/branch name, in case something like "HEAD"
+# was specified.
+
+src_ref=$(git rev-parse --abbrev-ref --symbolic-full-name "$src_ref")
+
+# Make sure that all remote refs are up to date.
+
+git fetch "$remote"
+
+# Find out the upstream branch of the main branch and...
+
+up_main_ref=$(git rev-parse --abbrev-ref --symbolic-full-name "$main_ref@{upstream}")
+up_main_id=$(git rev-parse "$up_main_ref")
+merge_base_id=$(git merge-base "$up_main_ref" "$src_ref")
+
+# ...check if the current branch is up to date with it:
+
+if [[ "$merge_base_id" != "$up_main_id" ]]; then
+
+    # It's not up to date, so unless auto-merge is requested, exit with an
+    # error.
+    echo >&2 "The branch is not up to date with: $up_main_ref"
+    echo >&2 "Retry after running: git merge $up_main_ref"
+    exit 1
+
+fi
+
+# Get the hash of the main upstream tree.
+
+up_main_tree_id=$(git log -1 --pretty=%T "$up_main_ref")
+
+# Get the hashes of the experiments commit (head) and tree delimited by colon
+# (:) then split and parse each one into separate variables.
+
+IFS=: read -r exp_head_id exp_tree_id < <(
+    git log -1 --pretty="%H:%T" "$remote_exp_ref"
+)
+
+# Search the trees of the experiments branch history to see if the tree of
+# source reference head is there. If it is, bail out because there is nothing
+# new to do.
+src_tree_id=$(git log -1 --pretty=%T "$src_ref")
+if grep -q -F "$src_tree_id" < <(git log --pretty=%T "$remote_exp_ref"); then
+    echo >&2 "Experiment has already been pushed; nothing new to do."
+    exit 0
+fi
+
+# If the experiments tree is not in sync with the main upstream tree, then
+# create a new commit that restores the main upstream branch tree on to the
+# experiments branch.
+
+if [[ "$up_main_tree_id" != "$exp_tree_id" ]]; then
+    exp_head_id=$(
+        git commit-tree \
+            -p "$remote_exp_ref" \
+            -m "restore main ($(git log -1 --pretty=%h "$up_main_id"))" \
+            "$up_main_tree_id"
+    )
+else
+    echo >&2 "Trees of \"$up_main_ref\" and \"$remote_exp_ref\" are in sync; skipping sync."
+fi
+
+# Commit the tree of the supplied commit hash on to the local experiments
+# branch.
+
+commit_id=$(git commit-tree -p "$exp_head_id" -m "$message" "$src_tree_id")
+git update-ref "refs/heads/$exp_ref" "$commit_id"
+
+echo "$commit_id"

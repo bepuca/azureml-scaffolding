@@ -1,0 +1,28 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: example_writer_step
+display_name: Example Writer Step
+
+# What to run (always cd into src for imports to work)
+command: >-
+  cd src &&
+  python -m example_writer_step
+  --content "${{ inputs.content }}"
+  --data_path "${{ outputs.data_path }}"
+
+inputs:
+  content:
+    type: string
+
+outputs:
+  data_path:
+    type: uri_folder
+
+# What code to make available
+code: .
+
+# Where to run it
+environment:
+  build:
+    path: ./environment

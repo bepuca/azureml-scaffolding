@@ -1,20 +1,21 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
 repos:
-  # Opinionated code formatter to forget about formatting
-  - repo: https://github.com/ambv/black
-    rev: 23.7.0
-    hooks:
-      - id: black
-
-  # Lint code to catch easy bugs and problems
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
-    hooks:
-      - id: flake8
-
-  # Sort imports deterministically
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
+- repo: local
+  hooks:
+  - id: shellcheck
+    name: Lint Bash
+    entry: bin/lint/shell
+    args: [check]
+    language: script
+    files: ^.*\.sh|^bin/
+    exclude: ^.*\.yaml|^.env.*|.*\.md
+  - id: python
+    name: Lint Python
+    entry: bin/lint/py
+    language: system
+    files: ^.*\.py
+  - id: md
+    name: Lint Markdown
+    entry: bin/lint/md
+    args: [--fix]
+    language: script
+    types: [ text , markdown ]
