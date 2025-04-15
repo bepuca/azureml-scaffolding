@@ -1,7 +1,7 @@
 # AzureML Scaffolding
 
 AzureML Scaffolding provides a minimal yet comprehensive template for AI and
-Machine Learning projects built on [Azure Machine Learning] (also refferred to
+Machine Learning projects built on [Azure Machine Learning] (also referred to
 as AzureML or AML). It implements [Hypothesis Driven Development] principles to
 accelerate experimentation-driven progress. By distilling best practices from
 numerous successful projects, we've created a developer-friendly foundation that
@@ -78,11 +78,11 @@ AzureML Scaffolding enables you to:
 - **Azure ML workspace** - For running and tracking experiments in AzureML, you
   need to have an Azure subscription with an Azure ML workspace. The workspace
   should have at least one compute cluster defined.
-- **Docker** - This project leverages Docker based environments to maximize
+- **Docker** - This project leverages Docker-based environments to maximize
   reproducibility. Therefore, you need the [Docker engine] in your machine and
   potentially a license for it.
 - **VSCode Dev Containers** - We use the [devcontainers] to capitalize on the
-  Docker environments for an easy to set-up and portable development
+  Docker environments for an easy-to-set-up and portable development
   environment. This project is designed to be used within VSCode [Dev Containers
   extension] but it may be possible to tweak it for other editors.
 
@@ -288,9 +288,9 @@ download a data asset. This can be done using:
 bin/data/find NAME VERSION | xargs bin/data/download
 ```
 
-The data will be downloaded in the `data` folder, which is ignored by git and it
+The data will be downloaded in the `data` folder, which is ignored by git and is
 the recommended place for it. Downloading a data asset chains two commands
-because  `bin/data/download` may be leveraged alone to download any data in
+because `bin/data/download` may be leveraged alone to download any data in
 Azure Blob Storage, registered or not.
 
 ### Packages
@@ -325,7 +325,7 @@ It is worth explaining a few things here:
 - **`environment/`** - This is the environment context. It should contain a
   `Dockerfile` that accepts a `requirements.txt` and builds an environment from
   it. The `requirements.txt` is generated from the dependencies defined in the
-  `pyproject.toml` file at run time. We need a separated `environment/` folder
+  `pyproject.toml` file at run time. We need a separate `environment/` folder
   because AzureML can cache the environment built from it if nothing changes.
   Having it at top level would mean a rebuild for every package change.
 - **`azure-ml-job.yaml`** - This is the AzureML job specification for the
@@ -335,7 +335,7 @@ It is worth explaining a few things here:
   - **[Command job]** - This is the simplest job type. It runs a command in a
     container. This is the most common type of job and the one we use for most
     of our experiments.
-  - **[Pipeline job]** - This is a more complex job type that allows to chain
+  - **[Pipeline job]** - This is a more complex job type that allows chaining
     multiple commands. The difference with a [Pipeline] as defined in this
     project, is that defining a pipeline job within a package means all steps
     will have all the same code and share the environment. Thus, any change in
@@ -486,13 +486,13 @@ Executing a run for a package in this manner, ensures the following:
 > reference and starting point.
 
 To bring the experimentation game to the next level, you can make any AzureML
-execution an experiment by adding the `--exp` or `-e` flag toe the command:
+execution an experiment by adding the `--exp` or `-e` flag to the command:
 
 ```bash
 bin/pkg/aml --exp "Add cosine scheduler" <package-name>
 ```
 
-This uses some `git` shanenigans to create a commit with all changes since main
+This uses some `git` shenanigans to create a commit with all changes since main
 in the `experiments` branch locally. Then, by triggering the AzureML job from
 this `git` state, the commit linked in the AzureML UI contains all these
 changes. If job submission succeeds, this commit is pushed to the remote
@@ -524,7 +524,7 @@ them):
 - One step outputs can be connected to the inputs of another one.
 - Steps connected will run sequentially, but the rest can run in parallel if
   sufficient compute is available.
-- Steps are cached. If submitted with the same code and environement, they will
+- Steps are cached. If submitted with the same code and environment, they will
   not be re-executed. This is useful for long running steps that do not change
   often.
 - Each step of the pipeline must reference a package. To do so, packages meant
@@ -591,11 +591,11 @@ This command will:
    Each package is isolated in its own subfolder in the same way `bin/pkg`
    scripts do.
 3. Execute each package `__main__.py` in the order they are defined in pipeline
-   YAML. It is the responsbility of the user to ensure each of these files can
-   be executed without arguments and that inputs are outputs are properly
+   YAML. It is the responsibility of the user to ensure each of these files can
+   be executed without arguments and that inputs and outputs are properly
    connected where needed.
 
-Once this succeed, once more we can execute the pipeline in AzureML in a similar
+Once this succeeds, once more we can execute the pipeline in AzureML in a similar
 way:
 
 ```bash
