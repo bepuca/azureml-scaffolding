@@ -244,9 +244,10 @@ It is worth explaining a few things here:
   - **[Pipeline job]** - This is a more complex job type that allows to chain
     multiple commands. The difference with a [Pipeline] as defined in this
     project, is that defining a pipeline job within a package means all steps
-    will have all the same code and share the environment. This is usually an
-    advanced pattern for people familiar with AzureML and the benefits of
-    pipelines.
+    will have all the same code and share the environment. Thus, any change in
+    the package will eliminate the cache. The main benefit of this pattern is
+    to avoid defining multiple packages for steps that largely use the same
+    code. For instance, a training and inference step.
 
 An example package is provided in [`.package-template`]. It is useful as a
 reference and used by `bin/pkg/new` to create a new package.
@@ -430,7 +431,7 @@ them):
   not be re-executed. This is useful for long running steps that do not change
   often.
 - Each step of the pipeline must reference a package. To do so, packages meant
-  to be used in pipelines should implement a [Component job] YAML defined.
+  to be used in pipelines should implement a [Component] YAML defined.
 - Component inputs are displayed in AzureML UI. This helps with traceability.
 - The name of the job steps should match the name of the package referenced
   (with dashes changed to underscores due to AzureML expectation).
@@ -438,12 +439,19 @@ them):
 An example pipeline is provided in
 [`.pipeline-template/pipeline-template.yaml`]. It is useful as a reference and
 used by `bin/pipe/new` to create a new pipeline. The rest of the files in that
-directory serve to create the example packages used by the pipeline. They
-contain example [`aml-component.yaml`].
+directory serve to create the example packages used by the pipeline. They also
+contain an example [Component] YAML: [`aml-component.yaml`].
+
+> **Tip**: A single package may implement multiple steps. This is useful when
+> the steps are closely related and share a lot of code. For instance, a
+> training and inference step. In this case, the package should implement one
+> `aml-component.yaml` file per step. In these cases, `__main__.py` is usually
+> relegated to local usage only and is the responsibility of the user to ensure
+> the payload is equivalent to the multiple steps.
 
 [pipeline documentation]:
     https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-component-pipelines-cli?view=azureml-api-2
-[Component job]:
+[Component]:
     https://learn.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command?view=azureml-api-2
 [`.pipeline-template/pipeline-template.yaml`]:
     .pipeline-template/pipeline-template.yaml
