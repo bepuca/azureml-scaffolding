@@ -153,6 +153,20 @@ thought through and changing them may break some behavior:
 - The `.vscode` folder contains the configuration for VSCode. It includes
   some configuration to make sure VSCode leverages the tools correctly.
 
+Finally, many of these scripts rely on the configuration through environment
+variables. These are defined in the [`.env`](.env) file. In many cases, if you
+are missing them, the script will fail with a clear error message. To make sure
+these variables are set in your shell:
+
+```bash
+. bin/env
+```
+
+> **Tip**: The above command will set the environment variables from [`.env`].
+> If you wish, that command also sets the variables in `.env.local` with higher
+> precedence if it exists. This second file is ignored by git and useful if
+> different developers need different values for the same variables.
+
 ### Data
 
 We recommend using [AzureML Data Assets] to manage data. This makes it easy to
