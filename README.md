@@ -208,7 +208,8 @@ these variables are set in your shell:
 > **Tip**: The above command will set the environment variables from [`.env`].
 > If you wish, that command also sets the variables in `.env.local` with higher
 > precedence if it exists. This second file is ignored by git and useful if
-> different developers need different values for the same variables.
+> different developers need different values for the same variables. For more
+> details, run `bin/env -h`.
 
 [multi-stage]: https://docs.docker.com/build/building/multi-stage/
 [`Dockerfile`]: Dockerfile
