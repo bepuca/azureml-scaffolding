@@ -190,7 +190,9 @@ to modify them to suit your needs, but beware that most decisions have been
 thought through and changing them may break some behavior:
 
 - The .`devcontainer` folder implements the definition for a devcontainer. It
-  uses a Dockerfile and installs extensions that are useful as well as features.
+  uses a [multi-stage] [`Dockerfile`] that serves for both full repository
+  devcontainer and for packages environment. The [`devcontainer.json`] also
+  installs useful VSCode extensions and necessary [devcontainer features].
 - The `.vscode` folder contains the configuration for VSCode. It includes
   some configuration to make sure VSCode leverages the tools correctly.
 
@@ -207,6 +209,11 @@ these variables are set in your shell:
 > If you wish, that command also sets the variables in `.env.local` with higher
 > precedence if it exists. This second file is ignored by git and useful if
 > different developers need different values for the same variables.
+
+[multi-stage]: https://docs.docker.com/build/building/multi-stage/
+[`Dockerfile`]: Dockerfile
+[`devcontainer.json`]: .devcontainer/devcontainer.json
+[devcontainer features]: https://containers.dev/features
 
 ### Data
 
