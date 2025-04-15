@@ -309,8 +309,10 @@ Azure Blob Storage, registered or not.
 
 A package is a self-contained unit of code that can be executed in isolation
 from the rest of the codebase. In this project, packages are Python packages
-defined in the `packages` folder. They are the base unit of execution. Their
-minimal file structure is:
+defined in the `packages` folder. They are the base unit of execution. We
+leverage the [uv workspaces] feature to provide both a good developer experience
+through a master project environment and the ability to isolate runs to their
+minimal dependencies. The minimal file structure for a package is:
 
 ```text
 <package-name>/
@@ -361,6 +363,7 @@ serve as live documentation. It includes examples on how to log metrics and
 tags, how to define the YAML file, how to import and how to define the
 environment.
 
+[uv workspaces]: https://docs.astral.sh/uv/concepts/projects/workspaces/
 [Command job]:
     https://learn.microsoft.com/en-us/azure/machine-learning/reference-yaml-job-command?view=azureml-api-2
 [Pipeline job]:
