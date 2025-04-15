@@ -15,74 +15,72 @@ efficient experimentation and iteration.
 [Azure Machine Learning]:
     https://learn.microsoft.com/en-us/azure/machine-learning/
 
-## Principles
-
-- **Continuous Experimentation** - Multiple lines of experimentation and
-  deployment can coexist without influencing each other.
-- **Full Reproducibility** - All meaningful executions are self-contained,
-  tracked and can be reproduced at any time.
-- **Minimal Assumptions** - Users have full freedom on what to run.
-- **Minimum Viable Compute** - Code runs the same everywhere, from laptops to
-  beefy VMs to multi-node cluster. No surprising errors when you change machine.
-- **Good Developer Experience** - Once the basics are grasped, it should be easy
-  and pleasant to use.
-- **Extensible** - No two projects are made equal. It should be easy to modify
-  and extend the scaffolding to fit your needs.
-
-## Features Overview
-
-- Developing multiple experiments in parallel with clear boundaries.
-- Running multiple experiments with independent AzureML configurations.
-- Sharing (not duplicating) code between experiments.
-- Local and remote execution - develop and quickly test code locally and execute
-  full scale pipelines on [AzureML compute targets].
-- Leveraging Docker containers to ensure compatibility of environments between
-  local and remote execution.
-- Clear separation between data science/ML and AzureML specific code.
-- Standardized (optional) code linting and formatting.
-- Extensible CLI composed of scripts to abstract complexity behind simple
-  commands. Run `bin/help` for an overview. For instance, running a
-  package-based experiment in AzureML can be done with `bin/pkg/aml --exp "My
-  experiment" <package>`.
-
-[AzureML compute targets]:
-    https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-target
-
 ## Why Azure Machine Learning?
 
-The main benefits of using Azure Machine Learning (which is built on top of
-[mlflow](https://mlflow.org/)) for this are:
+Azure Machine Learning provides essential capabilities for enterprise ML
+development that this scaffolding leverages:
 
-- **Compute on demand** - Use the machines you need and pay only for the time
-  they are running. Scale to big compute without hassle.
-- **Traceability and reproducibility** - By using the script provided, the
-  experiment will be fully reproducible as the artifacts needed to build the
-  environment and run the experiment are uploaded as a self-contained snapshot.
-  We strongly recommend using tags to log any input that is not hard-coded but
-  affects behavior (as we do in the `example_experiment`). Otherwise these
-  values would be lost.
-- **Progress tracking** - If you use metrics (and we believe you should), you
-  will track some sort of performance or quality of your experiments (as we do
-  in the `example_experiment`). Over time, you may try to improve these numbers.
-  By having all your runs together in AzureML, it is easy to display them and
-  observe progress.
-- **Shareability** - Everyone with read access to the workspace will be able to
-  see the runs and inspect results. This is usually helpful when not working
-  alone in a project.
-- **Data Ops** - AzureML offers things like [Data Assets] and good interactions
-  with Blob Storage. This makes it easy to version data and use it in jobs
-  making it clear what data is used where.
+- **Compute on Demand** - Use powerful machines only when needed and pay for
+  actual usage. Scale from local development to multi-node clusters without code
+  changes.
+- **Experiment Tracking** - Every run is automatically tracked with metrics,
+  parameters, and environment specs. Compare experiments, visualize progress,
+  and identify winning approaches efficiently.
+- **Complete Reproducibility** - All code, data references, and environment
+  definitions are captured in self-contained snapshots. Any experiment can be
+  reproduced exactly, even months later.
+- **Enterprise-grade Data Management** - Leverage Data Assets for versioning,
+  access control, and lineage tracking of datasets throughout your project
+  lifecycle.
+- **Collaboration** - Share experiments, results, and models with teammates
+  without needing to share execution environments. Everyone with workspace
+  access can view runs and inspect outcomes.
+
+## Core Design Principles
+
+This scaffolding was built around four key principles that guide how ML projects
+should operate:
+
+- **Continuous Experimentation** - Conduct multiple parallel experiments without
+  interference. Each experiment is isolated, allowing for fearless innovation
+  with clear boundaries between variations.
+- **Minimum Viable Compute** - Develop locally, test on small datasets, then
+  scale to production workloads—all using the same code. Your laptop, a powerful
+  VM, or a GPU cluster all run identical executions.
+- **Developer Experience First** - Clear project structure, simple commands, and
+  minimal boilerplate let you focus on ML code instead of infrastructure.
+  Linting, testing, and best practices are built in.
+- **Extensibility** - Customize and extend the scaffolding to fit your specific
+  project needs. The structure accommodates different ML workflows while
+  maintaining consistency.
+
+## Key Capabilities
+
+AzureML Scaffolding enables you to:
+
+- **Manage Parallel Experiments** - Develop and run multiple experiments with
+  independent configurations and clear isolation boundaries.
+- **Share Code Efficiently** - Use the `shared` package for code reuse across
+  packages without duplication.
+- **Run Anywhere** - Run the same code locally for fast iteration and remotely
+  for full-scale execution. Docker containers ensure environment consistency.
+- **Structure Your Project** - Maintain clean separation between ML code and
+  infrastructure code with standardized package organization.
+- **Leverage DevOps Practices** - Utilize built-in code linting, formatting, and
+  testing capabilities to maintain quality.
+- **Simplify Workflows** - Access all common tasks through an intuitive CLI with
+  commands like `bin/pkg/aml` to run experiments in AzureML.
+- **Build Pipelines** - Create multi-step ML workflows with proper dependency
+  management between components.
 
 ## Prerequisites
 
 - **Azure ML workspace** - For running and tracking experiments in AzureML, you
   need to have an Azure subscription with an Azure ML workspace. The workspace
   should have at least one compute cluster defined.
-
 - **Docker** - This project leverages Docker based environments to maximize
   reproducibility. Therefore, you need the [Docker engine] in your machine and
   potentially a license for it.
-
 - **VSCode Dev Containers** - We use the [devcontainers] to capitalize on the
   Docker environments for an easy to set-up and portable development
   environment. This project is designed to be used within VSCode [Dev Containers
@@ -112,7 +110,8 @@ The main benefits of using Azure Machine Learning (which is built on top of
    3. Change the `AZUREML_TENANT_ID` value to the tenant ID of your Azure
       subscription.
 4. Change the `name` key in the [`.devcontainer/devcontainer.json`] file to
-   match your project name. This is the name of the container that will be created.
+   match your project name. This is the name of the container that will be
+   created.
 5. Run the action `Dev Containers: Rebuild and Reopen in Container` in VSCode
    using the [Command Palette]. This will build the Dev Container for the first
    time. After it finishes, you are all set.
@@ -218,8 +217,8 @@ thought through and changing them may break some behavior:
   uses a [multi-stage] [`Dockerfile`] that serves for both full repository
   devcontainer and for packages environment. The [`devcontainer.json`] also
   installs useful VSCode extensions and necessary [devcontainer features].
-- The `.vscode` folder contains the configuration for VSCode. It includes
-  some configuration to make sure VSCode leverages the tools correctly.
+- The `.vscode` folder contains the configuration for VSCode. It includes some
+  configuration to make sure VSCode leverages the tools correctly.
 
 Finally, many of these scripts rely on the configuration through environment
 variables. These are defined in the [`.env`](.env) file. In many cases, if you
@@ -647,9 +646,9 @@ that execute the following commands (which may be called manually too):
   configuration is found in the caller script itself.
 
 > **Tip**: In most cases, the user may ignore linting until the hooks run.
-> However, sometimes it is useful to run some of it manually. VSCode will
-> pick up `pyright` automatically and show errors in the editor. For `ruff`,
-> the default devcontainer installs the extension and will show errors.
+> However, sometimes it is useful to run some of it manually. VSCode will pick
+> up `pyright` automatically and show errors in the editor. For `ruff`, the
+> default devcontainer installs the extension and will show errors.
 > Additionally, the `ruff` extension offers format imports and format code
 > commands exposed in the command palette. For markdown, some errors are raised
 > in the editor. We install the rewrap extension. The command "Rewrap Comment"
@@ -671,5 +670,5 @@ that execute the following commands (which may be called manually too):
 
 ### Testing
 
-We use and recommend [pytest] for testing. A little wrapper command `bin/dev/test`
-is provided to run the tests with coverage.
+We use and recommend [pytest] for testing. A little wrapper command
+`bin/dev/test` is provided to run the tests with coverage.
