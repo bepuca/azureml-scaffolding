@@ -84,6 +84,7 @@ aml_run() {
 	--resource-group "$AZUREML_RESOURCE_GROUP" \
     --workspace-name "$AZUREML_WORKSPACE" \
     --set name="$run_name" \
+    --set description="$exp" \
     "${job_xargs[@]}"
 }
 if [[ -z "$exp" ]]; then
