@@ -1,15 +1,15 @@
 # AzureML Scaffolding
 
 AzureML Scaffolding provides a minimal yet comprehensive template for AI and
-Machine Learning projects built on [Azure Machine Learning]. It implements
-[Hypothesis Driven Development] principles to accelerate experimentation-driven
-progress. By distilling best practices from numerous successful projects, we've
-created a developer-friendly foundation that eliminates common setup hurdles.
-This scaffolding is designed to work seamlessly with AzureML's experiment
-tracking and compute management, ensuring these features are leveraged
-effectively from day one. Get started in minutes and focus on what matters:
-building and shipping valuable ML solutions through efficient experimentation
-and iteration.
+Machine Learning projects built on [Azure Machine Learning] (also refferred to
+as AzureML or AML). It implements [Hypothesis Driven Development] principles to
+accelerate experimentation-driven progress. By distilling best practices from
+numerous successful projects, we've created a developer-friendly foundation that
+eliminates common setup hurdles. This scaffolding is designed to work seamlessly
+with AzureML's experiment tracking and compute management, ensuring these
+features are leveraged effectively from day one. Get started in minutes and
+focus on what matters: building and shipping valuable ML solutions through
+efficient experimentation and iteration.
 
 [Hypothesis Driven Development]: https://www.bepuca.dev/posts/hdd-for-ai/
 [Azure Machine Learning]:
@@ -47,6 +47,31 @@ and iteration.
 
 [AzureML compute targets]:
     https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-target
+
+## Why Azure Machine Learning?
+
+The main benefits of using Azure Machine Learning (which is built on top of
+[mlflow](https://mlflow.org/)) for this are:
+
+- **Compute on demand** - Use the machines you need and pay only for the time
+  they are running. Scale to big compute without hassle.
+- **Traceability and reproducibility** - By using the script provided, the
+  experiment will be fully reproducible as the artifacts needed to build the
+  environment and run the experiment are uploaded as a self-contained snapshot.
+  We strongly recommend using tags to log any input that is not hard-coded but
+  affects behavior (as we do in the `example_experiment`). Otherwise these
+  values would be lost.
+- **Progress tracking** - If you use metrics (and we believe you should), you
+  will track some sort of performance or quality of your experiments (as we do
+  in the `example_experiment`). Over time, you may try to improve these numbers.
+  By having all your runs together in AzureML, it is easy to display them and
+  observe progress.
+- **Shareability** - Everyone with read access to the workspace will be able to
+  see the runs and inspect results. This is usually helpful when not working
+  alone in a project.
+- **Data Ops** - AzureML offers things like [Data Assets] and good interactions
+  with Blob Storage. This makes it easy to version data and use it in jobs
+  making it clear what data is used where.
 
 ## Prerequisites
 
@@ -648,29 +673,3 @@ that execute the following commands (which may be called manually too):
 
 We use and recommend [pytest] for testing. A little wrapper command `bin/dev/test`
 is provided to run the tests with coverage.
-
-### Setting up Scaffolding in your project
-
-This will submit the job and run your experiment in the cloud. The main benefits
-of using Azure Machine Learning (which is built on top of
-[mlflow](https://mlflow.org/)) for this are:
-
-- **Compute on demand** - Use the machines you need and pay only for the time
-  they are running your experiment. Scale to big compute without hassle.
-- **Traceability and reproducibility** - By using the script provided, the
-  experiment will be fully reproducible as the artifacts needed to build the
-  environment and run the experiment are uploaded as a self-contained snapshot.
-  We strongly recommend using tags to log any input that is not hard-coded but
-  affects behavior (as we do in the `example_experiment`). Otherwise these
-  values would be lost.
-- **Progress tracking** - If you use metrics (and we believe you should), you
-  will track some sort of performance or quality of your experiments (as we do
-  in the `example_experiment`). Over time, you may try to improve these numbers.
-  By having all your runs together in AzureML, it is easy to display them and
-  observe progress.
-- **Shareability** - Everyone with read access to the workspace will be able to
-  see the runs and inspect results. This is usually helpful when not working
-  alone in a project.
-- **Data Ops** - AzureML offers things like [Data Assets] and good interactions
-  with Blob Storage. This makes it easy to version data and use it in jobs
-  making it clear what data is used where.
