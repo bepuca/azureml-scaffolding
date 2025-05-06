@@ -187,7 +187,7 @@ The main interface of this project is the script-based CLI in the `bin` folder.
 These scripts abstract away the complexity in simple commands and ensure best
 practices are followed. Each available command of the CLI is defined by the
 filepath of the script. If you are interested in the details or wish to change
-some behavior, refer first to the [`bin/README.md](bin/README.md). Otherwise,
+some behavior, refer first to the [`bin/README.md`](bin/README.md). Otherwise,
 that folder can be largely treated as a black box. The help should be enough to
 leverage the CLI. You can display it by running:
 
@@ -745,3 +745,5 @@ that execute the following commands (which may be called manually too):
 
 We use and recommend [pytest] for testing. A little wrapper command
 `bin/dev/test` is provided to run the tests with coverage.
+
+[pytest]: https://docs.pytest.org/
