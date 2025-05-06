@@ -745,3 +745,5 @@ that execute the following commands (which may be called manually too):
 
 We use and recommend [pytest] for testing. A little wrapper command
 `bin/dev/test` is provided to run the tests with coverage.
+
+[pytest]: https://docs.pytest.org/
