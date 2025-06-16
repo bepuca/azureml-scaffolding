@@ -22,6 +22,7 @@ efficient experimentation and iteration.
 - [Key Capabilities](#key-capabilities)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+- [Quickstart](#quickstart)
 - [Usage](#usage)
   - [Data](#data)
     - [Registering data](#registering-data)
@@ -157,10 +158,9 @@ AzureML Scaffolding enables you to:
 5. Run the action `Dev Containers: Rebuild and Reopen in Container` in VSCode
    using the [Command Palette]. This will build the Dev Container for the first
    time. After it finishes, you are all set.
-6. Define the default compute in the templates yamls.
-7. If it is the first time you use AzureML Scaffolding for a project of yours,
-   make sure to get familiar with this document.
-8. If you do not wish to persist any of the example packages provided with the
+6. If it is the first time you use AzureML Scaffolding for a project of yours,
+   the [Quickstart](#quickstart) is a good place to start.
+7. If you do not wish to persist any of the example packages provided with the
    template, you can remove them by running the following:
 
    ```bash
@@ -169,7 +169,7 @@ AzureML Scaffolding enables you to:
    bin/pkg/rm example-writer-step
    ```
 
-9. If you had existing code, move it to become one or more [packages]. You may
+8. If you had existing code, move it to become one or more [packages]. You may
    need to [create a new package] and ensure the dependencies in its
    `pyproject.toml` match your existing requirements.
 
@@ -179,6 +179,132 @@ AzureML Scaffolding enables you to:
 [packages]: #packages
 [create a new package]: #creating-a-new-package
 
+## Quickstart
+
+[Back to the Top](#table-of-contents)
+
+This quickstart will get you from zero to running your first ML experiment in
+Azure ML in about 10 minutes. By the end, you'll understand the core workflow of
+developing locally and executing remotely.
+
+### Step 0: Prerequisites Check
+
+Before starting, ensure you have completed the [Installation](#installation)
+steps:
+
+- The repository is open in a VS Code Dev Container
+- Azure ML settings are configured in your `.env` file
+- The Dev Container has been built and is running
+
+### Step 1: Verify Azure ML Connection
+
+Let's verify your Azure ML workspace connection is working:
+
+```bash
+# Load environment variables and test connection
+. bin/env
+az login  # If not already logged in
+az ml workspace show
+```
+
+This should display your workspace details. If you see an error, double-check
+your `.env` file settings.
+
+### Step 2: Create Your First Package
+
+Let's create a simple training package that we can modify:
+
+```bash
+# Load up environment variables
+. bin/env
+
+# Create a new package called "my-first-model"
+bin/pkg/new my-first-model
+```
+
+This creates a package with the standard structure in
+`packages/my-first-model/`.
+
+#### Step 3: Add Your ML Code
+
+Replace the contents of `packages/my-first-model/src/my_first_model/__main__.py`
+with your code. The contents in the file are illustrative of what you can do.
+This file is what gets executed down the line when you run the package.
+
+#### Step 4: Add Dependencies
+
+Add the required dependencies to your package. For example:
+
+```bash
+uv add --package my-first-model scikit-learn joblib numpy
+```
+
+#### Step 5: Run Locally
+
+First, test your package locally to ensure it works:
+
+```bash
+# Run in the full project environment (quick debugging)
+uv run python -m my_first_model
+# or equivalently
+uv run my_first_model
+# or use VSCode to run the __main__.py file directly
+
+# Run in isolated environment (recommended before cloud submission)
+bin/pkg/local my-first-model
+```
+
+Check the `runs/my-first-model/` folder to see the isolated execution artifacts.
+
+#### Step 6: Configure for Azure ML
+
+Edit `packages/my-first-model/aml-job.yaml` to set your compute target:
+
+```yaml
+compute: azureml:YOUR-COMPUTE-NAME  # Replace with your cluster name
+```
+
+#### Step 7: Run in Azure ML
+
+Now submit your experiment to Azure ML:
+
+```bash
+# Basic submission
+bin/pkg/aml my-first-model
+
+# Or, as a tracked experiment with a description
+bin/pkg/aml --exp "Testing different sample sizes" my-first-model
+```
+
+The command will output a link to the Azure ML Studio where you can monitor your
+job's progress, view logs, and see the logged metrics.
+
+#### Understanding the Workflow
+
+What just happened:
+
+1. **Local Development**: You wrote and tested code on your machine using the
+   full development environment.
+2. **Isolated Testing**: `bin/pkg/local` ran your code in an isolated
+  environment with only its declared dependencies, catching any missing imports.
+3. **Cloud Execution**: `bin/pkg/aml` packaged your code, created a Docker
+   environment, and submitted it to Azure ML with full reproducibility.
+
+The same code ran in all three environments, demonstrating the "develop locally,
+run anywhere" principle.
+
+#### Next Steps
+
+Now that you've run your first experiment:
+
+- Modify the code and use `--exp` flag to track different experiments.
+- See what other commands are available in the CLI by running `bin/help`.
+- Try using Azure ML data assets (see [Data](#data) section).
+- Explore the generated `runs/` folder to understand the isolation mechanism.
+
+Continue reading the full documentation below for detailed explanations of all
+features.
+
 ## Usage
 
 [Back to the Top](#table-of-contents)
@@ -187,7 +313,7 @@ The main interface of this project is the script-based CLI in the `bin` folder.
 These scripts abstract away the complexity in simple commands and ensure best
 practices are followed. Each available command of the CLI is defined by the
 filepath of the script. If you are interested in the details or wish to change
-some behavior, refer first to the [`bin/README.md`](bin/README.md). Otherwise,
+some behavior, refer first to the [`bin/README.md](bin/README.md). Otherwise,
 that folder can be largely treated as a black box. The help should be enough to
 leverage the CLI. You can display it by running:
 
@@ -745,5 +871,3 @@ that execute the following commands (which may be called manually too):
 
 We use and recommend [pytest] for testing. A little wrapper command
 `bin/dev/test` is provided to run the tests with coverage.
-
-[pytest]: https://docs.pytest.org/
