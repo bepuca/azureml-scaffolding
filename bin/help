@@ -35,9 +35,9 @@ class Command:
     help: str
 
 
-def enumerate_commands(root: Path, /) -> Iterator[Command]:
+def scan_commands(root: Path, /) -> Iterator[Command]:
     """
-    Scan for all commands from the root directory recursively.
+    Scan the files, yielding the file, group, and help text.
     """
 
     def should_display_help(file: Path) -> bool:
@@ -91,7 +91,7 @@ def main() -> None:
     """
 
     all_commands = list(
-        sorted(enumerate_commands(Path(__file__).parent), key=lambda c: (c.group, c.path_str))
+        sorted(scan_commands(Path(__file__).parent), key=lambda c: (c.group, c.path_str))
     )
 
     column_width = max(len(c.path_str) for c in all_commands) + 2
