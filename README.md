@@ -130,10 +130,10 @@ AzureML Scaffolding enables you to:
    a git repository with all changes committed:
 
    ```bash
-   curl -L https://github.com/bepuca/azureml-scaffolding/archive/v2.zip -o temp.zip \
+   curl -L https://github.com/bepuca/azureml-scaffolding/archive/refs/heads/main.zip -o temp.zip \
    && unzip -o temp.zip \
-   && cp -a azureml-scaffolding-2/. . \
-   && rm -rf temp.zip azureml-scaffolding-2
+   && cp -a azureml-scaffolding-main/. . \
+   && rm -rf temp.zip azureml-scaffolding-main
    ```
 
 2. Modify the [`pyproject.toml`](pyproject.toml) for your project.
