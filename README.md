@@ -130,10 +130,10 @@ AzureML Scaffolding enables you to:
    a git repository with all changes committed:
 
    ```bash
-   curl -L https://github.com/bepuca/azureml-scaffolding/archive/v2.zip -o temp.zip \
+   curl -L https://github.com/bepuca/azureml-scaffolding/archive/refs/heads/main.zip -o temp.zip \
    && unzip -o temp.zip \
-   && cp -a azureml-scaffolding-2/. . \
-   && rm -rf temp.zip azureml-scaffolding-2
+   && cp -a azureml-scaffolding-main/. . \
+   && rm -rf temp.zip azureml-scaffolding-main
    ```
 
 2. Modify the [`pyproject.toml`](pyproject.toml) for your project.
@@ -152,7 +152,7 @@ AzureML Scaffolding enables you to:
       group your workspace belongs to.
    3. Change the `AZUREML_TENANT_ID` value to the tenant ID of your Azure
       subscription.
-4. Change the `name` key in the [`.devcontainer/devcontainer.json`] file to
+4. Change the `name` key in the [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json) file to
    match your project name. This is the name of the container that will be
    created.
 5. Run the action `Dev Containers: Rebuild and Reopen in Container` in VSCode
