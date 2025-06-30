@@ -7,7 +7,7 @@ experiment_name: example
 
 # What to run
 command: >-
-  uv run python -m example
+  cd src && python -m example
   --data_path "${{inputs.data_path}}"
   --greeting "${{inputs.greeting}}"
 

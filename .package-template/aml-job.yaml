@@ -7,7 +7,7 @@ experiment_name: package_template
 
 # What to run
 command: >-
-  python -m package_template
+  cd src && python -m package_template
   --data_path "${{inputs.data_path}}"
   --greeting "${{inputs.greeting}}"
 
