@@ -49,7 +49,6 @@ def main():
 
     assume_debug = len(sys.argv) <= 1
     if assume_debug:
-        print(Path.cwd().name)
         print("WARNING: Using debug args because no args were passed")
         args_dict = {
             "data_path": Path("path/to/data"),
