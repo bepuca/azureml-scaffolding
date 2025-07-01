@@ -4,6 +4,9 @@ requirements.txt
 # Local entrypoints should be developer-specific
 **/debug.py
 
+# Outputs should not make it to version control
+outputs
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

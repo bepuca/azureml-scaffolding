@@ -1,16 +1,19 @@
 import sys
 from pathlib import Path
 
-from package_template.answer import get_the_ultimate_answer
+from example.answer import get_the_ultimate_answer
 from shared.logging import azureml_logger
 
 
-def example(data_path: Path, greeting: str = "Hello"):
+def example(data_path: Path, greeting: str = "Hello", outputs_dir: Path = Path("../outputs")):
     """Example function with the main things needed to get started with AzureML
 
     :param data_path: Path where data is stored. Here to exemplify how to connect AzureML data
         (see `aml-job.yaml`).
     :param greeting: Word with which to greet the world.
+    :param outputs_dir: Directory where to write outputs. Defaults to `../outputs` which is the
+        default AzureML outputs directory. One level up because we need to `cd src` in the job
+        for python to find the package.
     """
 
     # Tags are shown as properties of the job in the Azure ML dashboard. Run once.
@@ -34,6 +37,10 @@ def example(data_path: Path, greeting: str = "Hello"):
         metrics = {"value": v}
         azureml_logger.log_metrics(metrics)
 
+    outputs_dir.mkdir(exist_ok=True, parents=True)
+    out_filepath = outputs_dir / "hello.txt"
+    out_filepath.write_text("Hello darkness, my old friend!")
+
 
 def main():
     import argparse
@@ -42,10 +49,13 @@ def main():
 
     assume_debug = len(sys.argv) <= 1
     if assume_debug:
+        print(Path.cwd().name)
         print("WARNING: Using debug args because no args were passed")
         args_dict = {
             "data_path": Path("path/to/data"),
             "greeting": "Hello",
+            # on isolated run reproduce remote outputs, on direct run keep at repo root
+            "outputs_dir": Path("../outputs") if Path.cwd().name == "src" else Path("./outputs"),
         }
     else:
         parser = argparse.ArgumentParser(description="Driver script for Example Package")
