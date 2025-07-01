@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from example.answer import get_the_ultimate_answer
+from package_template.answer import get_the_ultimate_answer
 from shared.logging import azureml_logger
 
 
