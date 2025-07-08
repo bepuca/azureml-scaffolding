@@ -152,7 +152,8 @@ AzureML Scaffolding enables you to:
       group your workspace belongs to.
    3. Change the `AZUREML_TENANT_ID` value to the tenant ID of your Azure
       subscription.
-4. Change the `name` key in the [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json) file to
+4. Change the `name` key in the [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json)
+   file to
    match your project name. This is the name of the container that will be
    created.
 5. Run the action `Dev Containers: Rebuild and Reopen in Container` in VSCode
