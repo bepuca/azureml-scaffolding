@@ -872,3 +872,34 @@ that execute the following commands (which may be called manually too):
 
 We use and recommend [pytest] for testing. A little wrapper command
 `bin/dev/test` is provided to run the tests with coverage.
+
+### Common issues
+
+#### Authorization Failure when running an experiment on AML
+
+You may encounter this error message when trying to submit a job to Azure ML (for
+example, via using `bin/pkg/aml`):
+
+```text
+Operation returned an invalid status 'This request is not authorized to perform this operation.'
+ErrorCode:AuthorizationFailure
+```
+
+To resolve this, go to the storage account linked to your Azure ML workspace on Azure
+Portal, in the `Security + Networking` section, select `Networking`, look for `Public
+network access`, click on `Manage` and set:
+
+- `Public network access` to `Enable`
+- `Public network access scope` to `Enable from all networks`
+
+Additionally, you may encounter `KeyBasedAuthenticationNotPermitted` error:
+
+```text
+Met error <class 'Exception'>:KeyBasedAuthenticationNotPermitted
+Operation returned an invalid status 'Key based authentication is not permitted on this storage account.'
+This SAS token is derived from an account key, but key-based authentication is not permitted for this storage account. To update workspace properties, please see the documentation: https://review.learn.microsoft.com/azure/machine-learning/how-to-disable-local-auth-storage?view=azureml-api-2&branch=pr-en-us-278974&tabs=cli#update-an-existing-workspace
+Please check log by running the command with '--debug' for more details.
+```
+
+In such case, you need to change the authentication method for your storage
+account to identity-based with `bin/workspace-setup`

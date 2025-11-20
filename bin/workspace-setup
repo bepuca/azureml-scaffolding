@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# Script to update Azure ML workspace to use identity-based authentication for system datastores
+# Usage: ./update-workspace-auth.sh
+
+set -e  # Exit on any error
+
+# Check if AZUREML_WORKSPACE environment variable is set
+if [ -z "$AZUREML_WORKSPACE" ]; then
+    echo "Error: AZUREML_WORKSPACE environment variable is not set"
+    echo "Please set it with: export AZUREML_WORKSPACE=your-workspace-name"
+    exit 1
+fi
+
+echo "Using workspace: $AZUREML_WORKSPACE"
+
+# Get current Azure subscription ID
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+if [ -z "$SUBSCRIPTION_ID" ]; then
+    echo "Error: Could not get subscription ID. Make sure you're logged in to Azure CLI"
+    exit 1
+fi
+echo "Subscription ID: $SUBSCRIPTION_ID"
+
+# Try to find workspace across all resource groups first
+WORKSPACE_LIST=$(az ml workspace list --query "[?name=='$AZUREML_WORKSPACE'].{resourceGroup:resourceGroup,id:id}" -o json 2>/dev/null || echo "[]")
+WORKSPACE_COUNT=$(echo "$WORKSPACE_LIST" | jq length)
+
+if [ "$WORKSPACE_COUNT" -eq 0 ]; then
+    echo "Error: Could not find workspace '$AZUREML_WORKSPACE' in any resource group."
+    echo "Make sure the workspace exists and you have access to it."
+    exit 1
+elif [ "$WORKSPACE_COUNT" -gt 1 ]; then
+    echo "Warning: Found multiple workspaces named '$AZUREML_WORKSPACE':"
+    echo "$WORKSPACE_LIST" | jq -r '.[] | "  - Resource Group: \(.resourceGroup)"'
+    echo "Please set AZUREML_RESOURCE_GROUP environment variable to specify which one to use."
+    exit 1
+fi
+
+# Get workspace details
+WORKSPACE_INFO=$(echo "$WORKSPACE_LIST" | jq '.[0]')
+RESOURCE_GROUP=$(echo "$WORKSPACE_INFO" | jq -r '.resourceGroup')
+WORKSPACE_ID=$(echo "$WORKSPACE_INFO" | jq -r '.id')
+
+echo "Resource Group: $RESOURCE_GROUP"
+
+# Get the API version that Azure ML CLI is currently using
+API_VERSION=$(az ml workspace show --name "$AZUREML_WORKSPACE" --resource-group "$RESOURCE_GROUP" --debug 2>&1 | grep -i "api-version" | head -1 | sed -n 's/.*api-version=\([^"&'\'']*\).*/\1/p')
+if [ -z "$API_VERSION" ] || [[ "$API_VERSION" == *"'"* ]]; then
+    # Fallback to a known working version
+    API_VERSION="2024-10-01-preview"
+    echo "Warning: Could not detect API version cleanly, using fallback: $API_VERSION"
+else
+    echo "Detected API version: $API_VERSION"
+fi
+
+# Build the REST API URL
+REST_URL="https://management.azure.com${WORKSPACE_ID}?api-version=${API_VERSION}"
+
+echo "REST URL: $REST_URL"
+echo ""
+echo "Updating workspace to use identity-based authentication for system datastores..."
+
+# Execute the REST API call
+az rest --method PATCH --url "$REST_URL" --body '{"properties":{"systemDatastoresAuthMode":"identity"}}'
+
+if [ $? -eq 0 ]; then
+    echo ""
+    echo "✅ Successfully updated workspace '$AZUREML_WORKSPACE' to use identity-based authentication"
+    echo ""
+    echo "Verifying the change..."
+
+    # Verify the change
+    AUTH_MODE=$(az ml workspace show --name "$AZUREML_WORKSPACE" --resource-group "$RESOURCE_GROUP" --query 'system_datastores_auth_mode' -o tsv 2>/dev/null || echo "unknown")
+    echo "Current authentication mode: $AUTH_MODE"
+
+    if [ "$AUTH_MODE" = "identity" ]; then
+        echo "✅ Change verified successfully!"
+    else
+        echo "⚠️  Warning: Could not verify the change. Please check manually."
+    fi
+else
+    echo "❌ Failed to update workspace authentication mode"
+    exit 1
+fi
