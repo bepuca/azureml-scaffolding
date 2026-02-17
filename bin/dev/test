@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#? [Development] Run pytest for the project with coverage
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+usage() {
+    cat<<EOF
+Run pytest for the project with coverage
+
+Usage: $0
+
+Options:
+    -h, --help  Show this help message and exit
+EOF
+}
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+bin/chkenv "PKGS_PATH"
+
+uv run pytest --cov "$PKGS_PATH"

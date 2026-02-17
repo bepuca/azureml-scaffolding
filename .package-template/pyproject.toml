@@ -1,0 +1,18 @@
+[project]
+name = "package-template"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+dependencies = [
+    # needed for logging in AzureML
+    "azureml-mlflow==1.60.*",
+    "mlflow-skinny==2.21.*",
+    "pytz==2025.2",
+]
+
+[project.scripts]
+package-template = "package_template.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

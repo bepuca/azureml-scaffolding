@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+#? [Pipeline] Isolate files for pipeline run in a separate directory
+
+set -eo pipefail
+cd "$(dirname "$0")/../.."
+
+usage() {
+    cat<<EOF
+Isolate files for an pipeline run in a separate directory
+
+Usage: $0 PIPELINE RUN_NAME
+
+Options:
+    -h, --help  Show this help message and exit
+
+Arguments:
+  PIPELINE  Name of pipeline YAML (without extension) in "\$PIPES_PATH".
+  RUN_DIR   Path to the run directory where to isolate to.
+
+The goal is to isolate the absolute minimum to have a successful execution.
+This aims to make the run reproducible and portable as well as easy to reason
+about in the future.
+
+Each step is expected to be named after the package (but dashes are replaced by
+underscores).
+
+RUN_DIR will contain the PIPELINE YAML file and each package as isolated by
+'bin/pkg/_iso'. Thus, the final structure:
+<run_name>
+├── <PIPELINE>.yaml
+├── <package1>/
+│   └── ...
+└── <package2>/
+    └── ...
+EOF
+}
+
+
+while :; do
+    case $1 in
+        -h|--help) usage; exit ;;
+        *) break ;;
+    esac
+    shift
+done
+
+. bin/lib/utils.sh
+if [ $# -ne 2 ]; then utils::invalid_usage "Both PIPELINE and RUN_DIR required."; fi
+
+bin/chkenv "PKGS_PATH" "PIPES_PATH"
+pipeline=$1
+run_dir=$2
+
+pipeline_path="./$PIPES_PATH/$pipeline.yaml"
+if [[ ! -f "$pipeline_path" ]]; then
+    echo>&2 "Pipeline file '$pipeline_path' does not exist."
+    exit 1
+fi
+
+output=$(uv run python - <<EOF
+import yaml
+with open("$pipeline_path") as f:
+    pipeline = yaml.safe_load(f)
+seen_components = set()
+for step, specs in pipeline["jobs"].items():
+    if step != "snapshot":
+        package = specs["component"].split("/")[1]
+        if package not in seen_components:
+            seen_components.add(package)
+            print(package)
+EOF
+)
+
+while read -r package; do
+    bin/pkg/_iso "$package" "$run_dir/$package"
+done <<< "$output"
+cp "$pipeline_path" "$run_dir"
+
+# log components to stdout to be available to the caller, needed for local run
+echo "$output"

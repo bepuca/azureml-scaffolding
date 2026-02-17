@@ -1,0 +1,24 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: example_reader_step
+display_name: Example Reader Step
+
+# What to run (always cd into src for imports to work)
+command: >-
+  cd src &&
+  python -m example_reader_step
+  --data_path "${{inputs.data_path}}"
+
+inputs:
+  data_path:
+    type: uri_folder
+
+# What code to make available
+code: .
+
+# Where to run it
+environment:
+  build:
+    path: ./environment
+
