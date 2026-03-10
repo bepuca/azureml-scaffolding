@@ -1,6 +1,7 @@
-______________________________________________________________________
-
-## name: azureml-scaffolding description: Scaffold, structure, and manage AI/ML projects that run on AzureML. Covers project initialization (uv workspaces, devcontainers, Makefile), Python packaging with explicit dependencies, local and cloud execution, experiment reproducibility, and extensibility patterns (pipelines, datasets, linting). Use this skill whenever the user asks to create, modify, run, test, or deploy an AzureML-based ML project — or when they need guidance on project layout, dependency management, or cloud job submission with Azure Machine Learning.
+---
+name: azureml-scaffolding
+description: Scaffold, structure, and manage AI/ML projects that run on AzureML. Covers project initialization (uv workspaces, devcontainers, Makefile), Python packaging with explicit dependencies, local and cloud execution, experiment reproducibility, and extensibility patterns (pipelines, datasets, linting). Use this skill whenever the user asks to create, modify, run, test, or deploy an AzureML-based ML project — or when they need guidance on project layout, dependency management, or cloud job submission with Azure Machine Learning.
+---
 
 # AzureML Project Scaffolding
 
